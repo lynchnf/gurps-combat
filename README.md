@@ -1,2 +1,2 @@
-# Gurps Combat
+# GURPS Combat
 ﻿GURPS Combat Simulator

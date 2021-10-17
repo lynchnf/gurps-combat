@@ -14,7 +14,8 @@
     <!--    <version>2.5.0</version>-->
     <!--</parent>-->
 
-    <name>﻿GURPS Combat Simulator</name>
+    <name>GURPS Combat</name>
+    <description>GURPS Combat Simulator</description>
 
     <properties>
         <java.version>1.8</java.version>

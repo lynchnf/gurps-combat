@@ -39,7 +39,7 @@ public class Main {
 
     public static void main(String[] args) {
         LOGGER.debug("Starting Application");
-        Application me = new Application();
+        Main me = new Main();
         me.doIt();
         LOGGER.debug("Finished Application");
     }
