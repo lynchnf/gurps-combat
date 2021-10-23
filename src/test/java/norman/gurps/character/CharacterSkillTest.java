@@ -3,17 +3,17 @@ package norman.gurps.character;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CharacterSkillTest {
-    private CharacterSkill characterSkill;
+class CharacterSkillTest {
+    CharacterSkill characterSkill;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         Skill broadswordSkill = new Skill();
         broadswordSkill.setName("Broadsword");
         broadswordSkill.setControllingAttribute(ControllingAttribute.DX);
@@ -30,28 +30,28 @@ public class CharacterSkillTest {
         characterSkill = character.getSkill(broadswordSkill.getName());
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         characterSkill = null;
     }
 
     @Test
-    public void getLevel() {
+    void getLevel() {
         assertEquals(12, characterSkill.getLevel());
     }
 
     @Test
-    public void getLabel() {
+    void getLabel() {
         assertEquals("Broadsword", characterSkill.getLabel());
     }
 
     @Test
-    public void getSkill() {
+    void getSkill() {
         assertEquals("Broadsword", characterSkill.getSkill().getName());
     }
 
     @Test
-    public void getPoints() {
+    void getPoints() {
         assertEquals(1, characterSkill.getPoints());
     }
 }

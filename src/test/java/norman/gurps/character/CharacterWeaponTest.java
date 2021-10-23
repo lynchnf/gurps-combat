@@ -8,20 +8,20 @@ import norman.gurps.equipment.WeaponSkill;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CharacterWeaponTest {
-    private CharacterWeapon quarterstaff;
-    private CharacterWeapon axe;
+class CharacterWeaponTest {
+    CharacterWeapon quarterstaff;
+    CharacterWeapon axe;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         Skill twoHandedSwordSkill = new Skill();
         twoHandedSwordSkill.setName("Two-Handed Sword");
         twoHandedSwordSkill.setControllingAttribute(ControllingAttribute.DX);
@@ -114,28 +114,28 @@ public class CharacterWeaponTest {
         this.axe = character.getWeapon(axe.getName());
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         quarterstaff = null;
         axe = null;
     }
 
     @Test
-    public void getAttack() {
+    void getAttack() {
         assertEquals(12, quarterstaff.getAttack("Two-Handed Sword"));
         assertEquals(13, quarterstaff.getAttack("Staff"));
         assertEquals(12, axe.getAttack("Axe/Mace"));
     }
 
     @Test
-    public void getParry() {
+    void getParry() {
         assertEquals(9, quarterstaff.getParry("Two-Handed Sword"));
         assertEquals(11, quarterstaff.getParry("Staff"));
         assertEquals(9, axe.getParry("Axe/Mace"));
     }
 
     @Test
-    public void getDamageDice() {
+    void getDamageDice() {
         assertEquals(1, quarterstaff.getDamageDice("Two-Handed Sword", "Swing"));
         assertEquals(1, quarterstaff.getDamageDice("Two-Handed Sword", "Thrust"));
         assertEquals(1, quarterstaff.getDamageDice("Staff", "Swing"));
@@ -144,7 +144,7 @@ public class CharacterWeaponTest {
     }
 
     @Test
-    public void getDamageAdds() {
+    void getDamageAdds() {
         assertEquals(1, quarterstaff.getDamageAdds("Two-Handed Sword", "Swing"));
         assertEquals(-1, quarterstaff.getDamageAdds("Two-Handed Sword", "Thrust"));
         assertEquals(1, quarterstaff.getDamageAdds("Staff", "Swing"));
@@ -153,7 +153,7 @@ public class CharacterWeaponTest {
     }
 
     @Test
-    public void getDamageType() {
+    void getDamageType() {
         assertEquals(DamageType.CRUSHING, quarterstaff.getDamageType("Two-Handed Sword", "Swing"));
         assertEquals(DamageType.CRUSHING, quarterstaff.getDamageType("Two-Handed Sword", "Thrust"));
         assertEquals(DamageType.CRUSHING, quarterstaff.getDamageType("Staff", "Swing"));
@@ -162,31 +162,31 @@ public class CharacterWeaponTest {
     }
 
     @Test
-    public void getLabel() {
+    void getLabel() {
         assertEquals("Quarterstaff", quarterstaff.getLabel());
         assertEquals("Axe", axe.getLabel());
     }
 
     @Test
-    public void getWeapon() {
+    void getWeapon() {
         assertEquals("Quarterstaff", quarterstaff.getWeapon().getName());
         assertEquals("Axe", axe.getWeapon().getName());
     }
 
     @Test
-    public void isPrimary() {
+    void isPrimary() {
         assertTrue(quarterstaff.isPrimary());
         assertFalse(axe.isPrimary());
     }
 
     @Test
-    public void getPrimarySkillName() {
+    void getPrimarySkillName() {
         assertEquals("Staff", quarterstaff.getPrimarySkillName());
         assertEquals("Axe/Mace", axe.getPrimarySkillName());
     }
 
     @Test
-    public void getPrimaryModeName() {
+    void getPrimaryModeName() {
         assertEquals("Swing", quarterstaff.getPrimaryModeName());
         assertEquals("Swing", axe.getPrimaryModeName());
     }

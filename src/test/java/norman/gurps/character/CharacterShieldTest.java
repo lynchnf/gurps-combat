@@ -4,19 +4,19 @@ import norman.gurps.equipment.Shield;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class CharacterShieldTest {
-    private CharacterShield characterShield;
+class CharacterShieldTest {
+    CharacterShield characterShield;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         Skill shieldSkill = new Skill();
         shieldSkill.setName("Shield");
         shieldSkill.setControllingAttribute(ControllingAttribute.DX);
@@ -41,23 +41,28 @@ public class CharacterShieldTest {
         characterShield = character.getShield("Medium Shield");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         characterShield = null;
     }
 
     @Test
-    public void getLabel() {
+    void getBlock() {
+        assertEquals(12, characterShield.getBlock());
+    }
+
+    @Test
+    void getLabel() {
         assertEquals("Medium Shield", characterShield.getLabel());
     }
 
     @Test
-    public void getShield() {
+    void getShield() {
         assertEquals("Medium Shield", characterShield.getShield().getName());
     }
 
     @Test
-    public void isPrimary() {
+    void isPrimary() {
         assertTrue(characterShield.isPrimary());
     }
 }

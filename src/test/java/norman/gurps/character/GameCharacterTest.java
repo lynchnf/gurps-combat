@@ -11,18 +11,19 @@ import norman.gurps.equipment.WeaponSkill;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class GameCharacterTest {
+class GameCharacterTest {
     private GameCharacter character;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() {
         Skill broadswordSkill = new Skill();
         broadswordSkill.setName("Broadsword");
         broadswordSkill.setControllingAttribute(ControllingAttribute.DX);
@@ -118,104 +119,109 @@ public class GameCharacterTest {
         character.addEquipment(knife);
     }
 
+    @AfterEach
+    void tearDown() {
+        character = null;
+    }
+
     @Test
-    public void getName() {
+    void getName() {
         assertEquals("Testy McTester", character.getName());
     }
 
     @Test
-    public void getStrength() {
+    void getStrength() {
         assertEquals(9, character.getStrength());
     }
 
     @Test
-    public void getDexterity() {
+    void getDexterity() {
         assertEquals(13, character.getDexterity());
     }
 
     @Test
-    public void getIntelligence() {
+    void getIntelligence() {
         assertEquals(12, character.getIntelligence());
     }
 
     @Test
-    public void getHealth() {
+    void getHealth() {
         assertEquals(14, character.getHealth());
     }
 
     @Test
-    public void getBasicLift() {
+    void getBasicLift() {
         assertEquals(16.0, character.getBasicLift(), 0.001);
     }
 
     @Test
-    public void getBasicLiftLowStrength() {
+    void getBasicLiftLowStrength() {
         character.setStrength(7);
         assertEquals(9.8, character.getBasicLift(), 0.001);
     }
 
     @Test
-    public void getHitPoints() {
+    void getHitPoints() {
         assertEquals(9, character.getHitPoints());
     }
 
     @Test
-    public void getWill() {
+    void getWill() {
         assertEquals(12, character.getWill());
     }
 
     @Test
-    public void getPerception() {
+    void getPerception() {
         assertEquals(12, character.getPerception());
     }
 
     @Test
-    public void getFatiguePoints() {
+    void getFatiguePoints() {
         assertEquals(14, character.getFatiguePoints());
     }
 
     @Test
-    public void getBasicSpeed() {
+    void getBasicSpeed() {
         assertEquals(6.75, character.getBasicSpeed(), 0.001);
     }
 
     @Test
-    public void getBasicMove() {
+    void getBasicMove() {
         assertEquals(6, character.getBasicMove());
     }
 
     @Test
-    public void getEncumbranceLevel() {
+    void getEncumbranceLevel() {
         assertEquals(1, character.getEncumbranceLevel());
     }
 
     @Test
-    public void getMove() {
+    void getMove() {
         assertEquals(4, character.getMove());
     }
 
     @Test
-    public void getThrustDamageDice() {
+    void getThrustDamageDice() {
         assertEquals(1, character.getThrustDamageDice());
     }
 
     @Test
-    public void getThrustDamageAdds() {
+    void getThrustDamageAdds() {
         assertEquals(-2, character.getThrustDamageAdds());
     }
 
     @Test
-    public void getSwingDamageDice() {
+    void getSwingDamageDice() {
         assertEquals(1, character.getSwingDamageDice());
     }
 
     @Test
-    public void getSwingDamageAdds() {
+    void getSwingDamageAdds() {
         assertEquals(-1, character.getSwingDamageAdds());
     }
 
     @Test
-    public void getSkill() {
+    void getSkill() {
         CharacterSkill broadsword = character.getSkill("Broadsword");
         assertEquals(1, broadsword.getPoints());
         assertEquals(12, broadsword.getLevel());
@@ -228,7 +234,7 @@ public class GameCharacterTest {
     }
 
     @Test
-    public void getItem() {
+    void getItem() {
         Item armor = character.getItem("Leather Armor");
         assertTrue(BigDecimal.valueOf(34000, 2).compareTo(armor.getCost()) == 0);
         assertEquals(19.5, armor.getWeight(), 0.001);
@@ -244,26 +250,26 @@ public class GameCharacterTest {
     }
 
     @Test
-    public void getArmor() {
+    void getArmor() {
         Armor armor = character.getArmor("Leather Armor");
         assertEquals("Leather Armor", armor.getName());
     }
 
     @Test
-    public void getShield() {
+    void getShield() {
         CharacterShield shield = character.getShield("Small Shield");
         assertEquals("Small Shield", shield.getShield().getName());
         assertTrue(shield.isPrimary());
     }
 
     @Test
-    public void getPrimaryShield() {
+    void getPrimaryShield() {
         CharacterShield shield = character.getPrimaryShield();
-        assertEquals("Small Shield", shield.getLabel());
+        assertEquals("Small Shield", shield.getShield().getName());
     }
 
     @Test
-    public void getWeapon() {
+    void getWeapon() {
         CharacterWeapon sword = character.getWeapon("Broadsword");
         assertEquals("Broadsword", sword.getWeapon().getName());
         assertTrue(sword.isPrimary());
@@ -274,18 +280,18 @@ public class GameCharacterTest {
     }
 
     @Test
-    public void getPrimaryWeapon() {
-        CharacterWeapon weapon = character.getPrimaryWeapon();
-        assertEquals("Broadsword", weapon.getLabel());
+    void getPrimaryWeapon() {
+        CharacterWeapon sword = character.getPrimaryWeapon();
+        assertEquals("Broadsword", sword.getWeapon().getName());
     }
 
     @Test
-    public void getShieldDefenseBonus() {
+    void getShieldDefenseBonus() {
         assertEquals(1, character.getShieldDefenseBonus());
     }
 
     @Test
-    public void getShieldDefenseBonusTwoShields() {
+    void getShieldDefenseBonusTwoShields() {
         Shield mediumShield = new Shield();
         mediumShield.setName("Medium Shield");
         mediumShield.setCost(BigDecimal.valueOf(60, 0));
@@ -298,12 +304,12 @@ public class GameCharacterTest {
     }
 
     @Test
-    public void getDodge() {
+    void getDodge() {
         assertEquals(9, character.getDodge());
     }
 
     @Test
-    public void getArmorDamageResistance() {
+    void getArmorDamageResistance() {
         assertEquals(2, character.getArmorDamageResistance());
     }
 }

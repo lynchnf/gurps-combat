@@ -2,13 +2,32 @@ package norman.gurps.util;
 
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class MiscUtilTest {
+class MiscUtilTest {
+    @BeforeEach
+    void setUp() {
+    }
+
+    @AfterEach
+    void tearDown() {
+    }
+
     @Test
-    public void calculateStatus() {
+    void rollDice() {
+        // TODO Mock random and test.
+    }
+
+    @Test
+    void testRollDice() {
+    }
+
+    @Test
+    void calculateStatus() {
         assertEquals(RollStatus.CRITICAL_SUCCESS, MiscUtil.calculateStatus(5, 3));
         assertEquals(RollStatus.CRITICAL_SUCCESS, MiscUtil.calculateStatus(5, 4));
         assertEquals(RollStatus.SUCCESS, MiscUtil.calculateStatus(5, 5));
@@ -55,7 +74,7 @@ public class MiscUtilTest {
     }
 
     @Test
-    public void calculateSimpleStatus() {
+    void calculateSimpleStatus() {
         assertEquals(RollStatus.SUCCESS, MiscUtil.calculateSimpleStatus(20, 3));
         assertEquals(RollStatus.SUCCESS, MiscUtil.calculateSimpleStatus(20, 4));
         assertEquals(RollStatus.SUCCESS, MiscUtil.calculateSimpleStatus(20, 5));
@@ -70,7 +89,7 @@ public class MiscUtilTest {
     }
 
     @Test
-    public void calculateSkillLevel() {
+    void calculateSkillLevel() {
         assertEquals(10, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 1));
         assertEquals(11, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 2));
         assertEquals(12, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 4));
@@ -91,14 +110,14 @@ public class MiscUtilTest {
     }
 
     @Test
-    public void calculateSkillLevelHighAttribute() {
+    void calculateSkillLevelHighAttribute() {
         assertEquals(18, MiscUtil.calculateSkillLevel(20, DifficultyLevel.HARD, 1));
 
         assertEquals(18, MiscUtil.calculateSkillLevel(25, DifficultyLevel.HARD, 1));
     }
 
     @Test
-    public void calculateSkillLevelControllingAttribute() {
+    void calculateSkillLevelControllingAttribute() {
         assertEquals(9, MiscUtil.calculateSkillLevel(ControllingAttribute.ST, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
         assertEquals(10,
                 MiscUtil.calculateSkillLevel(ControllingAttribute.DX, DifficultyLevel.HARD, 1, 11, 12, 13, 14));

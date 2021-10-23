@@ -1,72 +1,67 @@
 package norman.gurps.combat;
 
-import norman.gurps.character.GameCharacter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BattleTest {
-    private Battle battle;
+class BattleTest {
+    Battle battle;
 
-    @Before
-    public void setUp() throws Exception {
-        GameCharacter able = new GameCharacter();
-        GameCharacter baker = new GameCharacter();
+    @BeforeEach
+    void setUp() {
         battle = new Battle();
-        battle.addCombatant(able, "blue");
-        battle.addCombatant(baker, "red");
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() {
         battle = null;
     }
 
     @Test
-    public void addCombatant() {
+    void addCombatant() {
     }
 
     @Test
-    public void start() {
+    void start() {
     }
 
     @Test
-    public void next() {
+    void next() {
     }
 
     @Test
-    public void getRound() {
+    void getRound() {
     }
 
     @Test
-    public void getActor() {
+    void getActor() {
     }
 
     @Test
-    public void setTargetIndex() {
+    void setTargetIndex() {
     }
 
     @Test
-    public void getTarget() {
+    void getTarget() {
     }
 
     @Test
-    public void executeAction() {
+    void executeAction() {
     }
 
     @Test
-    public void executeDefense() {
+    void executeDefense() {
     }
 
     @Test
-    public void applyDamage() {
+    void applyDamage() {
     }
 
     @Test
-    public void getStayConscious() {
+    void getStayConscious() {
     }
 
     @Test
-    public void over() {
+    void over() {
     }
 }

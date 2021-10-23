@@ -23,8 +23,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <junit.version>4.13.2</junit.version>
+        <!-- Versions listed alphabetically. -->
+        <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <logback.version>1.2.3</logback.version>
+        <mockito.version>3.9.0</mockito.version>
     </properties>
 
     <developers>
@@ -42,9 +44,15 @@
             <version>${logback.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
