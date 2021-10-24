@@ -8,11 +8,11 @@
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <!--<parent>-->
-    <!--    <groupId>org.springframework.boot</groupId>-->
-    <!--    <artifactId>spring-boot-starter-parent</artifactId>-->
-    <!--    <version>2.5.0</version>-->
-    <!--</parent>-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+    </parent>
 
     <name>GURPS Combat</name>
     <description>GURPS Combat Simulator</description>
@@ -22,8 +22,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- Versions listed alphabetically. -->
+        <jackson.version>2.12.3</jackson.version>
         <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <logback.version>1.2.3</logback.version>
         <mockito.version>3.9.0</mockito.version>
@@ -42,6 +44,21 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

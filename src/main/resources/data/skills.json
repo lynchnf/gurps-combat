@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Acrobatics",
+    "controllingAttribute": "DX",
+    "difficultyLevel": "HARD"
+  },
+  {
+    "name": "Acting",
+    "controllingAttribute": "IQ",
+    "difficultyLevel": "AVERAGE"
+  },
+  {
+    "name": "Animal Handling",
+    "controllingAttribute": "IQ",
+    "difficultyLevel": "AVERAGE"
+  },
+  {
+    "name": "Area Knowledge",
+    "controllingAttribute": "IQ",
+    "difficultyLevel": "EASY"
+  },
+  {
+    "name": "Armoury",
+    "controllingAttribute": "IQ",
+    "difficultyLevel": "AVERAGE"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Small Shield",
+    "cost": 40,
+    "weight": 8.0,
+    "skillName": "Shield",
+    "defenseBonus": 1
+  },
+  {
+    "name": "Medium Shield",
+    "cost": 60,
+    "weight": 15.0,
+    "skillName": "Shield",
+    "defenseBonus": 2
+  },
+  {
+    "name": "Large Shield",
+    "cost": 90,
+    "weight": 25.0,
+    "skillName": "Shield",
+    "defenseBonus": 3,
+    "attackWhileHoldingAdjustment": -2
+  }
+]

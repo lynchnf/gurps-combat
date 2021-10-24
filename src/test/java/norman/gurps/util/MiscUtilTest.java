@@ -1,29 +1,35 @@
 package norman.gurps.util;
 
+import norman.gurps.equipment.Armor;
+import norman.gurps.equipment.Shield;
+import norman.gurps.equipment.Weapon;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import norman.gurps.skill.Skill;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Map;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class MiscUtilTest {
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void rollDice() {
-        // TODO Mock random and test.
-    }
+        Random mockRandom = mock(Random.class);
+        Mockito.when(mockRandom.nextInt(6)).thenReturn(5);
+        MiscUtil.setRandom(mockRandom);
 
-    @Test
-    void testRollDice() {
+        Assertions.assertEquals(5, MiscUtil.rollDice(1));
+        Assertions.assertEquals(10, MiscUtil.rollDice(2));
+        Assertions.assertEquals(15, MiscUtil.rollDice(3));
+
+        Assertions.assertEquals(9, MiscUtil.rollDice(2, -1));
+        Assertions.assertEquals(11, MiscUtil.rollDice(2, 1));
+        Assertions.assertEquals(13, MiscUtil.rollDice(2, 3));
     }
 
     @Test
@@ -125,5 +131,33 @@ class MiscUtilTest {
                 MiscUtil.calculateSkillLevel(ControllingAttribute.IQ, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
         assertEquals(12,
                 MiscUtil.calculateSkillLevel(ControllingAttribute.HT, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
+    }
+
+    @Test
+    void getArmors() {
+        Map<String, Armor> armors = MiscUtil.getArmors();
+        assertNotNull(armors);
+        assertFalse(armors.isEmpty());
+    }
+
+    @Test
+    void getShields() {
+        Map<String, Shield> shields = MiscUtil.getShields();
+        assertNotNull(shields);
+        assertFalse(shields.isEmpty());
+    }
+
+    @Test
+    void getSkills() {
+        Map<String, Skill> skills = MiscUtil.getSkills();
+        assertNotNull(skills);
+        assertFalse(skills.isEmpty());
+    }
+
+    @Test
+    void getWeapons() {
+        Map<String, Weapon> weapons = MiscUtil.getWeapons();
+        assertNotNull(weapons);
+        assertFalse(weapons.isEmpty());
     }
 }
