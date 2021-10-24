@@ -6,7 +6,6 @@ import norman.gurps.equipment.Weapon;
 import norman.gurps.skill.ControllingAttribute;
 import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -20,16 +19,16 @@ class MiscUtilTest {
     @Test
     void rollDice() {
         Random mockRandom = mock(Random.class);
-        Mockito.when(mockRandom.nextInt(6)).thenReturn(5);
+        Mockito.when(mockRandom.nextInt(6)).thenReturn(4);
         MiscUtil.setRandom(mockRandom);
 
-        Assertions.assertEquals(5, MiscUtil.rollDice(1));
-        Assertions.assertEquals(10, MiscUtil.rollDice(2));
-        Assertions.assertEquals(15, MiscUtil.rollDice(3));
+        assertEquals(5, MiscUtil.rollDice(1));
+        assertEquals(10, MiscUtil.rollDice(2));
+        assertEquals(15, MiscUtil.rollDice(3));
 
-        Assertions.assertEquals(9, MiscUtil.rollDice(2, -1));
-        Assertions.assertEquals(11, MiscUtil.rollDice(2, 1));
-        Assertions.assertEquals(13, MiscUtil.rollDice(2, 3));
+        assertEquals(9, MiscUtil.rollDice(2, -1));
+        assertEquals(11, MiscUtil.rollDice(2, 1));
+        assertEquals(13, MiscUtil.rollDice(2, 3));
     }
 
     @Test
