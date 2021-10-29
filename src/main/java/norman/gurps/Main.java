@@ -8,14 +8,9 @@ import norman.gurps.combat.CombatantStatus;
 import norman.gurps.combat.DamageResult;
 import norman.gurps.combat.Defense;
 import norman.gurps.equipment.Armor;
-import norman.gurps.equipment.DamageBase;
 import norman.gurps.equipment.DamageType;
 import norman.gurps.equipment.Shield;
 import norman.gurps.equipment.Weapon;
-import norman.gurps.equipment.WeaponMode;
-import norman.gurps.equipment.WeaponSkill;
-import norman.gurps.skill.ControllingAttribute;
-import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
 import norman.gurps.util.MiscUtil;
 import norman.gurps.util.RollResult;
@@ -23,7 +18,7 @@ import norman.gurps.util.RollStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
+import java.util.Map;
 
 import static norman.gurps.combat.CombatantStatus.COLLAPSING;
 import static norman.gurps.combat.CombatantStatus.UNCONSCIOUS;
@@ -45,45 +40,12 @@ public class Main {
     }
 
     private void doIt() {
-        Skill broadswordSkill = new Skill();
-        broadswordSkill.setName("Broadsword");
-        broadswordSkill.setControllingAttribute(ControllingAttribute.DX);
-        broadswordSkill.setDifficultyLevel(DifficultyLevel.AVERAGE);
-
-        Skill shieldSkill = new Skill();
-        shieldSkill.setName("Shield");
-        shieldSkill.setControllingAttribute(ControllingAttribute.DX);
-        shieldSkill.setDifficultyLevel(DifficultyLevel.EASY);
-
-        Armor leatherArmor = new Armor();
-        leatherArmor.setName("Leather Armor");
-        leatherArmor.setCost(BigDecimal.valueOf(340, 0));
-        leatherArmor.setWeight(19.5);
-        leatherArmor.setDamageResistance(2);
-
-        Shield smallShield = new Shield();
-        smallShield.setName("Small shield");
-        smallShield.setCost(BigDecimal.valueOf(40, 0));
-        smallShield.setWeight(8.0);
-        smallShield.setSkillName(shieldSkill.getName());
-        smallShield.setDefenseBonus(1);
-
-        Weapon broadsword = new Weapon();
-        broadsword.setName("Broadsword");
-        broadsword.setCost(BigDecimal.valueOf(500, 0));
-        broadsword.setWeight(3.0);
-
-        WeaponSkill weaponSkill = new WeaponSkill();
-        weaponSkill.setSkillName(broadswordSkill.getName());
-        weaponSkill.setMinimumStrength(10);
-        broadsword.getSkills().put(weaponSkill.getSkillName(), weaponSkill);
-
-        WeaponMode weaponMode = new WeaponMode();
-        weaponMode.setModeName("Swing");
-        weaponMode.setDamageBase(DamageBase.SWING);
-        weaponMode.setDamageAdds(1);
-        weaponMode.setDamageType(DamageType.CUTTING);
-        weaponSkill.getModes().put(weaponMode.getModeName(), weaponMode);
+        Map<String, Skill> skills = MiscUtil.getSkills();
+        Skill broadswordSkill = skills.get("Broadsword");
+        Skill shieldSkill = skills.get("Shield");
+        Armor leatherArmor = MiscUtil.getArmors().get("Leather Armor");
+        Shield smallShield = MiscUtil.getShields().get("Small Shield");
+        Weapon broadsword = MiscUtil.getWeapons().get("Broadsword");
 
         // Create characters.
         GameCharacter able = new GameCharacter();
@@ -92,8 +54,8 @@ public class Main {
         able.setDexterity(10);
         able.setIntelligence(10);
         able.setHealth(10);
-        able.addSkill(broadswordSkill, 2);
-        able.addSkill(shieldSkill, 1);
+        able.addSkill(broadswordSkill, 12);
+        able.addSkill(shieldSkill, 10);
         able.addEquipment(leatherArmor);
         able.addEquipment(smallShield);
         able.addEquipment(broadsword);
@@ -104,8 +66,8 @@ public class Main {
         baker.setDexterity(10);
         baker.setIntelligence(10);
         baker.setHealth(10);
-        baker.addSkill(broadswordSkill, 2);
-        baker.addSkill(shieldSkill, 1);
+        baker.addSkill(broadswordSkill, 12);
+        baker.addSkill(shieldSkill, 10);
         baker.addEquipment(leatherArmor);
         baker.addEquipment(smallShield);
         baker.addEquipment(broadsword);
@@ -136,38 +98,39 @@ public class Main {
                 actorStatus = doStayConscious(battle);
             }
 
-            // If our guy is still not unconscious, ...
-            if (actorStatus != UNCONSCIOUS) {
+            // If our guy is unconscious, skip the rest of this loop.
+            if (actorStatus == UNCONSCIOUS) {
+                continue;
+            }
 
-                // If this action requires a target, decide on one.
-                battle.setTargetIndex(-1);
-                if (battle.getActor().getAction().getManeuver().isTargetRequired()) {
-                    int decideTarget = battle.getActor().getHelper().decideTarget();
-                    battle.setTargetIndex(decideTarget);
+            // If this action requires a target, decide on one.
+            battle.setTargetIndex(-1);
+            if (battle.getActor().getAction().getManeuver().isTargetRequired()) {
+                int decideTarget = battle.getActor().getHelper().decideTarget();
+                battle.setTargetIndex(decideTarget);
+            }
+
+            // Execute action.
+            RollResult[] actionResults = doAction(battle);
+
+            for (RollResult actionResult : actionResults) {
+                boolean defenseSuccess = false;
+                boolean actionSuccess = doActionResult(actionResult);
+
+                // If defense needed ...
+                if (isDefenseNeeded(battle, actionResult)) {
+
+                    // Decide defense(s).
+                    Defense[] decideDefense = battle.getTarget().getHelper().decideDefense();
+                    battle.getTarget().setDefenses(decideDefense);
+
+                    // Execute defense.
+                    defenseSuccess = doDefense(battle);
                 }
 
-                // Execute action.
-                RollResult[] actionResults = doAction(battle);
-
-                for (RollResult actionResult : actionResults) {
-                    boolean defenseSuccess = false;
-                    boolean actionSuccess = doActionResult(actionResult);
-
-                    // If defense needed ...
-                    if (isDefenseNeeded(battle, actionResult)) {
-
-                        // Decide defense(s).
-                        Defense[] decideDefense = battle.getTarget().getHelper().decideDefense();
-                        battle.getTarget().setDefenses(decideDefense);
-
-                        // Execute defense.
-                        defenseSuccess = doDefense(battle);
-                    }
-
-                    // If the action was successful and the defense was not, calculate and apply damage.
-                    if (actionSuccess && !defenseSuccess) {
-                        doDamage(battle);
-                    }
+                // If the action was successful and the defense was not, calculate and apply damage.
+                if (actionSuccess && !defenseSuccess) {
+                    doDamage(battle);
                 }
             }
         } while (!battle.over());
@@ -183,15 +146,15 @@ public class Main {
                 System.out.printf("%s is able to stay conscious by doing nothing.%n", actorName);
             } else {
                 System.out.printf("%s attempts to stay conscious.%n", actorName);
-                int needed = battle.getStayConscious();
-                int rolled = MiscUtil.rollDice(3);
-                RollStatus rollStatus = MiscUtil.calculateSimpleStatus(needed, rolled);
-                if (rollStatus == SUCCESS || rollStatus == CRITICAL_SUCCESS) {
-                    System.out.printf("%s! Made it by %d. Needed a %d and rolled a %d.%n", rollStatus.name(),
-                            needed - rolled, needed, rolled);
+                RollResult result = battle.getStayConscious();
+                if (result.getStatus() == SUCCESS || result.getStatus() == CRITICAL_SUCCESS) {
+                    System.out.printf("%s! Made it by %d. Needed a %d and rolled a %d.%n", result.getStatus().name(),
+                            result.getEffectiveSkill() - result.getRollValue(), result.getEffectiveSkill(),
+                            result.getRollValue());
                 } else {
-                    System.out.printf("%s! Failed by %d. Needed a %d, but rolled a %d.%n", rollStatus.name(),
-                            rolled - needed, needed, rolled);
+                    System.out.printf("%s! Failed by %d. Needed a %d, but rolled a %d.%n", result.getStatus().name(),
+                            result.getRollValue() - result.getEffectiveSkill(), result.getEffectiveSkill(),
+                            result.getRollValue());
                     actor.setUnconscious();
                     actorStatus = UNCONSCIOUS;
                 }

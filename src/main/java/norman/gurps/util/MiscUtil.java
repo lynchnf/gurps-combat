@@ -5,8 +5,6 @@ import norman.gurps.LoggingException;
 import norman.gurps.equipment.Armor;
 import norman.gurps.equipment.Shield;
 import norman.gurps.equipment.Weapon;
-import norman.gurps.skill.ControllingAttribute;
-import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,36 +14,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class MiscUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(MiscUtil.class);
-    private static Random random;
     private static ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private static ObjectMapper mapper = new ObjectMapper();
     private static String dataDirectory = "data";
 
-    public static Random getRandom() {
-        if (random == null) {
-            random = new Random();
-        }
-        return random;
+    public static int getThrustDamageDice(int strength) {
+        return strength < 11 ? 1 : (strength - 3) / 8;
     }
 
-    public static void setRandom(Random random) {
-        MiscUtil.random = random;
+    public static int getThrustDamageAdds(int strength) {
+        return strength < 11 ? (strength - 1) / 2 - 6 : (strength - 3) % 8 / 2 - 1;
     }
 
-    public static int rollDice(int nbrOfDice) {
-        return rollDice(nbrOfDice, 0);
+    public static int getSwingDamageDice(int strength) {
+        return strength < 9 ? 1 : (strength - 5) / 4;
     }
 
-    public static int rollDice(int nbrOfDice, int adds) {
-        int total = 0;
-        for (int i = 0; i < nbrOfDice; i++) {
-            total += getRandom().nextInt(6) + 1;
-        }
-        return total + adds;
+    public static int getSwingDamageAdds(int strength) {
+        return strength < 9 ? (strength - 1) / 2 - 5 : (strength - 5) % 4 - 1;
     }
 
     public static RollStatus calculateStatus(int effectiveSkill, int roll) {
@@ -69,46 +58,6 @@ public class MiscUtil {
         } else {
             return RollStatus.FAILURE;
         }
-    }
-
-    public static int calculateSkillLevel(ControllingAttribute controllingAttribute, DifficultyLevel difficultyLevel,
-            int points, int strength, int dexterity, int intelligence, int health) {
-        int attribute = 0;
-        if (controllingAttribute == ControllingAttribute.ST) {
-            attribute = strength;
-        } else if (controllingAttribute == ControllingAttribute.DX) {
-            attribute = dexterity;
-        } else if (controllingAttribute == ControllingAttribute.IQ) {
-            attribute = intelligence;
-        } else if (controllingAttribute == ControllingAttribute.HT) {
-            attribute = health;
-        } else {
-            LOGGER.error("Invalid value for controllingAttribute: \"" + controllingAttribute + "\"");
-        }
-        return calculateSkillLevel(attribute, difficultyLevel, points);
-    }
-
-    public static int calculateSkillLevel(int attribute, DifficultyLevel difficultyLevel, int points) {
-        int level = Math.min(20, attribute);
-
-        if (difficultyLevel == DifficultyLevel.EASY) {
-            // do nothing.
-        } else if (difficultyLevel == DifficultyLevel.AVERAGE) {
-            level -= 1;
-        } else if (difficultyLevel == DifficultyLevel.HARD) {
-            level -= 2;
-        } else {
-            LOGGER.error("Invalid value for difficultyLevel: \"" + difficultyLevel + "\"");
-        }
-
-        if (points >= 4) {
-            level += points / 4 + 1;
-        } else if (points >= 2) {
-            level += 1;
-        } else if (points < 1) {
-            level -= 4;
-        }
-        return level;
     }
 
     public static Map<String, Armor> getArmors() {

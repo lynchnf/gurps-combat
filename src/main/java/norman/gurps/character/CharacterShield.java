@@ -2,11 +2,18 @@ package norman.gurps.character;
 
 import norman.gurps.equipment.Shield;
 
+/**
+ * Read-only bean that contains shields plus additional properties specific to a character.
+ */
 public class CharacterShield {
     private GameCharacter character;
     private String label;
     private Shield shield;
     private boolean primary = false;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Constructors, Getters, and Setters /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public CharacterShield(GameCharacter character, String label, Shield shield) {
         this(character, label, shield, false);

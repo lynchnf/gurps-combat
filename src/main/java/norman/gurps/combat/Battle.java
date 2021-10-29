@@ -5,6 +5,7 @@ import norman.gurps.character.GameCharacter;
 import norman.gurps.equipment.DamageType;
 import norman.gurps.strategy.DefaultStrategyHelper;
 import norman.gurps.strategy.StrategyHelper;
+import norman.gurps.util.Dice;
 import norman.gurps.util.MiscUtil;
 import norman.gurps.util.RollResult;
 import norman.gurps.util.RollStatus;
@@ -14,8 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Battle {
-    private Defense[] defenses;
-
     // TODO Do I really need this?
     public List<Combatant> getCombatants() {
         return combatants;
@@ -26,6 +25,7 @@ public class Battle {
         return actorIndex;
     }
 
+    private Dice dice = new Dice();
     private List<Combatant> combatants = new ArrayList<>();
     private int roundIndex;
     private int actorIndex;
@@ -88,33 +88,33 @@ public class Battle {
         if (maneuver == Maneuver.ATTACK || maneuver == Maneuver.ALL_OUT_ATTACK_STRONG) {
             RollResult result = new RollResult();
             result.setEffectiveSkill(effectiveSkill);
-            int rollValue = MiscUtil.rollDice(3);
+            int rollValue = dice.roll(3);
             result.setRollValue(rollValue);
             result.setStatus(MiscUtil.calculateStatus(effectiveSkill, rollValue));
             results = new RollResult[]{result};
         } else if (maneuver == Maneuver.ALL_OUT_ATTACK_DETERMINED) {
             RollResult result = new RollResult();
             result.setEffectiveSkill(effectiveSkill + 4);
-            int rollValue = MiscUtil.rollDice(3);
+            int rollValue = dice.roll(3);
             result.setRollValue(rollValue);
             result.setStatus(MiscUtil.calculateStatus(effectiveSkill, rollValue));
             results = new RollResult[]{result};
         } else if (maneuver == Maneuver.ALL_OUT_ATTACK_DOUBLE) {
             RollResult result1 = new RollResult();
             result1.setEffectiveSkill(effectiveSkill);
-            int rollValue1 = MiscUtil.rollDice(3);
+            int rollValue1 = dice.roll(3);
             result1.setRollValue(rollValue1);
             result1.setStatus(MiscUtil.calculateStatus(effectiveSkill, rollValue1));
             RollResult result2 = new RollResult();
             result2.setEffectiveSkill(effectiveSkill);
-            int rollValue2 = MiscUtil.rollDice(3);
+            int rollValue2 = dice.roll(3);
             result2.setRollValue(rollValue1);
             result2.setStatus(MiscUtil.calculateStatus(effectiveSkill, rollValue2));
             results = new RollResult[]{result1, result2};
         } else if (maneuver == Maneuver.MOVE_AND_ATTACK) {
             RollResult result = new RollResult();
             result.setEffectiveSkill(Math.min(9, effectiveSkill - 4));
-            int rollValue = MiscUtil.rollDice(3);
+            int rollValue = dice.roll(3);
             result.setRollValue(rollValue);
             result.setStatus(MiscUtil.calculateStatus(effectiveSkill, rollValue));
             results = new RollResult[]{result};
@@ -138,7 +138,7 @@ public class Battle {
 
             RollResult result = new RollResult();
             result.setEffectiveSkill(defenseSkill);
-            int rollValue = MiscUtil.rollDice(3);
+            int rollValue = dice.roll(3);
             result.setRollValue(rollValue);
             RollStatus rollStatus = MiscUtil.calculateSimpleStatus(defenseSkill, rollValue);
             result.setStatus(rollStatus);
@@ -163,7 +163,7 @@ public class Battle {
         } else if (damageAdds > 0) {
             damage += "+" + damageAdds;
         }
-        int rollValue = MiscUtil.rollDice(damageDice, damageAdds);
+        int rollValue = dice.roll(damageDice, damageAdds);
         Combatant target = combatants.get(targetIndex);
         int damageResistance = target.getCharacter().getArmorDamageResistance();
         DamageType damageType = weapon.getDamageType(skillName, modeName);
@@ -183,10 +183,17 @@ public class Battle {
         return result;
     }
 
-    public int getStayConscious() {
+    public RollResult getStayConscious() {
         int health = combatants.get(actorIndex).getCharacter().getHealth();
         int penalty = -combatants.get(actorIndex).getCurrentHitPoints() / health;
-        return health - penalty;
+        int needed = health - penalty;
+        int rolled = dice.roll(3);
+        RollStatus status = MiscUtil.calculateSimpleStatus(needed, rolled);
+        RollResult result = new RollResult();
+        result.setEffectiveSkill(needed);
+        result.setRollValue(rolled);
+        result.setStatus(status);
+        return result;
     }
 
     public boolean over() {

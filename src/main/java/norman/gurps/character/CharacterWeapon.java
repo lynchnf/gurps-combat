@@ -5,37 +5,18 @@ import norman.gurps.equipment.DamageType;
 import norman.gurps.equipment.Weapon;
 import norman.gurps.equipment.WeaponMode;
 import norman.gurps.equipment.WeaponSkill;
+import norman.gurps.util.MiscUtil;
 
+/**
+ * Read-only bean that contains weapons plus additional properties specific to a character.
+ */
 public class CharacterWeapon {
     private GameCharacter character;
     private String label;
     private Weapon weapon;
-    private boolean primary;
+    private boolean primary = false;
     private String primarySkillName;
     private String primaryModeName;
-
-    public CharacterWeapon(GameCharacter character, String label, Weapon weapon) {
-        this(character, label, weapon, false, null, null);
-    }
-
-    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, boolean primary) {
-        this(character, label, weapon, primary, null, null);
-    }
-
-    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, String primarySkillName,
-            String primaryModeName) {
-        this(character, label, weapon, false, primarySkillName, primaryModeName);
-    }
-
-    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, boolean primary,
-            String primarySkillName, String primaryModeName) {
-        this.character = character;
-        this.label = label;
-        this.weapon = weapon;
-        this.primary = primary;
-        this.primarySkillName = primarySkillName;
-        this.primaryModeName = primaryModeName;
-    }
 
     public int getAttack(String skillName) {
         int level = character.getSkill(skillName).getLevel();
@@ -49,49 +30,42 @@ public class CharacterWeapon {
 
     public int getParry(String skillName) {
         int level = getAttack(skillName);
-        int parryAdj = character.getSkill(skillName).getSkill().getParryWithAdjustment();
         int defenseBonus = character.getShieldDefenseBonus();
-        return level / 2 + 3 + parryAdj + defenseBonus;
+        return level / 2 + 3 + defenseBonus;
     }
 
     public int getDamageDice(String skillName, String modeName) {
-        WeaponMode mode = weapon.getSkills().get(skillName).getModes().get(modeName);
+        WeaponSkill skill = weapon.getSkills().get(skillName);
+        int minimumStrength = skill.getMinimumStrength();
+        int effectiveStrength = Math.min(character.getStrength(), minimumStrength * 3);
+        WeaponMode mode = skill.getModes().get(modeName);
         int damageDice = mode.getDamageDice();
         DamageBase damageBase = mode.getDamageBase();
         if (damageBase == DamageBase.SWING) {
-            damageDice += character.getSwingDamageDice();
+            damageDice += MiscUtil.getSwingDamageDice(effectiveStrength);
         } else if (damageBase == DamageBase.THRUST) {
-            damageDice += character.getThrustDamageDice();
+            damageDice += MiscUtil.getThrustDamageDice(effectiveStrength);
         }
         return damageDice;
     }
 
     public int getDamageAdds(String skillName, String modeName) {
-        WeaponMode mode = weapon.getSkills().get(skillName).getModes().get(modeName);
+        WeaponSkill skill = weapon.getSkills().get(skillName);
+        int minimumStrength = skill.getMinimumStrength();
+        int effectiveStrength = Math.min(character.getStrength(), minimumStrength * 3);
+        WeaponMode mode = skill.getModes().get(modeName);
         int damageAdds = mode.getDamageAdds();
         DamageBase damageBase = mode.getDamageBase();
         if (damageBase == DamageBase.SWING) {
-            damageAdds += character.getSwingDamageAdds();
+            damageAdds += MiscUtil.getSwingDamageAdds(effectiveStrength);
         } else if (damageBase == DamageBase.THRUST) {
-            damageAdds += character.getThrustDamageAdds();
+            damageAdds += MiscUtil.getThrustDamageAdds(effectiveStrength);
         }
         return damageAdds;
     }
 
     public DamageType getDamageType(String skillName, String modeName) {
         return weapon.getSkills().get(skillName).getModes().get(modeName).getDamageType();
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public Weapon getWeapon() {
-        return weapon;
-    }
-
-    public boolean isPrimary() {
-        return primary;
     }
 
     public String getPrimarySkillName() {
@@ -132,5 +106,44 @@ public class CharacterWeapon {
             }
             return bestModeName;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Constructors, Getters, and Setters /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public CharacterWeapon(GameCharacter character, String label, Weapon weapon) {
+        this(character, label, weapon, false, null, null);
+    }
+
+    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, boolean primary) {
+        this(character, label, weapon, primary, null, null);
+    }
+
+    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, String primarySkillName,
+            String primaryModeName) {
+        this(character, label, weapon, false, primarySkillName, primaryModeName);
+    }
+
+    public CharacterWeapon(GameCharacter character, String label, Weapon weapon, boolean primary,
+            String primarySkillName, String primaryModeName) {
+        this.character = character;
+        this.label = label;
+        this.weapon = weapon;
+        this.primary = primary;
+        this.primarySkillName = primarySkillName;
+        this.primaryModeName = primaryModeName;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public boolean isPrimary() {
+        return primary;
     }
 }

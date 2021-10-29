@@ -35,7 +35,7 @@ class CharacterShieldTest {
         character.setDexterity(13);
         character.setIntelligence(12);
         character.setHealth(14);
-        character.addSkill(shieldSkill, 4);
+        character.addSkill(shieldSkill, 13);
         character.addEquipment(mediumShield);
 
         characterShield = character.getShield("Medium Shield");
@@ -48,7 +48,7 @@ class CharacterShieldTest {
 
     @Test
     void getBlock() {
-        assertEquals(12, characterShield.getBlock());
+        assertEquals(11, characterShield.getBlock());
     }
 
     @Test

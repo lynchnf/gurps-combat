@@ -1,10 +1,12 @@
 package norman.gurps.skill;
 
+/**
+ * Bean that contains skills as listed in GURPS Lite, pages 13-17.
+ */
 public class Skill {
     private String name;
     private ControllingAttribute controllingAttribute;
     private DifficultyLevel difficultyLevel;
-    private int parryWithAdjustment = 0;
 
     public String getName() {
         return name;
@@ -28,13 +30,5 @@ public class Skill {
 
     public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
         this.difficultyLevel = difficultyLevel;
-    }
-
-    public int getParryWithAdjustment() {
-        return parryWithAdjustment;
-    }
-
-    public void setParryWithAdjustment(int parryWithAdjustment) {
-        this.parryWithAdjustment = parryWithAdjustment;
     }
 }

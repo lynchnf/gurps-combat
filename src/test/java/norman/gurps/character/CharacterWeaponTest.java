@@ -31,7 +31,6 @@ class CharacterWeaponTest {
         staffSkill.setName("Staff");
         staffSkill.setControllingAttribute(ControllingAttribute.DX);
         staffSkill.setDifficultyLevel(DifficultyLevel.AVERAGE);
-        staffSkill.setParryWithAdjustment(2);
 
         Skill axeMaceSkill = new Skill();
         axeMaceSkill.setName("Axe/Mace");
@@ -104,9 +103,9 @@ class CharacterWeaponTest {
         character.setDexterity(13);
         character.setIntelligence(12);
         character.setHealth(14);
-        character.addSkill(twoHandedSwordSkill, 1);
-        character.addSkill(staffSkill, 2);
-        character.addSkill(axeMaceSkill, 4);
+        character.addSkill(twoHandedSwordSkill, 11);
+        character.addSkill(staffSkill, 13);
+        character.addSkill(axeMaceSkill, 15);
         character.addEquipment(quarterstaff);
         character.addEquipment(axe);
 
@@ -122,15 +121,15 @@ class CharacterWeaponTest {
 
     @Test
     void getAttack() {
-        assertEquals(12, quarterstaff.getAttack("Two-Handed Sword"));
+        assertEquals(11, quarterstaff.getAttack("Two-Handed Sword"));
         assertEquals(13, quarterstaff.getAttack("Staff"));
-        assertEquals(12, axe.getAttack("Axe/Mace"));
+        assertEquals(13, axe.getAttack("Axe/Mace"));
     }
 
     @Test
     void getParry() {
-        assertEquals(9, quarterstaff.getParry("Two-Handed Sword"));
-        assertEquals(11, quarterstaff.getParry("Staff"));
+        assertEquals(8, quarterstaff.getParry("Two-Handed Sword"));
+        assertEquals(9, quarterstaff.getParry("Staff"));
         assertEquals(9, axe.getParry("Axe/Mace"));
     }
 

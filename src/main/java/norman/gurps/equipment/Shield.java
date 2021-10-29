@@ -1,9 +1,11 @@
 package norman.gurps.equipment;
 
+/**
+ * Bean that contains shields as listed in GURPS Lite, page 19.
+ */
 public class Shield extends Item {
     private String skillName;
     private int defenseBonus;
-    private int attackWhileHoldingAdjustment;
 
     public String getSkillName() {
         return skillName;
@@ -19,13 +21,5 @@ public class Shield extends Item {
 
     public void setDefenseBonus(int defenseBonus) {
         this.defenseBonus = defenseBonus;
-    }
-
-    public int getAttackWhileHoldingAdjustment() {
-        return attackWhileHoldingAdjustment;
-    }
-
-    public void setAttackWhileHoldingAdjustment(int attackWhileHoldingAdjustment) {
-        this.attackWhileHoldingAdjustment = attackWhileHoldingAdjustment;
     }
 }

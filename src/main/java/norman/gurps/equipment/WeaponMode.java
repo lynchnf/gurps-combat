@@ -1,10 +1,13 @@
 package norman.gurps.equipment;
 
+/**
+ * Bean that contains modes of use associated with weapon skills as listed in GURPS Lite, pages 20-21.
+ */
 public class WeaponMode {
     private String modeName;
     private DamageBase damageBase;
-    private int damageDice;
-    private int damageAdds;
+    private int damageDice = 0;
+    private int damageAdds = 0;
     private DamageType damageType;
 
     public String getModeName() {

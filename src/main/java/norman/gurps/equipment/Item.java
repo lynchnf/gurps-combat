@@ -2,6 +2,10 @@ package norman.gurps.equipment;
 
 import java.math.BigDecimal;
 
+/**
+ * Base class for armor, shields, and weapons. Could also be used for miscellaneous equipment that is none of the
+ * above.
+ */
 public class Item {
     private String name;
     private BigDecimal cost;

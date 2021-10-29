@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <property name="LOG_FILE_HOME" value="logs"/>
-    <property name="LOG_FILE_NAME" value="gurps"/>
+    <property name="LOG_FILE_NAME" value="gurps-combat"/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{1}.%method - %message%n</pattern>

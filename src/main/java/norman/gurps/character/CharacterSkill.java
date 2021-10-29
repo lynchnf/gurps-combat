@@ -1,31 +1,28 @@
 package norman.gurps.character;
 
-import norman.gurps.LoggingException;
 import norman.gurps.skill.Skill;
-import norman.gurps.util.MiscUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Read-only bean that contains skills plus additional properties specific to a character.
+ */
 public class CharacterSkill {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharacterSkill.class);
     private GameCharacter character;
     private String label;
     private Skill skill;
-    private int points;
+    private int level;
 
-    public CharacterSkill(GameCharacter character, String label, Skill skill, int points) {
-        if (points != 0 && points != 1 && points != 2 && (points < 4 || points % 4 != 0)) {
-            throw new LoggingException(LOGGER, "Skill Points must be 0, 1, 2, or a multiple of 4");
-        }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Constructors, Getters, and Setters /////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public CharacterSkill(GameCharacter character, String label, Skill skill, int level) {
         this.character = character;
         this.label = label;
         this.skill = skill;
-        this.points = points;
-    }
-
-    public int getLevel() {
-        return MiscUtil.calculateSkillLevel(skill.getControllingAttribute(), skill.getDifficultyLevel(), points,
-                character.getStrength(), character.getDexterity(), character.getIntelligence(), character.getHealth());
+        this.level = level;
     }
 
     public String getLabel() {
@@ -36,7 +33,7 @@ public class CharacterSkill {
         return skill;
     }
 
-    public int getPoints() {
-        return points;
+    public int getLevel() {
+        return level;
     }
 }

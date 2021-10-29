@@ -33,7 +33,6 @@ class GameCharacterTest {
         knifeSkill.setName("Knife");
         knifeSkill.setControllingAttribute(ControllingAttribute.DX);
         knifeSkill.setDifficultyLevel(DifficultyLevel.EASY);
-        knifeSkill.setParryWithAdjustment(-1);
 
         Skill shieldSkill = new Skill();
         shieldSkill.setName("Shield");
@@ -110,9 +109,9 @@ class GameCharacterTest {
         character.setDexterity(13);
         character.setIntelligence(12);
         character.setHealth(14);
-        character.addSkill(broadswordSkill, 1);
-        character.addSkill(knifeSkill, 2);
-        character.addSkill(shieldSkill, 4);
+        character.addSkill(broadswordSkill, 12);
+        character.addSkill(knifeSkill, 14);
+        character.addSkill(shieldSkill, 15);
         character.addEquipment(leatherArmor);
         character.addEquipment(smallShield);
         character.addEquipment(broadsword);
@@ -191,16 +190,6 @@ class GameCharacterTest {
     }
 
     @Test
-    void getEncumbranceLevel() {
-        assertEquals(1, character.getEncumbranceLevel());
-    }
-
-    @Test
-    void getMove() {
-        assertEquals(4, character.getMove());
-    }
-
-    @Test
     void getThrustDamageDice() {
         assertEquals(1, character.getThrustDamageDice());
     }
@@ -221,15 +210,22 @@ class GameCharacterTest {
     }
 
     @Test
+    void getEncumbranceLevel() {
+        assertEquals(1, character.getEncumbranceLevel());
+    }
+
+    @Test
+    void getMove() {
+        assertEquals(4, character.getMove());
+    }
+
+    @Test
     void getSkill() {
         CharacterSkill broadsword = character.getSkill("Broadsword");
-        assertEquals(1, broadsword.getPoints());
         assertEquals(12, broadsword.getLevel());
         CharacterSkill knife = character.getSkill("Knife");
-        assertEquals(2, knife.getPoints());
         assertEquals(14, knife.getLevel());
         CharacterSkill shield = character.getSkill("Shield");
-        assertEquals(4, shield.getPoints());
         assertEquals(15, shield.getLevel());
     }
 

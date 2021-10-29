@@ -3,32 +3,48 @@ package norman.gurps.util;
 import norman.gurps.equipment.Armor;
 import norman.gurps.equipment.Shield;
 import norman.gurps.equipment.Weapon;
-import norman.gurps.skill.ControllingAttribute;
-import norman.gurps.skill.DifficultyLevel;
 import norman.gurps.skill.Skill;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Map;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class MiscUtilTest {
     @Test
-    void rollDice() {
-        Random mockRandom = mock(Random.class);
-        Mockito.when(mockRandom.nextInt(6)).thenReturn(4);
-        MiscUtil.setRandom(mockRandom);
+    void getThrustDamageDice() {
+        assertEquals(1, MiscUtil.getThrustDamageDice(6));
+        assertEquals(1, MiscUtil.getThrustDamageDice(10));
+        assertEquals(1, MiscUtil.getThrustDamageDice(14));
+        assertEquals(1, MiscUtil.getThrustDamageDice(18));
+        assertEquals(2, MiscUtil.getThrustDamageDice(22));
+    }
 
-        assertEquals(5, MiscUtil.rollDice(1));
-        assertEquals(10, MiscUtil.rollDice(2));
-        assertEquals(15, MiscUtil.rollDice(3));
+    @Test
+    void getThrustDamageAdds() {
+        assertEquals(-4, MiscUtil.getThrustDamageAdds(6));
+        assertEquals(-2, MiscUtil.getThrustDamageAdds(10));
+        assertEquals(0, MiscUtil.getThrustDamageAdds(14));
+        assertEquals(2, MiscUtil.getThrustDamageAdds(18));
+        assertEquals(0, MiscUtil.getThrustDamageAdds(22));
+    }
 
-        assertEquals(9, MiscUtil.rollDice(2, -1));
-        assertEquals(11, MiscUtil.rollDice(2, 1));
-        assertEquals(13, MiscUtil.rollDice(2, 3));
+    @Test
+    void getSwingDamageDice() {
+        assertEquals(1, MiscUtil.getSwingDamageDice(6));
+        assertEquals(1, MiscUtil.getSwingDamageDice(10));
+        assertEquals(2, MiscUtil.getSwingDamageDice(14));
+        assertEquals(3, MiscUtil.getSwingDamageDice(18));
+        assertEquals(4, MiscUtil.getSwingDamageDice(22));
+    }
+
+    @Test
+    void getSwingDamageAdds() {
+        assertEquals(-3, MiscUtil.getSwingDamageAdds(6));
+        assertEquals(0, MiscUtil.getSwingDamageAdds(10));
+        assertEquals(0, MiscUtil.getSwingDamageAdds(14));
+        assertEquals(0, MiscUtil.getSwingDamageAdds(18));
+        assertEquals(0, MiscUtil.getSwingDamageAdds(22));
     }
 
     @Test
@@ -94,69 +110,30 @@ class MiscUtilTest {
     }
 
     @Test
-    void calculateSkillLevel() {
-        assertEquals(10, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 1));
-        assertEquals(11, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 2));
-        assertEquals(12, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 4));
-        assertEquals(13, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 8));
-        assertEquals(14, MiscUtil.calculateSkillLevel(10, DifficultyLevel.EASY, 12));
-
-        assertEquals(9, MiscUtil.calculateSkillLevel(10, DifficultyLevel.AVERAGE, 1));
-        assertEquals(10, MiscUtil.calculateSkillLevel(10, DifficultyLevel.AVERAGE, 2));
-        assertEquals(11, MiscUtil.calculateSkillLevel(10, DifficultyLevel.AVERAGE, 4));
-        assertEquals(12, MiscUtil.calculateSkillLevel(10, DifficultyLevel.AVERAGE, 8));
-        assertEquals(13, MiscUtil.calculateSkillLevel(10, DifficultyLevel.AVERAGE, 12));
-
-        assertEquals(8, MiscUtil.calculateSkillLevel(10, DifficultyLevel.HARD, 1));
-        assertEquals(9, MiscUtil.calculateSkillLevel(10, DifficultyLevel.HARD, 2));
-        assertEquals(10, MiscUtil.calculateSkillLevel(10, DifficultyLevel.HARD, 4));
-        assertEquals(11, MiscUtil.calculateSkillLevel(10, DifficultyLevel.HARD, 8));
-        assertEquals(12, MiscUtil.calculateSkillLevel(10, DifficultyLevel.HARD, 12));
-    }
-
-    @Test
-    void calculateSkillLevelHighAttribute() {
-        assertEquals(18, MiscUtil.calculateSkillLevel(20, DifficultyLevel.HARD, 1));
-
-        assertEquals(18, MiscUtil.calculateSkillLevel(25, DifficultyLevel.HARD, 1));
-    }
-
-    @Test
-    void calculateSkillLevelControllingAttribute() {
-        assertEquals(9, MiscUtil.calculateSkillLevel(ControllingAttribute.ST, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
-        assertEquals(10,
-                MiscUtil.calculateSkillLevel(ControllingAttribute.DX, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
-        assertEquals(11,
-                MiscUtil.calculateSkillLevel(ControllingAttribute.IQ, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
-        assertEquals(12,
-                MiscUtil.calculateSkillLevel(ControllingAttribute.HT, DifficultyLevel.HARD, 1, 11, 12, 13, 14));
-    }
-
-    @Test
     void getArmors() {
         Map<String, Armor> armors = MiscUtil.getArmors();
         assertNotNull(armors);
-        assertFalse(armors.isEmpty());
+        assertTrue(armors.size() > 0);
     }
 
     @Test
     void getShields() {
         Map<String, Shield> shields = MiscUtil.getShields();
         assertNotNull(shields);
-        assertFalse(shields.isEmpty());
+        assertTrue(shields.size() > 0);
     }
 
     @Test
     void getSkills() {
         Map<String, Skill> skills = MiscUtil.getSkills();
         assertNotNull(skills);
-        assertFalse(skills.isEmpty());
+        assertTrue(skills.size() > 0);
     }
 
     @Test
     void getWeapons() {
         Map<String, Weapon> weapons = MiscUtil.getWeapons();
         assertNotNull(weapons);
-        assertFalse(weapons.isEmpty());
+        assertTrue(weapons.size() > 0);
     }
 }

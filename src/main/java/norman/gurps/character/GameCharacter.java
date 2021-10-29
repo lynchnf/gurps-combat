@@ -6,12 +6,16 @@ import norman.gurps.equipment.Item;
 import norman.gurps.equipment.Shield;
 import norman.gurps.equipment.Weapon;
 import norman.gurps.skill.Skill;
+import norman.gurps.util.MiscUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Bean that represents a GURPS character including his traits (advantages & disadvantages), skills, and equipment.
+ */
 public class GameCharacter {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameCharacter.class);
     private String name;
@@ -24,46 +28,6 @@ public class GameCharacter {
     private Map<String, Armor> armors = new HashMap<>();
     private Map<String, CharacterShield> shields = new HashMap<>();
     private Map<String, CharacterWeapon> weapons = new HashMap<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
-    }
-
-    public int getDexterity() {
-        return dexterity;
-    }
-
-    public void setDexterity(int dexterity) {
-        this.dexterity = dexterity;
-    }
-
-    public int getIntelligence() {
-        return intelligence;
-    }
-
-    public void setIntelligence(int intelligence) {
-        this.intelligence = intelligence;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-    }
 
     public double getBasicLift() {
         double basicLift = strength * strength / 5.0;
@@ -98,6 +62,22 @@ public class GameCharacter {
         return (int) getBasicSpeed();
     }
 
+    public int getThrustDamageDice() {
+        return MiscUtil.getThrustDamageDice(strength);
+    }
+
+    public int getThrustDamageAdds() {
+        return MiscUtil.getThrustDamageAdds(strength);
+    }
+
+    public int getSwingDamageDice() {
+        return MiscUtil.getSwingDamageDice(strength);
+    }
+
+    public int getSwingDamageAdds() {
+        return MiscUtil.getSwingDamageAdds(strength);
+    }
+
     public int getEncumbranceLevel() {
         double totalWeight = 0;
         for (Item item : equipment.values()) {
@@ -126,31 +106,15 @@ public class GameCharacter {
         return (int) (basicMove * multiplier);
     }
 
-    public int getThrustDamageDice() {
-        return strength < 11 ? 1 : (strength - 3) / 8;
+    public void addSkill(Skill skill, int level) {
+        addSkill(skill, level, skill.getName());
     }
 
-    public int getThrustDamageAdds() {
-        return strength < 11 ? (strength - 1) / 2 - 6 : (strength - 3) % 8 / 2 - 1;
-    }
-
-    public int getSwingDamageDice() {
-        return strength < 9 ? 1 : (strength - 5) / 4;
-    }
-
-    public int getSwingDamageAdds() {
-        return strength < 9 ? (strength - 1) / 2 - 5 : (strength - 5) % 4 - 1;
-    }
-
-    public void addSkill(Skill skill, int points) {
-        addSkill(skill, points, skill.getName());
-    }
-
-    public void addSkill(Skill skill, int points, String label) {
+    public void addSkill(Skill skill, int level, String label) {
         if (skills.containsKey(label)) {
             throw new LoggingException(LOGGER, "Character " + name + " already has a skill with label " + label + ".");
         }
-        CharacterSkill charSkill = new CharacterSkill(this, label, skill, points);
+        CharacterSkill charSkill = new CharacterSkill(this, label, skill, level);
         skills.put(label, charSkill);
     }
 
@@ -237,5 +201,49 @@ public class GameCharacter {
             armorDamageResistance += armor.getDamageResistance();
         }
         return armorDamageResistance;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //  Getters and Setters ////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getDexterity() {
+        return dexterity;
+    }
+
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
+    public int getIntelligence() {
+        return intelligence;
+    }
+
+    public void setIntelligence(int intelligence) {
+        this.intelligence = intelligence;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

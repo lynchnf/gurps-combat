@@ -227,7 +227,7 @@
         }
       },
       "Two-handed Sword": {
-        "skillName": "Two-handed Sword",
+        "skillName": "Two-Handed Sword",
         "minimumStrength": 9,
         "modes": {
           "Sword Swing": {
@@ -252,7 +252,7 @@
     "weight": 7.0,
     "skills": {
       "Two-handed Sword": {
-        "skillName": "Two-handed Sword",
+        "skillName": "Two-Handed Sword",
         "minimumStrength": 12,
         "modes": {
           "Swing": {

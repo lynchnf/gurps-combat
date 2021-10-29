@@ -25,7 +25,7 @@ class CharacterSkillTest {
         character.setDexterity(13);
         character.setIntelligence(12);
         character.setHealth(14);
-        character.addSkill(broadswordSkill, 1);
+        character.addSkill(broadswordSkill, 15);
 
         characterSkill = character.getSkill(broadswordSkill.getName());
     }
@@ -33,11 +33,6 @@ class CharacterSkillTest {
     @AfterEach
     void tearDown() {
         characterSkill = null;
-    }
-
-    @Test
-    void getLevel() {
-        assertEquals(12, characterSkill.getLevel());
     }
 
     @Test
@@ -51,7 +46,7 @@ class CharacterSkillTest {
     }
 
     @Test
-    void getPoints() {
-        assertEquals(1, characterSkill.getPoints());
+    void getLevel() {
+        assertEquals(15, characterSkill.getLevel());
     }
 }

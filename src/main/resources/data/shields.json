@@ -18,7 +18,6 @@
     "cost": 90,
     "weight": 25.0,
     "skillName": "Shield",
-    "defenseBonus": 3,
-    "attackWhileHoldingAdjustment": -2
+    "defenseBonus": 3
   }
 ]

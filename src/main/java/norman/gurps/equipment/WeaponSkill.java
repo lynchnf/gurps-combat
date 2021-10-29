@@ -3,6 +3,9 @@ package norman.gurps.equipment;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Bean that contains skills associated with weapons as listed in GURPS Lite, pages 20-21.
+ */
 public class WeaponSkill {
     private String skillName;
     private int minimumStrength;
