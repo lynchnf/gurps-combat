@@ -1,0 +1,16 @@
+{
+  "name": "Prime",
+  "strength": 10,
+  "dexterity": 10,
+  "intelligence": 10,
+  "health": 10,
+  "skills": {
+    "Broadsword": 12,
+    "Shield": 10
+  },
+  "equipment": [
+    "Leather Armor",
+    "Small Shield",
+    "Broadsword"
+  ]
+}

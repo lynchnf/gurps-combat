@@ -2,7 +2,9 @@ package norman.gurps.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
+import norman.gurps.character.GameCharacter;
 import norman.gurps.equipment.Armor;
+import norman.gurps.equipment.Item;
 import norman.gurps.equipment.Shield;
 import norman.gurps.equipment.Weapon;
 import norman.gurps.skill.Skill;
@@ -13,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MiscUtil {
@@ -20,6 +23,11 @@ public class MiscUtil {
     private static ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private static ObjectMapper mapper = new ObjectMapper();
     private static String dataDirectory = "data";
+    private static Map<String, Skill> skills = null;
+    private static Map<String, Item> items = null;
+    private static Map<String, Armor> armors = null;
+    private static Map<String, Shield> shields = null;
+    private static Map<String, Weapon> weapons = null;
 
     public static int getThrustDamageDice(int strength) {
         return strength < 11 ? 1 : (strength - 3) / 8;
@@ -60,18 +68,52 @@ public class MiscUtil {
         }
     }
 
+    public static Map<String, Skill> getSkills() {
+        String fileName = "skills.json";
+        Class<?> clazz = Skill.class;
+        try {
+            if (skills == null) {
+                InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
+                Skill[] thingArray = mapper.readValue(stream, Skill[].class);
+                Map<String, Skill> thingMap = new HashMap<>();
+                for (Skill thing : thingArray) {
+                    String name = thing.getName();
+                    thingMap.put(name, thing);
+                }
+                skills = thingMap;
+            }
+            return skills;
+        } catch (IOException e) {
+            throw new LoggingException(LOGGER,
+                    String.format("Unable to create %s objects from file %s.", clazz.getSimpleName(), fileName), e);
+        }
+    }
+
+    public static Map<String, Item> getItems() {
+        if (items == null) {
+            items = new HashMap<>();
+            items.putAll(getArmors());
+            items.putAll(getShields());
+            items.putAll(getWeapons());
+        }
+        return items;
+    }
+
     public static Map<String, Armor> getArmors() {
         String fileName = "armors.json";
         Class<?> clazz = Armor.class;
-        InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
         try {
-            Armor[] thingArray = mapper.readValue(stream, Armor[].class);
-            Map<String, Armor> thingMap = new HashMap<>();
-            for (Armor thing : thingArray) {
-                String name = thing.getName();
-                thingMap.put(name, thing);
+            if (armors == null) {
+                InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
+                Armor[] thingArray = mapper.readValue(stream, Armor[].class);
+                Map<String, Armor> thingMap = new HashMap<>();
+                for (Armor thing : thingArray) {
+                    String name = thing.getName();
+                    thingMap.put(name, thing);
+                }
+                armors = thingMap;
             }
-            return thingMap;
+            return armors;
         } catch (IOException e) {
             throw new LoggingException(LOGGER,
                     String.format("Unable to create %s objects from file %s.", clazz.getSimpleName(), fileName), e);
@@ -81,33 +123,18 @@ public class MiscUtil {
     public static Map<String, Shield> getShields() {
         String fileName = "shields.json";
         Class<?> clazz = Shield.class;
-        InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
         try {
-            Shield[] thingArray = mapper.readValue(stream, Shield[].class);
-            Map<String, Shield> thingMap = new HashMap<>();
-            for (Shield thing : thingArray) {
-                String name = thing.getName();
-                thingMap.put(name, thing);
+            if (shields == null) {
+                InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
+                Shield[] thingArray = mapper.readValue(stream, Shield[].class);
+                Map<String, Shield> thingMap = new HashMap<>();
+                for (Shield thing : thingArray) {
+                    String name = thing.getName();
+                    thingMap.put(name, thing);
+                }
+                shields = thingMap;
             }
-            return thingMap;
-        } catch (IOException e) {
-            throw new LoggingException(LOGGER,
-                    String.format("Unable to create %s objects from file %s.", clazz.getSimpleName(), fileName), e);
-        }
-    }
-
-    public static Map<String, Skill> getSkills() {
-        String fileName = "skills.json";
-        Class<?> clazz = Skill.class;
-        InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
-        try {
-            Skill[] thingArray = mapper.readValue(stream, Skill[].class);
-            Map<String, Skill> thingMap = new HashMap<>();
-            for (Skill thing : thingArray) {
-                String name = thing.getName();
-                thingMap.put(name, thing);
-            }
-            return thingMap;
+            return shields;
         } catch (IOException e) {
             throw new LoggingException(LOGGER,
                     String.format("Unable to create %s objects from file %s.", clazz.getSimpleName(), fileName), e);
@@ -117,18 +144,53 @@ public class MiscUtil {
     public static Map<String, Weapon> getWeapons() {
         String fileName = "weapons.json";
         Class<?> clazz = Weapon.class;
-        InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
         try {
-            Weapon[] thingArray = mapper.readValue(stream, Weapon[].class);
-            Map<String, Weapon> thingMap = new HashMap<>();
-            for (Weapon thing : thingArray) {
-                String name = thing.getName();
-                thingMap.put(name, thing);
+            if (weapons == null) {
+                InputStream stream = loader.getResourceAsStream(dataDirectory + File.separator + fileName);
+                Weapon[] thingArray = mapper.readValue(stream, Weapon[].class);
+                Map<String, Weapon> thingMap = new HashMap<>();
+                for (Weapon thing : thingArray) {
+                    String name = thing.getName();
+                    thingMap.put(name, thing);
+                }
+                weapons = thingMap;
             }
-            return thingMap;
+            return weapons;
         } catch (IOException e) {
             throw new LoggingException(LOGGER,
                     String.format("Unable to create %s objects from file %s.", clazz.getSimpleName(), fileName), e);
+        }
+    }
+
+    public static GameCharacter convertJson(String filePath) {
+        GameCharacter gameCharacter = new GameCharacter();
+        File file = new File(filePath);
+        try {
+            Map<String, Object> jsonMap = mapper.readValue(file, Map.class);
+            String name = (String) jsonMap.get("name");
+            gameCharacter.setName(name);
+            int strength = (int) jsonMap.get("strength");
+            gameCharacter.setStrength(strength);
+            int dexterity = (int) jsonMap.get("dexterity");
+            gameCharacter.setDexterity(dexterity);
+            int intelligence = (int) jsonMap.get("intelligence");
+            gameCharacter.setIntelligence(intelligence);
+            int health = (int) jsonMap.get("health");
+            gameCharacter.setHealth(health);
+            Map<String, Integer> characterSkills = (Map<String, Integer>) jsonMap.get("skills");
+            for (String skillName : characterSkills.keySet()) {
+                Skill skill = MiscUtil.getSkills().get(skillName);
+                Integer level = characterSkills.get(skillName);
+                gameCharacter.addSkill(skill, level);
+            }
+            List<String> equipment = (List<String>) jsonMap.get("equipment");
+            for (String itemName : equipment) {
+                Item item = MiscUtil.getItems().get(itemName);
+                gameCharacter.addEquipment(item);
+            }
+            return gameCharacter;
+        } catch (IOException e) {
+            throw new LoggingException(LOGGER, String.format("Unable to read JSON file: %s", filePath), e);
         }
     }
 }

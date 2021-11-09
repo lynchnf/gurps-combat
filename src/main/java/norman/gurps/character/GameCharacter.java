@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Bean that represents a GURPS character including his traits (advantages & disadvantages), skills, and equipment.
@@ -167,6 +168,10 @@ public class GameCharacter {
 
     public CharacterWeapon getWeapon(String label) {
         return weapons.get(label);
+    }
+
+    public Set<String> getWeaponLabels() {
+        return weapons.keySet();
     }
 
     public CharacterWeapon getPrimaryWeapon() {

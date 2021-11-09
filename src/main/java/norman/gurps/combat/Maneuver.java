@@ -1,5 +1,8 @@
 package norman.gurps.combat;
 
+/**
+ * List of possible character actions.
+ */
 public enum Maneuver {
     // @formatter:off
     DO_NOTHING(false, false),

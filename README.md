@@ -4,9 +4,15 @@ GURPS Combat Simulator
 
 ## GURPS Questions
 
+Shouldn't the controlling attribute of Intimidation be ST instead of IQ?
+
 When a character rolls a critical success to hit, does he do max damage?
 
-Shouldn't the controlling attribute of Intimidation be ST instead of IQ?
+What is the effect of a critically failed attack.
+
+What is the effect of a critically successful defense.
+
+What is the effect of a critically failed defense.
 
 ## TODO
 
@@ -61,9 +67,3 @@ Shouldn't the controlling attribute of Intimidation be ST instead of IQ?
         -[ ] HT roll is at -1/per full HP below zero.
     -[ ] Shock gives -1 (max -4) to all DX and IQ skills for next round only. 
     -[ ] Major wounds
-    -[ ] foo
-    -[ ] foo
-    -[ ] foo
-    -[ ] foo
-    -[ ] foo
-

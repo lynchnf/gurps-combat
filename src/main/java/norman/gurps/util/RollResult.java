@@ -1,5 +1,8 @@
 package norman.gurps.util;
 
+/**
+ * Bean encapsulating a skill roll.
+ */
 public class RollResult {
     private int effectiveSkill;
     private int rollValue;
