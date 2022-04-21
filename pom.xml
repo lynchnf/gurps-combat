@@ -9,14 +9,14 @@
     <packaging>jar</packaging>
 
     <!-- This is just here for my convenience, so I can see what versions Spring uses. -->
-    <!--<parent>-->
-    <!--    <groupId>org.springframework.boot</groupId>-->
-    <!--    <artifactId>spring-boot-starter-parent</artifactId>-->
-    <!--    <version>2.6.6</version>-->
-    <!--</parent>-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.6</version>
+    </parent>
 
-    <name>GURPS Combat</name>
-    <description>GURPS Combat Dashboard</description>
+    <name>GURPS Combat Dashboard</name>
+    <description>A play aid for Gamemasters running a GURPS game.</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -25,9 +25,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Versions listed alphabetically. -->
+        <!-- Dependency versions listed alphabetically. -->
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <logback.version>1.2.11</logback.version>
+
+        <!-- Plugin versions listed alphabetically. -->
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <maven-jar-plugin.version>3.2.2</maven-jar-plugin.version>
     </properties>
 
     <developers>
@@ -50,4 +54,41 @@
             <version>${commons-lang3.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>norman.gurps.Application</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/bin.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assemble-code</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
