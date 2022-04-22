@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyVetoException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -52,33 +53,20 @@ public class MainFrame extends JFrame implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        JMenu fileMenu = new JMenu(bundle.getString("menu.file"));
-        menuBar.add(fileMenu);
-        optionsFileItem = new JMenuItem(bundle.getString("menu.file.options"));
-        fileMenu.add(optionsFileItem);
-        optionsFileItem.addActionListener(this);
+        JMenu fileMenu = createMenu("menu.file", menuBar);
+        optionsFileItem = createMenuItem("menu.file.options", fileMenu);
         fileMenu.add(new JSeparator());
-        exitFileItem = new JMenuItem(bundle.getString("menu.file.exit"));
-        fileMenu.add(exitFileItem);
-        exitFileItem.addActionListener(this);
+        exitFileItem = createMenuItem("menu.file.exit", fileMenu);
 
-        JMenu charMenu = new JMenu(bundle.getString("menu.char"));
-        menuBar.add(charMenu);
-        createCharItem = new JMenuItem(bundle.getString("menu.char.create"));
-        charMenu.add(createCharItem);
-        updateCharItem = new JMenuItem(bundle.getString("menu.char.update"));
-        charMenu.add(updateCharItem);
-        deleteCharItem = new JMenuItem(bundle.getString("menu.char.delete"));
-        charMenu.add(deleteCharItem);
+        JMenu charMenu = createMenu("menu.char", menuBar);
+        createCharItem = createMenuItem("menu.char.create", charMenu);
+        updateCharItem = createMenuItem("menu.char.update", charMenu);
+        deleteCharItem = createMenuItem("menu.char.delete", charMenu);
 
-        JMenu battleMenu = new JMenu(bundle.getString("menu.battle"));
-        menuBar.add(battleMenu);
-        createBattleItem = new JMenuItem(bundle.getString("menu.battle.create"));
-        battleMenu.add(createBattleItem);
-        addCharBattleItem = new JMenuItem(bundle.getString("menu.battle.add.char"));
-        battleMenu.add(addCharBattleItem);
-        removeCharBattleItem = new JMenuItem(bundle.getString("menu.battle.remove.char"));
-        battleMenu.add(removeCharBattleItem);
+        JMenu battleMenu = createMenu("menu.battle", menuBar);
+        createBattleItem = createMenuItem("menu.battle.create", battleMenu);
+        addCharBattleItem = createMenuItem("menu.battle.add.char", battleMenu);
+        removeCharBattleItem = createMenuItem("menu.battle.remove.char", battleMenu);
     }
 
     @Override
@@ -88,6 +76,10 @@ public class MainFrame extends JFrame implements ActionListener {
             processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
         } else if (actionEvent.getSource().equals(optionsFileItem)) {
             options();
+        } else if (actionEvent.getSource().equals(createCharItem)) {
+            createChar();
+        } else {
+            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
     }
 
@@ -114,12 +106,23 @@ public class MainFrame extends JFrame implements ActionListener {
         super.processWindowEvent(windowEvent);
     }
 
+    private JMenu createMenu(String key, JMenuBar bar) {
+        JMenu menu = new JMenu(bundle.getString(key));
+        bar.add(menu);
+        return menu;
+    }
+
+    private JMenuItem createMenuItem(String key, JMenu menu) {
+        JMenuItem item = new JMenuItem(bundle.getString(key));
+        menu.add(item);
+        item.addActionListener(this);
+        return item;
+    }
+
     private void options() {
-        // Put up an options panel to change the number of moves per second
         JFrame optionsFrame = new JFrame();
         optionsFrame.setTitle(bundle.getString("options.title"));
         optionsFrame.setResizable(false);
-
         JPanel optionsPanel = new JPanel();
         optionsFrame.add(optionsPanel);
         optionsPanel.setOpaque(false);
@@ -131,6 +134,7 @@ public class MainFrame extends JFrame implements ActionListener {
         JComboBox<LocaleWrapper> langComboBox = new JComboBox<>(locales);
         optionsPanel.add(langComboBox);
         langComboBox.setSelectedItem(new LocaleWrapper());
+
         MainFrame mainFrame = this;
         langComboBox.addActionListener(actionEvent -> {
             LocaleWrapper newLang = (LocaleWrapper) langComboBox.getSelectedItem();
@@ -156,5 +160,15 @@ public class MainFrame extends JFrame implements ActionListener {
         int optionsHeight = optionsFrame.getHeight();
         optionsFrame.setLocation((screenWidth - optionsWidth) / 2, (screenHeight - optionsHeight) / 2);
         optionsFrame.setVisible(true);
+    }
+
+    private void createChar() {
+        CharFrame charFrame = new CharFrame();
+        desktop.add(charFrame);
+        try {
+            charFrame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            LOGGER.warn("Unable to set selected on CharFrame for new GameChar.", e);
+        }
     }
 }
