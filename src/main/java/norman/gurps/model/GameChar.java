@@ -1,11 +1,20 @@
 package norman.gurps.model;
 
 public class GameChar {
+    private int id = -1;
     private String name;
     private int strength = 10;
     private int dexterity = 10;
     private int intelligence = 10;
     private int health = 10;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -45,5 +54,11 @@ public class GameChar {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    @Override
+    public String toString() {
+        return "GameChar{" + "id=" + id + ", name='" + name + '\'' + ", strength=" + strength + ", dexterity=" +
+                dexterity + ", intelligence=" + intelligence + ", health=" + health + '}';
     }
 }

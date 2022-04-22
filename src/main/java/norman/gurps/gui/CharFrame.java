@@ -1,18 +1,27 @@
 package norman.gurps.gui;
 
 import norman.gurps.model.GameChar;
+import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-public class CharFrame extends JInternalFrame {
+public class CharFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharFrame.class);
     private static int openFrameCount = 0;
     private ResourceBundle bundle;
-    private GameChar gameChar;
+    private JTextField nameTextField;
+    private JSpinner strengthSpinner;
+    private JSpinner dexteritySpinner;
+    private JSpinner intelligenceSpinner;
+    private JSpinner healthSpinner;
+
+    private JButton saveButton;
 
     public CharFrame() {
         super();
@@ -25,8 +34,7 @@ public class CharFrame extends JInternalFrame {
     }
 
     private void initComponents(GameChar gameChar) {
-        LOGGER.debug("Initializing character frame");
-        this.gameChar = gameChar;
+        LOGGER.debug("Initializing character frame.");
         bundle = ResourceBundle.getBundle("norman.gurps.gui.CharFrame");
         setTitle(bundle.getString("char.title") + " - " + (openFrameCount + 1));
         setLayout(new GridBagLayout());
@@ -41,16 +49,16 @@ public class CharFrame extends JInternalFrame {
         int attrCols = Integer.parseInt(bundle.getString("char.attribute.columns"));
 
         createLabel("char.name", this, 0, 0, insetx, insety);
-        JTextField nameTextField = createTextField(nameCols, this, 1, 0, insetx, insety);
+        nameTextField = createTextField(nameCols, this, 1, 0, insetx, insety);
         createLabel("char.strength", this, 0, 1, insetx, insety);
-        JSpinner strengthSpinner = createSpinner(attrCols, this, 1, 1, insetx, insety);
+        strengthSpinner = createSpinner(attrCols, this, 1, 1, insetx, insety);
         createLabel("char.dexterity", this, 0, 2, insetx, insety);
-        JSpinner dexteritySpinner = createSpinner(attrCols, this, 1, 2, insetx, insety);
+        dexteritySpinner = createSpinner(attrCols, this, 1, 2, insetx, insety);
         createLabel("char.intelligence", this, 0, 3, insetx, insety);
-        JSpinner intelligenceSpinner = createSpinner(attrCols, this, 1, 3, insetx, insety);
+        intelligenceSpinner = createSpinner(attrCols, this, 1, 3, insetx, insety);
         createLabel("char.health", this, 0, 4, insetx, insety);
-        JSpinner healthSpinner = createSpinner(attrCols, this, 1, 4, insetx, insety);
-        createButton("char.save", this, 1, 5, insetx, insety);
+        healthSpinner = createSpinner(attrCols, this, 1, 4, insetx, insety);
+        saveButton = createButton("char.save", this, 1, 5, insetx, insety);
 
         this.pack();
         this.setVisible(true);
@@ -65,6 +73,15 @@ public class CharFrame extends JInternalFrame {
         dexteritySpinner.setValue(gameChar.getDexterity());
         intelligenceSpinner.setValue(gameChar.getIntelligence());
         healthSpinner.setValue(gameChar.getHealth());
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(saveButton)) {
+            saveChar();
+        } else {
+            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+        }
     }
 
     private JLabel createLabel(String key, Container container, int gridx, int gridy, int insetx, int insety) {
@@ -97,6 +114,7 @@ public class CharFrame extends JInternalFrame {
 
     private JButton createButton(String key, Container container, int gridx, int gridy, int insetx, int insety) {
         JButton button = new JButton(bundle.getString(key));
+        button.addActionListener(this);
         GridBagConstraints constraints = createConstraints(gridx, gridy, insetx, insety);
         constraints.anchor = GridBagConstraints.LINE_START;
         container.add(button, constraints);
@@ -109,5 +127,16 @@ public class CharFrame extends JInternalFrame {
         constraints.gridy = gridy;
         constraints.insets = new Insets(insety, insetx, insety, insetx);
         return constraints;
+    }
+
+    private void saveChar() {
+        GameChar gameChar = new GameChar();
+        gameChar.setName(nameTextField.getText());
+        gameChar.setStrength((Integer) strengthSpinner.getValue());
+        gameChar.setDexterity((Integer) dexteritySpinner.getValue());
+        gameChar.setIntelligence((Integer) intelligenceSpinner.getValue());
+        gameChar.setHealth((Integer) healthSpinner.getValue());
+        GameCharService.save(gameChar);
+        doDefaultCloseAction();
     }
 }

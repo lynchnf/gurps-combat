@@ -27,6 +27,7 @@
 
         <!-- Dependency versions listed alphabetically. -->
         <commons-lang3.version>3.12.0</commons-lang3.version>
+        <jackson.version.databind>2.13.2.2</jackson.version.databind>
         <logback.version>1.2.11</logback.version>
 
         <!-- Plugin versions listed alphabetically. -->
@@ -52,6 +53,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version.databind}</version>
         </dependency>
     </dependencies>
 
