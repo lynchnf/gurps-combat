@@ -24,12 +24,12 @@ public class GameCharService {
         List<GameChar> oldGameChars = loadGameChars();
 
         // If the character to be saved is new, ...
-        int newGameCharId = gameChar.getId();
-        if (newGameCharId < 0) {
+        Long newGameCharId = gameChar.getId();
+        if (newGameCharId == null) {
             // Find the highest existing id.
-            int maxId = 0;
+            long maxId = 0;
             for (GameChar oldGameChar : oldGameChars) {
-                int oldGameCharId = oldGameChar.getId();
+                long oldGameCharId = oldGameChar.getId() == null ? -1 : oldGameChar.getId().longValue();
                 if (maxId < oldGameCharId) {
                     maxId = oldGameCharId;
                 }
@@ -38,12 +38,17 @@ public class GameCharService {
             gameChar.setId(maxId + 1);
         } else {
             // Otherwise, the character to be saved already exists.
+            GameChar gameCharToRemove = null;
             for (GameChar oldGameChar : oldGameChars) {
                 // Find and remove the old version.
-                int oldGameCharId = oldGameChar.getId();
-                if (newGameCharId == oldGameCharId) {
-                    oldGameChars.remove(oldGameChar);
+                Long oldGameCharId = oldGameChar.getId();
+                if (newGameCharId.equals(oldGameCharId)) {
+                    gameCharToRemove = oldGameChar;
+                    break;
                 }
+            }
+            if (gameCharToRemove != null) {
+                oldGameChars.remove(gameCharToRemove);
             }
         }
 
@@ -51,6 +56,10 @@ public class GameCharService {
         oldGameChars.add(gameChar);
         storeGameChars(oldGameChars);
         LOGGER.debug("Successfully saved " + gameChar + ".");
+    }
+
+    public static List<GameChar> getAll() {
+        return loadGameChars();
     }
 
     private static List<GameChar> loadGameChars() {

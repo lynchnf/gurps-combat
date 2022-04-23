@@ -1,18 +1,38 @@
 package norman.gurps.model;
 
-public class GameChar {
-    private int id = -1;
-    private String name;
-    private int strength = 10;
-    private int dexterity = 10;
-    private int intelligence = 10;
-    private int health = 10;
+import org.apache.commons.lang3.StringUtils;
 
-    public int getId() {
+public class GameChar {
+    private Long id;
+    private String name;
+    private Integer strength = 10;
+    private Integer dexterity = 10;
+    private Integer intelligence = 10;
+    private Integer health = 10;
+    // Uncomment these later.
+    //private Integer damageThrustDice;
+    //private Integer damageThrustAdds;
+    //private Integer damageSwingDice;
+    //private Integer damageSwingAdds;
+    //private Float basicLift;
+    //private Integer hitPoints;
+    //private Integer hitPointsAdj;
+    //private Integer will;
+    //private Integer willAdj;
+    //private Integer perception;
+    //private Integer perceptionAdj;
+    //private Integer fatigueHits;
+    //private Integer fatigueHitsAdj;
+    //private Float basicSpeed;
+    //private Float basicSpeedAdj;
+    //private Integer basicMove;
+    //private Integer basicMoveAdj;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -24,41 +44,42 @@ public class GameChar {
         this.name = name;
     }
 
-    public int getStrength() {
+    public Integer getStrength() {
         return strength;
     }
 
-    public void setStrength(int strength) {
+    public void setStrength(Integer strength) {
         this.strength = strength;
     }
 
-    public int getDexterity() {
+    public Integer getDexterity() {
         return dexterity;
     }
 
-    public void setDexterity(int dexterity) {
+    public void setDexterity(Integer dexterity) {
         this.dexterity = dexterity;
     }
 
-    public int getIntelligence() {
+    public Integer getIntelligence() {
         return intelligence;
     }
 
-    public void setIntelligence(int intelligence) {
+    public void setIntelligence(Integer intelligence) {
         this.intelligence = intelligence;
     }
 
-    public int getHealth() {
+    public Integer getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(Integer health) {
         this.health = health;
     }
 
     @Override
     public String toString() {
-        return "GameChar{" + "id=" + id + ", name='" + name + '\'' + ", strength=" + strength + ", dexterity=" +
-                dexterity + ", intelligence=" + intelligence + ", health=" + health + '}';
+        String idStr = id == null ? "new" : id.toString();
+        String nameStr = StringUtils.trimToEmpty(name);
+        return "(" + idStr + ") " + nameStr;
     }
 }

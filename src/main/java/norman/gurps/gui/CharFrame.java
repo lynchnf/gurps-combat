@@ -15,18 +15,13 @@ public class CharFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharFrame.class);
     private static int openFrameCount = 0;
     private ResourceBundle bundle;
+    private Long modelId;
     private JTextField nameTextField;
     private JSpinner strengthSpinner;
     private JSpinner dexteritySpinner;
     private JSpinner intelligenceSpinner;
     private JSpinner healthSpinner;
-
     private JButton saveButton;
-
-    public CharFrame() {
-        super();
-        initComponents(new GameChar());
-    }
 
     public CharFrame(GameChar gameChar) {
         super();
@@ -68,11 +63,7 @@ public class CharFrame extends JInternalFrame implements ActionListener {
         setLocation(offsetx * openFrameCount, offsety * openFrameCount);
         openFrameCount++;
 
-        nameTextField.setText(gameChar.getName());
-        strengthSpinner.setValue(gameChar.getStrength());
-        dexteritySpinner.setValue(gameChar.getDexterity());
-        intelligenceSpinner.setValue(gameChar.getIntelligence());
-        healthSpinner.setValue(gameChar.getHealth());
+        setValues(gameChar);
     }
 
     @Override
@@ -82,6 +73,26 @@ public class CharFrame extends JInternalFrame implements ActionListener {
         } else {
             LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
+    }
+
+    public GameChar toModel() {
+        GameChar gameChar = new GameChar();
+        gameChar.setId(modelId);
+        gameChar.setName(nameTextField.getText());
+        gameChar.setStrength((Integer) strengthSpinner.getValue());
+        gameChar.setDexterity((Integer) dexteritySpinner.getValue());
+        gameChar.setIntelligence((Integer) intelligenceSpinner.getValue());
+        gameChar.setHealth((Integer) healthSpinner.getValue());
+        return gameChar;
+    }
+
+    private void setValues(GameChar gameChar) {
+        modelId = gameChar.getId();
+        nameTextField.setText(gameChar.getName());
+        strengthSpinner.setValue(gameChar.getStrength());
+        dexteritySpinner.setValue(gameChar.getDexterity());
+        intelligenceSpinner.setValue(gameChar.getIntelligence());
+        healthSpinner.setValue(gameChar.getHealth());
     }
 
     private JLabel createLabel(String key, Container container, int gridx, int gridy, int insetx, int insety) {
@@ -130,12 +141,7 @@ public class CharFrame extends JInternalFrame implements ActionListener {
     }
 
     private void saveChar() {
-        GameChar gameChar = new GameChar();
-        gameChar.setName(nameTextField.getText());
-        gameChar.setStrength((Integer) strengthSpinner.getValue());
-        gameChar.setDexterity((Integer) dexteritySpinner.getValue());
-        gameChar.setIntelligence((Integer) intelligenceSpinner.getValue());
-        gameChar.setHealth((Integer) healthSpinner.getValue());
+        GameChar gameChar = toModel();
         GameCharService.save(gameChar);
         doDefaultCloseAction();
     }

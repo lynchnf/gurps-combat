@@ -2,6 +2,8 @@ package norman.gurps.gui;
 
 import norman.gurps.Application;
 import norman.gurps.LoggingException;
+import norman.gurps.model.GameChar;
+import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -78,6 +81,8 @@ public class MainFrame extends JFrame implements ActionListener {
             options();
         } else if (actionEvent.getSource().equals(createCharItem)) {
             createChar();
+        } else if (actionEvent.getSource().equals(updateCharItem)) {
+            updateChar();
         } else {
             LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
@@ -163,7 +168,24 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void createChar() {
-        CharFrame charFrame = new CharFrame();
+        showCharFrame(new GameChar());
+    }
+
+    private void updateChar() {
+        Object message = "This is a message.";
+        String title = "This Is The Title";
+        List<GameChar> allGameChars = GameCharService.getAll();
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        GameChar choice =
+                (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
+                        selectionValues, null);
+        if (choice != null) {
+            showCharFrame(choice);
+        }
+    }
+
+    private void showCharFrame(GameChar gameChar) {
+        CharFrame charFrame = new CharFrame(gameChar);
         desktop.add(charFrame);
         try {
             charFrame.setSelected(true);

@@ -6,9 +6,9 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 
 | Task                             | Pts | Start     | Complete  | Days |
 |----------------------------------|-----|-----------|-----------|------|
-| UI Framework                     | 3   | 4/21/2020 | 4/21/2020 | 1    |
-| Add GameChar                     | 5   | 4/21/2020 | 4/22/2022 | 2    |
-| View GameChar                    | 3   |           |           |      |
+| UI Framework                     | 3   | 4/21/2022 | 4/21/2022 | 0    |
+| Add GameChar                     | 5   | 4/21/2022 | 4/22/2022 | 1    |
+| View GameChar                    | 3   | 4/22/2022 | 4/23/2022 | 1    |
 | Edit GameChar                    | 2   |           |           |      |
 | Delete GameChar                  | 1   |           |           |      |
 | Create empty Battle              | 3   |           |           |      |
