@@ -83,6 +83,8 @@ public class MainFrame extends JFrame implements ActionListener {
             createChar();
         } else if (actionEvent.getSource().equals(updateCharItem)) {
             updateChar();
+        } else if (actionEvent.getSource().equals(deleteCharItem)) {
+            deleteChar();
         } else {
             LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
@@ -168,29 +170,49 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void createChar() {
-        showCharFrame(new GameChar());
+        showCharEditFrame(new GameChar());
     }
 
     private void updateChar() {
-        Object message = "This is a message.";
-        String title = "This Is The Title";
-        List<GameChar> allGameChars = GameCharService.getAll();
-        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
-        GameChar choice =
-                (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
-                        selectionValues, null);
+        GameChar choice = showSelectCharDialog("menu.char.update", "char.update.message");
         if (choice != null) {
-            showCharFrame(choice);
+            showCharEditFrame(choice);
         }
     }
 
-    private void showCharFrame(GameChar gameChar) {
-        CharFrame charFrame = new CharFrame(gameChar);
-        desktop.add(charFrame);
+    private void deleteChar() {
+        GameChar choice = showSelectCharDialog("menu.char.delete", "char.delete.message");
+        if (choice != null) {
+            showCharViewFrame(choice);
+        }
+    }
+
+    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
+        String title = bundle.getString(titleKey);
+        Object message = bundle.getString(messageKey);
+        List<GameChar> allGameChars = GameCharService.findAll();
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        return (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
+                selectionValues, null);
+    }
+
+    private void showCharViewFrame(GameChar gameChar) {
+        CharViewFrame charViewFrame = new CharViewFrame(gameChar);
+        desktop.add(charViewFrame);
         try {
-            charFrame.setSelected(true);
+            charViewFrame.setSelected(true);
         } catch (PropertyVetoException e) {
-            LOGGER.warn("Unable to set selected on CharFrame for new GameChar.", e);
+            LOGGER.warn("Unable to select CharViewFrame. gameChar=\"" + gameChar + "\"", e);
+        }
+    }
+
+    private void showCharEditFrame(GameChar gameChar) {
+        CharEditFrame charEditFrame = new CharEditFrame(gameChar);
+        desktop.add(charEditFrame);
+        try {
+            charEditFrame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            LOGGER.warn("Unable to select CharEditFrame. gameChar=\"" + gameChar + "\"", e);
         }
     }
 }

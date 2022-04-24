@@ -11,55 +11,55 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-public class CharFrame extends JInternalFrame implements ActionListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharFrame.class);
+public class CharEditFrame extends JInternalFrame implements ActionListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
     private static int openFrameCount = 0;
     private ResourceBundle bundle;
     private Long modelId;
-    private JTextField nameTextField;
+    private JTextField nameField;
     private JSpinner strengthSpinner;
     private JSpinner dexteritySpinner;
     private JSpinner intelligenceSpinner;
     private JSpinner healthSpinner;
     private JButton saveButton;
 
-    public CharFrame(GameChar gameChar) {
+    public CharEditFrame(GameChar gameChar) {
         super();
         initComponents(gameChar);
     }
 
     private void initComponents(GameChar gameChar) {
-        LOGGER.debug("Initializing character frame.");
-        bundle = ResourceBundle.getBundle("norman.gurps.gui.CharFrame");
-        setTitle(bundle.getString("char.title") + " - " + (openFrameCount + 1));
+        LOGGER.debug("Initializing character edit frame.");
+        bundle = ResourceBundle.getBundle("norman.gurps.gui.CharEditFrame");
+        setTitle(bundle.getString("char.edit.title") + " - " + (openFrameCount + 1));
         setLayout(new GridBagLayout());
         setResizable(true);
         setClosable(true);
         setMaximizable(true);
         setIconifiable(true);
 
-        int insetx = Integer.parseInt(bundle.getString("char.insets.x"));
-        int insety = Integer.parseInt(bundle.getString("char.insets.y"));
-        int nameCols = Integer.parseInt(bundle.getString("char.name.columns"));
-        int attrCols = Integer.parseInt(bundle.getString("char.attribute.columns"));
+        int insetx = Integer.parseInt(bundle.getString("char.edit.insets.x"));
+        int insety = Integer.parseInt(bundle.getString("char.edit.insets.y"));
+        int nameCols = Integer.parseInt(bundle.getString("char.edit.name.columns"));
+        int attrCols = Integer.parseInt(bundle.getString("char.edit.attribute.columns"));
 
-        createLabel("char.name", this, 0, 0, insetx, insety);
-        nameTextField = createTextField(nameCols, this, 1, 0, insetx, insety);
-        createLabel("char.strength", this, 0, 1, insetx, insety);
+        createLabel("char.edit.name", this, 0, 0, insetx, insety);
+        nameField = createField(nameCols, this, 1, 0, insetx, insety);
+        createLabel("char.edit.strength", this, 0, 1, insetx, insety);
         strengthSpinner = createSpinner(attrCols, this, 1, 1, insetx, insety);
-        createLabel("char.dexterity", this, 0, 2, insetx, insety);
+        createLabel("char.edit.dexterity", this, 0, 2, insetx, insety);
         dexteritySpinner = createSpinner(attrCols, this, 1, 2, insetx, insety);
-        createLabel("char.intelligence", this, 0, 3, insetx, insety);
+        createLabel("char.edit.intelligence", this, 0, 3, insetx, insety);
         intelligenceSpinner = createSpinner(attrCols, this, 1, 3, insetx, insety);
-        createLabel("char.health", this, 0, 4, insetx, insety);
+        createLabel("char.edit.health", this, 0, 4, insetx, insety);
         healthSpinner = createSpinner(attrCols, this, 1, 4, insetx, insety);
-        saveButton = createButton("char.save", this, 1, 5, insetx, insety);
+        saveButton = createButton("char.edit.save", this, 1, 5, insetx, insety);
 
         this.pack();
         this.setVisible(true);
 
-        int offsetx = Integer.parseInt(bundle.getString("char.offset.x"));
-        int offsety = Integer.parseInt(bundle.getString("char.offset.y"));
+        int offsetx = Integer.parseInt(bundle.getString("char.edit.offset.x"));
+        int offsety = Integer.parseInt(bundle.getString("char.edit.offset.y"));
         setLocation(offsetx * openFrameCount, offsety * openFrameCount);
         openFrameCount++;
 
@@ -78,7 +78,7 @@ public class CharFrame extends JInternalFrame implements ActionListener {
     public GameChar toModel() {
         GameChar gameChar = new GameChar();
         gameChar.setId(modelId);
-        gameChar.setName(nameTextField.getText());
+        gameChar.setName(nameField.getText());
         gameChar.setStrength((Integer) strengthSpinner.getValue());
         gameChar.setDexterity((Integer) dexteritySpinner.getValue());
         gameChar.setIntelligence((Integer) intelligenceSpinner.getValue());
@@ -88,12 +88,20 @@ public class CharFrame extends JInternalFrame implements ActionListener {
 
     private void setValues(GameChar gameChar) {
         modelId = gameChar.getId();
-        nameTextField.setText(gameChar.getName());
+        nameField.setText(gameChar.getName());
         strengthSpinner.setValue(gameChar.getStrength());
         dexteritySpinner.setValue(gameChar.getDexterity());
         intelligenceSpinner.setValue(gameChar.getIntelligence());
         healthSpinner.setValue(gameChar.getHealth());
     }
+
+    private void saveChar() {
+        GameChar gameChar = toModel();
+        GameCharService.save(gameChar);
+        doDefaultCloseAction();
+    }
+
+    // COMMON METHODS // TODO Refactor these someday.
 
     private JLabel createLabel(String key, Container container, int gridx, int gridy, int insetx, int insety) {
         JLabel label = new JLabel(bundle.getString(key));
@@ -103,7 +111,7 @@ public class CharFrame extends JInternalFrame implements ActionListener {
         return label;
     }
 
-    private JTextField createTextField(int columns, Container container, int gridx, int gridy, int insetx, int insety) {
+    private JTextField createField(int columns, Container container, int gridx, int gridy, int insetx, int insety) {
         JTextField field = new JTextField(columns);
         GridBagConstraints constraints = createConstraints(gridx, gridy, insetx, insety);
         constraints.anchor = GridBagConstraints.LINE_START;
@@ -138,11 +146,5 @@ public class CharFrame extends JInternalFrame implements ActionListener {
         constraints.gridy = gridy;
         constraints.insets = new Insets(insety, insetx, insety, insetx);
         return constraints;
-    }
-
-    private void saveChar() {
-        GameChar gameChar = toModel();
-        GameCharService.save(gameChar);
-        doDefaultCloseAction();
     }
 }

@@ -19,6 +19,10 @@ public class GameCharService {
     private static final String APP_CHAR_FILE_NAME = "characters.json";
     private static ObjectMapper mapper = new ObjectMapper();
 
+    public static List<GameChar> findAll() {
+        return loadGameChars();
+    }
+
     public static void save(GameChar gameChar) {
         // Get all the old characters from the json file.
         List<GameChar> oldGameChars = loadGameChars();
@@ -58,8 +62,25 @@ public class GameCharService {
         LOGGER.debug("Successfully saved " + gameChar + ".");
     }
 
-    public static List<GameChar> getAll() {
-        return loadGameChars();
+    public static void delete(Long gameCharId) {
+        // Get all the old characters from the json file.
+        List<GameChar> oldGameChars = loadGameChars();
+
+        // Find character to be deleted.
+        GameChar gameCharToRemove = null;
+        for (GameChar oldGameChar : oldGameChars) {
+            // Find and remove the character.
+            Long oldGameCharId = oldGameChar.getId();
+            if (gameCharId.equals(oldGameCharId)) {
+                gameCharToRemove = oldGameChar;
+                break;
+            }
+        }
+        if (gameCharToRemove != null) {
+            oldGameChars.remove(gameCharToRemove);
+        }
+        storeGameChars(oldGameChars);
+        LOGGER.debug("Successfully deleted " + gameCharToRemove + ".");
     }
 
     private static List<GameChar> loadGameChars() {
