@@ -2,6 +2,7 @@ package norman.gurps.gui;
 
 import norman.gurps.Application;
 import norman.gurps.LoggingException;
+import norman.gurps.model.Battle;
 import norman.gurps.model.GameChar;
 import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ public class MainFrame extends JFrame implements ActionListener {
         setTitle(bundle.getString("title"));
         desktop = new JDesktopPane();
         setContentPane(desktop);
+
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
@@ -70,24 +72,6 @@ public class MainFrame extends JFrame implements ActionListener {
         createBattleItem = createMenuItem("menu.battle.create", battleMenu);
         addCharBattleItem = createMenuItem("menu.battle.add.char", battleMenu);
         removeCharBattleItem = createMenuItem("menu.battle.remove.char", battleMenu);
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(exitFileItem)) {
-            LOGGER.debug("Processing exit menu item.");
-            processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-        } else if (actionEvent.getSource().equals(optionsFileItem)) {
-            options();
-        } else if (actionEvent.getSource().equals(createCharItem)) {
-            createChar();
-        } else if (actionEvent.getSource().equals(updateCharItem)) {
-            updateChar();
-        } else if (actionEvent.getSource().equals(deleteCharItem)) {
-            deleteChar();
-        } else {
-            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
-        }
     }
 
     @Override
@@ -113,17 +97,24 @@ public class MainFrame extends JFrame implements ActionListener {
         super.processWindowEvent(windowEvent);
     }
 
-    private JMenu createMenu(String key, JMenuBar bar) {
-        JMenu menu = new JMenu(bundle.getString(key));
-        bar.add(menu);
-        return menu;
-    }
-
-    private JMenuItem createMenuItem(String key, JMenu menu) {
-        JMenuItem item = new JMenuItem(bundle.getString(key));
-        menu.add(item);
-        item.addActionListener(this);
-        return item;
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(exitFileItem)) {
+            LOGGER.debug("Processing exit menu item.");
+            processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        } else if (actionEvent.getSource().equals(optionsFileItem)) {
+            options();
+        } else if (actionEvent.getSource().equals(createCharItem)) {
+            createChar();
+        } else if (actionEvent.getSource().equals(updateCharItem)) {
+            updateChar();
+        } else if (actionEvent.getSource().equals(deleteCharItem)) {
+            deleteChar();
+        } else if (actionEvent.getSource().equals(createBattleItem)) {
+            createBattle();
+        } else {
+            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+        }
     }
 
     private void options() {
@@ -214,5 +205,32 @@ public class MainFrame extends JFrame implements ActionListener {
         } catch (PropertyVetoException e) {
             LOGGER.warn("Unable to select CharEditFrame. gameChar=\"" + gameChar + "\"", e);
         }
+    }
+
+    private void createBattle() {
+        Battle battle = new Battle();
+        BattleFrame battleFrame = new BattleFrame(battle);
+        desktop.add(battleFrame);
+        try {
+            battleFrame.setMaximum(true);
+            battleFrame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            LOGGER.warn("Unable to maximize and/or select battle frame. battle=\"" + battle + "\"", e);
+        }
+    }
+
+    // COMMON METHODS // TODO Refactor these someday.
+
+    private JMenu createMenu(String key, JMenuBar bar) {
+        JMenu menu = new JMenu(bundle.getString(key));
+        bar.add(menu);
+        return menu;
+    }
+
+    private JMenuItem createMenuItem(String key, JMenu menu) {
+        JMenuItem item = new JMenuItem(bundle.getString(key));
+        menu.add(item);
+        item.addActionListener(this);
+        return item;
     }
 }

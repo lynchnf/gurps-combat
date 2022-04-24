@@ -55,8 +55,8 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         healthField = createReadOnly(attrCols, this, 1, 4, insetx, insety);
         deleteButton = createButton("char.view.delete", this, 1, 5, insetx, insety);
 
-        this.pack();
-        this.setVisible(true);
+        pack();
+        setVisible(true);
 
         int offsetx = Integer.parseInt(bundle.getString("char.view.offset.x"));
         int offsety = Integer.parseInt(bundle.getString("char.view.offset.y"));

@@ -55,8 +55,8 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         healthSpinner = createSpinner(attrCols, this, 1, 4, insetx, insety);
         saveButton = createButton("char.edit.save", this, 1, 5, insetx, insety);
 
-        this.pack();
-        this.setVisible(true);
+        pack();
+        setVisible(true);
 
         int offsetx = Integer.parseInt(bundle.getString("char.edit.offset.x"));
         int offsety = Integer.parseInt(bundle.getString("char.edit.offset.y"));
