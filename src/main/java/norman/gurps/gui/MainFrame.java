@@ -50,6 +50,7 @@ public class MainFrame extends JFrame implements ActionListener {
         bundle = ResourceBundle.getBundle("norman.gurps.gui.MainFrame");
         setTitle(bundle.getString("title"));
         desktop = new JDesktopPane();
+        desktop.setOpaque(false);
         setContentPane(desktop);
 
         JMenuBar menuBar = new JMenuBar();

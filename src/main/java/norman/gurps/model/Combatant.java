@@ -3,6 +3,10 @@ package norman.gurps.model;
 public class Combatant {
     private GameChar gameChar;
 
+    public Combatant(GameChar gameChar) {
+        this.gameChar = gameChar;
+    }
+
     public GameChar getGameChar() {
         return gameChar;
     }
