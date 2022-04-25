@@ -50,38 +50,27 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         battle = new Battle();
 
         // Battlefield map.
-        String path = "norman/gurps/gui/battlefield.png";
-        URL url = loader.getResource(path);
-        ImageIcon image = new ImageIcon(url);
-        JLabel imageLabel = new JLabel(image);
-        JScrollPane mapPane = new JScrollPane(imageLabel);
-        mapPane.setPreferredSize(new Dimension(200, 200));
+        JLabel mapLabel = createLabel("norman/gurps/gui/battlefield.png", null);
+        JScrollPane mapScroll = makeScrollable(mapLabel, 200, 200);
 
         // Battle combatants.
-        JPanel combatantPane = new JPanel();
-        combatantPane.setLayout(new BorderLayout());
-        JToolBar toolBar = new JToolBar();
-        combatantPane.add(toolBar, BorderLayout.NORTH);
+        JPanel combatantPanel = createPanel(null);
+        JScrollPane combatantScroll = makeScrollable(combatantPanel, 100, 100);
+        JToolBar toolBar = createToolBar(combatantPanel);
         addCharButton = createButton("norman/gurps/gui/character24.png", "battle.combatant.add.char", toolBar);
         addGroupButton = createButton("norman/gurps/gui/group24.png", "battle.combatant.add.group", toolBar);
         startButton = createButton("norman/gurps/gui/start24.png", "battle.combatant.start", toolBar);
-        combatantList = new JList<>(new DefaultListModel<>());
-        JScrollPane combatantScroll = new JScrollPane(combatantList);
-        combatantScroll.setPreferredSize(new Dimension(100, 100));
-        combatantPane.add(combatantScroll);
+        combatantList = createList(battle.getCombatants(), combatantPanel);
 
         // Battle logs.
         BattleLog log = new BattleLog(bundle.getString("battle.log.created"), null);
         List<BattleLog> battleLogs = battle.getBattleLogs();
         battleLogs.add(log);
-        DefaultListModel<BattleLog> logListModel = new DefaultListModel<>();
-        logListModel.addElement(log);
-        logList = new JList<>(logListModel);
-        JScrollPane logPane = new JScrollPane(logList);
-        logPane.setPreferredSize(new Dimension(50, 50));
+        logList = createList(battleLogs, null);
+        JScrollPane logScroll = makeScrollable(logList, 50, 50);
 
-        JSplitPane innerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, combatantPane, logPane);
-        JSplitPane outerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPane, innerSplitPane);
+        JSplitPane innerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, combatantScroll, logScroll);
+        JSplitPane outerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapScroll, innerSplitPane);
         this.add(outerSplitPane);
 
         pack();
@@ -100,7 +89,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     private void addChar() {
         GameChar choice = showSelectCharDialog("battle.combatant.add.char", "battle.combatant.add.char.message");
         if (choice != null) {
-            // Save curent state of battle.
+            // Save current state of battle.
             // TODO Battle object will grow exponentially. Fix this soon!
             String battleJson = null;
             try {
@@ -135,13 +124,61 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
     // COMMON METHODS // TODO Refactor these someday.
 
+    private JScrollPane makeScrollable(Component view, int width, int height) {
+        JScrollPane scroll = new JScrollPane(view);
+        scroll.setPreferredSize(new Dimension(width, height));
+        return scroll;
+    }
+
+    private JPanel createPanel(Container container) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+        if (container != null) {
+            container.add(panel);
+        }
+        return panel;
+    }
+
+    private <T> JList<T> createList(List<T> elements, Container container) {
+        DefaultListModel<T> model = new DefaultListModel<>();
+        JList<T> list = new JList<>(model);
+        for (T element : elements) {
+            model.addElement(element);
+        }
+        if (container != null) {
+            container.add(list);
+        }
+        return list;
+    }
+
+    private JToolBar createToolBar(Container container) {
+        JToolBar bar = new JToolBar();
+        if (container != null) {
+            container.add(bar, BorderLayout.NORTH);
+        }
+        return bar;
+    }
+
+    private JLabel createLabel(String path, Container container) {
+        JLabel label = new JLabel();
+        URL url = loader.getResource(path);
+        ImageIcon image = new ImageIcon(url);
+        label.setIcon(image);
+        if (container != null) {
+            container.add(label);
+        }
+        return label;
+    }
+
     private JButton createButton(String path, String key, Container container) {
         URL url = loader.getResource(path);
         ImageIcon icon = new ImageIcon(url);
         JButton button = new JButton(icon);
         button.setToolTipText(bundle.getString(key));
         button.addActionListener(this);
-        container.add(button);
+        if (container != null) {
+            container.add(button);
+        }
         return button;
     }
 }
