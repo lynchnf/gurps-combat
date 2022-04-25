@@ -1,52 +1,85 @@
 package norman.gurps.gui;
 
+import norman.gurps.model.Battle;
 import norman.gurps.model.Combatant;
+import norman.gurps.model.GameChar;
+import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class BattleCombatantPane extends JPanel {
+public class BattleCombatantPane extends JPanel implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleCombatantPane.class);
     private ResourceBundle bundle;
+    private ClassLoader loader;
+    private JButton addCharButton;
+    private JButton addGroupButton;
+    private JButton startButton;
 
-    public BattleCombatantPane(List<Combatant> combatants) {
+    public BattleCombatantPane(Battle battle) {
         super();
-        initComponents(combatants);
+        initComponents(battle);
     }
 
-    private void initComponents(List<Combatant> combatants) {
+    private void initComponents(Battle battle) {
         LOGGER.debug("Initializing battle combatant pane.");
         bundle = ResourceBundle.getBundle("norman.gurps.gui.BattleCombatantPane");
+        loader = Thread.currentThread().getContextClassLoader();
         setLayout(new BorderLayout());
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-
-        URL addCharUrl = loader.getResource("norman/gurps/gui/character24.png");
-        ImageIcon addCharIcon = new ImageIcon(addCharUrl);
-        JButton addCharButton = new JButton(addCharIcon);
-        addCharButton.setToolTipText(bundle.getString("battle.combatant.add.character"));
-
-        URL addGroupUrl = loader.getResource("norman/gurps/gui/group24.png");
-        ImageIcon addGroupIcon = new ImageIcon(addGroupUrl);
-        JButton addGroupButton = new JButton(addGroupIcon);
-        addGroupButton.setToolTipText(bundle.getString("battle.combatant.add.group"));
-
-        URL startUrl = loader.getResource("norman/gurps/gui/start24.png");
-        ImageIcon startIcon = new ImageIcon(startUrl);
-        JButton startButton = new JButton(startIcon);
-        startButton.setToolTipText(bundle.getString("battle.combatant.start"));
 
         JToolBar toolBar = new JToolBar();
-        toolBar.add(addCharButton);
-        toolBar.add(addGroupButton);
-        toolBar.add(startButton);
-        this.add(toolBar, BorderLayout.NORTH);
+        add(toolBar, BorderLayout.NORTH);
 
-        JList<Combatant> combatantList = new JList<>(combatants.toArray(new Combatant[0]));
+        addCharButton = createButton("norman/gurps/gui/character24.png", "battle.combatant.add.char", toolBar);
+        addGroupButton = createButton("norman/gurps/gui/group24.png", "battle.combatant.add.group", toolBar);
+        startButton = createButton("norman/gurps/gui/start24.png", "battle.combatant.start", toolBar);
+
+        JList<Combatant> combatantList = new JList<>(battle.getCombatants().toArray(new Combatant[0]));
         this.add(combatantList);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        if (actionEvent.getSource().equals(addCharButton)) {
+            addChar();
+        } else {
+            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+        }
+    }
+
+    private void addChar() {
+        GameChar choice = showSelectCharDialog("battle.combatant.add.char", "battle.combatant.add.char.message");
+        if (choice != null) {
+            //showCharEditFrame(choice);
+        }
+    }
+
+    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
+        String title = bundle.getString(titleKey);
+        Object message = bundle.getString(messageKey);
+        List<GameChar> allGameChars = GameCharService.findAll();
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        return (GameChar) JOptionPane.showInternalInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, null,
+                selectionValues, null);
+    }
+
+
+    // COMMON METHODS // TODO Refactor these someday.
+
+    private JButton createButton(String path, String key, Container container) {
+        URL url = loader.getResource(path);
+        ImageIcon icon = new ImageIcon(url);
+        JButton button = new JButton(icon);
+        button.setToolTipText(bundle.getString(key));
+        button.addActionListener(this);
+        container.add(button);
+        return button;
     }
 }

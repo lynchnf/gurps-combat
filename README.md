@@ -13,7 +13,7 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 | Delete GameChar                  | 1   | 4/23/2022 | 4/23/2022 | 0    |
 | Unit tests for GameCharService   | 2   |           |           |      |
 | Create empty Battle              | 3   | 4/23/2022 | 4/24/2022 | 1    |
-| Add GameChar to Battle           | 3   |           |           |      |
+| Add GameChar to Battle           | 3   | 4/24/2022 |           |      |
 | Remove GameChar from Battle      | 1   |           |           |      |
 | Start Battle (log)               | 2   |           |           |      |
 | Start Battle (sort)              | 2   |           |           |      |

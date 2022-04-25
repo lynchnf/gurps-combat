@@ -2,7 +2,6 @@ package norman.gurps.gui;
 
 import norman.gurps.Application;
 import norman.gurps.LoggingException;
-import norman.gurps.model.Battle;
 import norman.gurps.model.GameChar;
 import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
@@ -30,8 +29,6 @@ public class MainFrame extends JFrame implements ActionListener {
     private JMenuItem updateCharItem;
     private JMenuItem deleteCharItem;
     private JMenuItem createBattleItem;
-    private JMenuItem addCharBattleItem;
-    private JMenuItem removeCharBattleItem;
 
     public MainFrame(Properties appProps) throws HeadlessException {
         super();
@@ -59,6 +56,7 @@ public class MainFrame extends JFrame implements ActionListener {
         setJMenuBar(menuBar);
 
         JMenu fileMenu = createMenu("menu.file", menuBar);
+        createBattleItem = createMenuItem("menu.file.battle", fileMenu);
         optionsFileItem = createMenuItem("menu.file.options", fileMenu);
         fileMenu.add(new JSeparator());
         exitFileItem = createMenuItem("menu.file.exit", fileMenu);
@@ -67,11 +65,6 @@ public class MainFrame extends JFrame implements ActionListener {
         createCharItem = createMenuItem("menu.char.create", charMenu);
         updateCharItem = createMenuItem("menu.char.update", charMenu);
         deleteCharItem = createMenuItem("menu.char.delete", charMenu);
-
-        JMenu battleMenu = createMenu("menu.battle", menuBar);
-        createBattleItem = createMenuItem("menu.battle.create", battleMenu);
-        addCharBattleItem = createMenuItem("menu.battle.add.char", battleMenu);
-        removeCharBattleItem = createMenuItem("menu.battle.remove.char", battleMenu);
     }
 
     @Override
@@ -102,6 +95,8 @@ public class MainFrame extends JFrame implements ActionListener {
         if (actionEvent.getSource().equals(exitFileItem)) {
             LOGGER.debug("Processing exit menu item.");
             processWindowEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        } else if (actionEvent.getSource().equals(createBattleItem)) {
+            createBattle();
         } else if (actionEvent.getSource().equals(optionsFileItem)) {
             options();
         } else if (actionEvent.getSource().equals(createCharItem)) {
@@ -110,10 +105,19 @@ public class MainFrame extends JFrame implements ActionListener {
             updateChar();
         } else if (actionEvent.getSource().equals(deleteCharItem)) {
             deleteChar();
-        } else if (actionEvent.getSource().equals(createBattleItem)) {
-            createBattle();
         } else {
             LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+        }
+    }
+
+    private void createBattle() {
+        BattleFrame battleFrame = new BattleFrame();
+        desktop.add(battleFrame);
+        try {
+            battleFrame.setMaximum(true);
+            battleFrame.setSelected(true);
+        } catch (PropertyVetoException e) {
+            LOGGER.warn("Unable to maximize and/or select battle frame.", e);
         }
     }
 
@@ -204,18 +208,6 @@ public class MainFrame extends JFrame implements ActionListener {
             charEditFrame.setSelected(true);
         } catch (PropertyVetoException e) {
             LOGGER.warn("Unable to select CharEditFrame. gameChar=\"" + gameChar + "\"", e);
-        }
-    }
-
-    private void createBattle() {
-        Battle battle = new Battle();
-        BattleFrame battleFrame = new BattleFrame(battle);
-        desktop.add(battleFrame);
-        try {
-            battleFrame.setMaximum(true);
-            battleFrame.setSelected(true);
-        } catch (PropertyVetoException e) {
-            LOGGER.warn("Unable to maximize and/or select battle frame. battle=\"" + battle + "\"", e);
         }
     }
 

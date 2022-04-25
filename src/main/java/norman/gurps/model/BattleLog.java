@@ -7,6 +7,12 @@ public class BattleLog {
     public static final DateFormat FORMAT = DateFormat.getTimeInstance(DateFormat.MEDIUM);
     private Date timestamp = new Date();
     private String message;
+    private String battleJson;
+
+    public BattleLog(String message, String battleJson) {
+        this.message = message;
+        this.battleJson = battleJson;
+    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -18,6 +24,14 @@ public class BattleLog {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getBattleJson() {
+        return battleJson;
+    }
+
+    public void setBattleJson(String battleJson) {
+        this.battleJson = battleJson;
     }
 
     @Override
