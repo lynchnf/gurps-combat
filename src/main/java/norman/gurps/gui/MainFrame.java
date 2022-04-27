@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -184,15 +185,6 @@ public class MainFrame extends JFrame implements ActionListener {
         }
     }
 
-    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
-        String title = bundle.getString(titleKey);
-        Object message = bundle.getString(messageKey);
-        List<GameChar> allGameChars = GameCharService.findAll();
-        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
-        return (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
-                selectionValues, null);
-    }
-
     private void showCharViewFrame(GameChar gameChar) {
         CharViewFrame charViewFrame = new CharViewFrame(gameChar, frameCount++);
         desktop.add(charViewFrame);
@@ -214,6 +206,16 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     // COMMON METHODS // TODO Refactor these someday.
+
+    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
+        String title = bundle.getString(titleKey);
+        Object message = bundle.getString(messageKey);
+        List<GameChar> allGameChars = GameCharService.findAll();
+        allGameChars.sort(Comparator.comparing(GameChar::getName));
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        return (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
+                selectionValues, null);
+    }
 
     private JMenu createMenu(String key, JMenuBar bar) {
         JMenu menu = new JMenu(bundle.getString(key));

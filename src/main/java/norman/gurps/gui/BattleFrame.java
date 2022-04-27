@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -113,16 +114,17 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         }
     }
 
+    // COMMON METHODS // TODO Refactor these someday.
+
     private GameChar showSelectCharDialog(String titleKey, String messageKey) {
         String title = bundle.getString(titleKey);
         Object message = bundle.getString(messageKey);
         List<GameChar> allGameChars = GameCharService.findAll();
+        allGameChars.sort(Comparator.comparing(GameChar::getName));
         GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
         return (GameChar) JOptionPane.showInternalInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, null,
                 selectionValues, null);
     }
-
-    // COMMON METHODS // TODO Refactor these someday.
 
     private JScrollPane makeScrollable(Component view, int width, int height) {
         JScrollPane scroll = new JScrollPane(view);
