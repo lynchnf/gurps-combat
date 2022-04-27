@@ -1,7 +1,5 @@
 package norman.gurps.model;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class GameChar {
     private Long id;
     private String name;
@@ -9,7 +7,7 @@ public class GameChar {
     private Integer dexterity = 10;
     private Integer intelligence = 10;
     private Integer health = 10;
-    // Uncomment these later.
+    // TODO Uncomment these later.
     //private Integer damageThrustDice;
     //private Integer damageThrustAdds;
     //private Integer damageSwingDice;
@@ -23,8 +21,8 @@ public class GameChar {
     //private Integer perceptionAdj;
     //private Integer fatigueHits;
     //private Integer fatigueHitsAdj;
-    //private Float basicSpeed;
-    //private Float basicSpeedAdj;
+    private Double basicSpeed = 5.00;
+    //private Double basicSpeedAdj = 0.0;
     //private Integer basicMove;
     //private Integer basicMoveAdj;
 
@@ -76,10 +74,16 @@ public class GameChar {
         this.health = health;
     }
 
+    public Double getBasicSpeed() {
+        return basicSpeed;
+    }
+
+    public void setBasicSpeed(Double basicSpeed) {
+        this.basicSpeed = basicSpeed;
+    }
+
     @Override
     public String toString() {
-        String idStr = id == null ? "new" : id.toString();
-        String nameStr = StringUtils.trimToEmpty(name);
-        return "(" + idStr + ") " + nameStr;
+        return name;
     }
 }

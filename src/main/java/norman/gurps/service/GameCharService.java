@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class GameCharService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
@@ -21,6 +22,37 @@ public class GameCharService {
 
     public static List<GameChar> findAll() {
         return loadGameChars();
+    }
+
+    public static List<String> validate(GameChar gameChar) {
+        List<String> errors = new ArrayList<>();
+        if (gameChar.getName() == null) {
+            errors.add("Name may not be blank.");
+        } else {
+            List<GameChar> oldGameChars = loadGameChars();
+            for (GameChar oldGameChar : oldGameChars) {
+                if (oldGameChar.getName().equals(gameChar.getName()) &&
+                        !Objects.equals(oldGameChar.getId(), gameChar.getId())) {
+                    errors.add("Name " + gameChar.getName() + " is not unique.");
+                }
+            }
+        }
+        if (gameChar.getStrength() < 0) {
+            errors.add("ST may not be less than zero.");
+        }
+        if (gameChar.getDexterity() < 0) {
+            errors.add("DX may not be less than zero.");
+        }
+        if (gameChar.getIntelligence() < 0) {
+            errors.add("IQ may not be less than zero.");
+        }
+        if (gameChar.getHealth() < 0) {
+            errors.add("HT may not be less than zero.");
+        }
+        if (gameChar.getBasicSpeed() < 0.0) {
+            errors.add("Basic Speed may not be less than zero.");
+        }
+        return errors;
     }
 
     public static void save(GameChar gameChar) {
@@ -33,7 +65,7 @@ public class GameCharService {
             // Find the highest existing id.
             long maxId = 0;
             for (GameChar oldGameChar : oldGameChars) {
-                long oldGameCharId = oldGameChar.getId() == null ? -1 : oldGameChar.getId().longValue();
+                long oldGameCharId = oldGameChar.getId() == null ? -1 : oldGameChar.getId();
                 if (maxId < oldGameCharId) {
                     maxId = oldGameCharId;
                 }
@@ -42,18 +74,7 @@ public class GameCharService {
             gameChar.setId(maxId + 1);
         } else {
             // Otherwise, the character to be saved already exists.
-            GameChar gameCharToRemove = null;
-            for (GameChar oldGameChar : oldGameChars) {
-                // Find and remove the old version.
-                Long oldGameCharId = oldGameChar.getId();
-                if (newGameCharId.equals(oldGameCharId)) {
-                    gameCharToRemove = oldGameChar;
-                    break;
-                }
-            }
-            if (gameCharToRemove != null) {
-                oldGameChars.remove(gameCharToRemove);
-            }
+            findAndRemoveGameChar(oldGameChars, newGameCharId);
         }
 
         // Add the character to be saved to our json file.
@@ -67,20 +88,9 @@ public class GameCharService {
         List<GameChar> oldGameChars = loadGameChars();
 
         // Find character to be deleted.
-        GameChar gameCharToRemove = null;
-        for (GameChar oldGameChar : oldGameChars) {
-            // Find and remove the character.
-            Long oldGameCharId = oldGameChar.getId();
-            if (gameCharId.equals(oldGameCharId)) {
-                gameCharToRemove = oldGameChar;
-                break;
-            }
-        }
-        if (gameCharToRemove != null) {
-            oldGameChars.remove(gameCharToRemove);
-        }
+        GameChar gameCharRemoved = findAndRemoveGameChar(oldGameChars, gameCharId);
         storeGameChars(oldGameChars);
-        LOGGER.debug("Successfully deleted " + gameCharToRemove + ".");
+        LOGGER.debug("Successfully deleted " + gameCharRemoved + ".");
     }
 
     private static List<GameChar> loadGameChars() {
@@ -115,5 +125,21 @@ public class GameCharService {
         } catch (IOException e) {
             throw new LoggingException(LOGGER, "Error storing character data file to " + appCharFile + ".", e);
         }
+    }
+
+    private static GameChar findAndRemoveGameChar(List<GameChar> oldGameChars, Long newGameCharId) {
+        GameChar gameCharToRemove = null;
+        for (GameChar oldGameChar : oldGameChars) {
+            // Find and remove the old version.
+            Long oldGameCharId = oldGameChar.getId();
+            if (newGameCharId.equals(oldGameCharId)) {
+                gameCharToRemove = oldGameChar;
+                break;
+            }
+        }
+        if (gameCharToRemove != null) {
+            oldGameChars.remove(gameCharToRemove);
+        }
+        return gameCharToRemove;
     }
 }

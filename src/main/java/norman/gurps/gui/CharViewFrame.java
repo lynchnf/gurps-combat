@@ -13,55 +13,59 @@ import java.util.ResourceBundle;
 
 public class CharViewFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharViewFrame.class);
-    private static int openFrameCount = 0;
     private ResourceBundle bundle;
+    private int gbcInsetx;
+    private int gbcInsety;
     private Long modelId;
     private JTextField nameField;
     private JTextField strengthField;
     private JTextField dexterityField;
     private JTextField intelligenceField;
     private JTextField healthField;
+    private JTextField basicSpeedField;
     private JButton deleteButton;
 
-    public CharViewFrame(GameChar gameChar) {
+    public CharViewFrame(GameChar gameChar, int frameCount) {
         super();
-        initComponents(gameChar);
+        initComponents(gameChar, frameCount);
     }
 
-    private void initComponents(GameChar gameChar) {
+    private void initComponents(GameChar gameChar, int frameCount) {
         LOGGER.debug("Initializing character view frame.");
         bundle = ResourceBundle.getBundle("norman.gurps.gui.CharViewFrame");
-        setTitle(bundle.getString("char.view.title") + " - " + (openFrameCount + 1));
+        setTitle(bundle.getString("char.view.title"));
         setLayout(new GridBagLayout());
         setResizable(true);
         setClosable(true);
         setMaximizable(true);
         setIconifiable(true);
 
-        int insetx = Integer.parseInt(bundle.getString("char.view.insets.x"));
-        int insety = Integer.parseInt(bundle.getString("char.view.insets.y"));
+        gbcInsetx = Integer.parseInt(bundle.getString("char.view.insets.x"));
+        gbcInsety = Integer.parseInt(bundle.getString("char.view.insets.y"));
         int nameCols = Integer.parseInt(bundle.getString("char.view.name.columns"));
         int attrCols = Integer.parseInt(bundle.getString("char.view.attribute.columns"));
+        int speedCols = Integer.parseInt(bundle.getString("char.view.speed.columns"));
 
-        createLabel("char.view.name", this, 0, 0, insetx, insety);
-        nameField = createReadOnly(nameCols, this, 1, 0, insetx, insety);
-        createLabel("char.view.strength", this, 0, 1, insetx, insety);
-        strengthField = createReadOnly(attrCols, this, 1, 1, insetx, insety);
-        createLabel("char.view.dexterity", this, 0, 2, insetx, insety);
-        dexterityField = createReadOnly(attrCols, this, 1, 2, insetx, insety);
-        createLabel("char.view.intelligence", this, 0, 3, insetx, insety);
-        intelligenceField = createReadOnly(attrCols, this, 1, 3, insetx, insety);
-        createLabel("char.view.health", this, 0, 4, insetx, insety);
-        healthField = createReadOnly(attrCols, this, 1, 4, insetx, insety);
-        deleteButton = createButton("char.view.delete", this, 1, 5, insetx, insety);
+        createLabel("char.view.name", this, createGbc(0, 0));
+        nameField = createReadOnlyField(nameCols, this, createGbc(1, 0));
+        createLabel("char.view.strength", this, createGbc(0, 1));
+        strengthField = createReadOnlyField(attrCols, this, createGbc(1, 1));
+        createLabel("char.view.dexterity", this, createGbc(0, 2));
+        dexterityField = createReadOnlyField(attrCols, this, createGbc(1, 2));
+        createLabel("char.view.intelligence", this, createGbc(0, 3));
+        intelligenceField = createReadOnlyField(attrCols, this, createGbc(1, 3));
+        createLabel("char.view.health", this, createGbc(0, 4));
+        healthField = createReadOnlyField(attrCols, this, createGbc(1, 4));
+        createLabel("char.view.basic.speed", this, createGbc(0, 5));
+        basicSpeedField = createReadOnlyField(speedCols, this, createGbc(1, 5));
+        deleteButton = createButton("char.view.delete", this, createGbc(1, 6));
 
         pack();
         setVisible(true);
 
         int offsetx = Integer.parseInt(bundle.getString("char.view.offset.x"));
         int offsety = Integer.parseInt(bundle.getString("char.view.offset.y"));
-        setLocation(offsetx * openFrameCount, offsety * openFrameCount);
-        openFrameCount++;
+        setLocation(offsetx * frameCount, offsety * frameCount);
 
         setValues(gameChar);
     }
@@ -71,7 +75,7 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         if (actionEvent.getSource().equals(deleteButton)) {
             deleteChar();
         } else {
-            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+            LOGGER.warn("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
     }
 
@@ -82,46 +86,62 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         dexterityField.setText(String.valueOf(gameChar.getDexterity()));
         intelligenceField.setText(String.valueOf(gameChar.getIntelligence()));
         healthField.setText(String.valueOf(gameChar.getHealth()));
+        basicSpeedField.setText(String.valueOf(gameChar.getBasicSpeed()));
     }
 
     private void deleteChar() {
         GameCharService.delete(modelId);
-        doDefaultCloseAction();
+        dispose();
     }
 
     // COMMON METHODS // TODO Refactor these someday.
 
-    private JLabel createLabel(String key, Container container, int gridx, int gridy, int insetx, int insety) {
+    private JLabel createLabel(String key, Container container, GridBagConstraints gbc) {
         JLabel label = new JLabel(bundle.getString(key));
-        GridBagConstraints constraints = createConstraints(gridx, gridy, insetx, insety);
-        constraints.anchor = GridBagConstraints.LINE_END;
-        container.add(label, constraints);
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_END;
+                container.add(label, gbc);
+            } else {
+                container.add(label);
+            }
+        }
         return label;
     }
 
-    private JTextField createReadOnly(int columns, Container container, int gridx, int gridy, int insetx, int insety) {
+    private JTextField createReadOnlyField(int columns, Container container, GridBagConstraints gbc) {
         JTextField field = new JTextField(columns);
         field.setEditable(false);
-        GridBagConstraints constraints = createConstraints(gridx, gridy, insetx, insety);
-        constraints.anchor = GridBagConstraints.LINE_START;
-        container.add(field, constraints);
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_START;
+                container.add(field, gbc);
+            } else {
+                container.add(field);
+            }
+        }
         return field;
     }
 
-    private JButton createButton(String key, Container container, int gridx, int gridy, int insetx, int insety) {
+    private JButton createButton(String key, Container container, GridBagConstraints gbc) {
         JButton button = new JButton(bundle.getString(key));
         button.addActionListener(this);
-        GridBagConstraints constraints = createConstraints(gridx, gridy, insetx, insety);
-        constraints.anchor = GridBagConstraints.LINE_START;
-        container.add(button, constraints);
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_START;
+                container.add(button, gbc);
+            } else {
+                container.add(button);
+            }
+        }
         return button;
     }
 
-    private GridBagConstraints createConstraints(int gridx, int gridy, int insetx, int insety) {
+    private GridBagConstraints createGbc(int gridx, int gridy) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
         constraints.gridy = gridy;
-        constraints.insets = new Insets(insety, insetx, insety, insetx);
+        constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
         return constraints;
     }
 }

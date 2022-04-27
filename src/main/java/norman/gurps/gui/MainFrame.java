@@ -29,6 +29,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private JMenuItem updateCharItem;
     private JMenuItem deleteCharItem;
     private JMenuItem createBattleItem;
+    private int frameCount = 0;
 
     public MainFrame(Properties appProps) throws HeadlessException {
         super();
@@ -107,7 +108,7 @@ public class MainFrame extends JFrame implements ActionListener {
         } else if (actionEvent.getSource().equals(deleteCharItem)) {
             deleteChar();
         } else {
-            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+            LOGGER.warn("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
         }
     }
 
@@ -193,7 +194,7 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void showCharViewFrame(GameChar gameChar) {
-        CharViewFrame charViewFrame = new CharViewFrame(gameChar);
+        CharViewFrame charViewFrame = new CharViewFrame(gameChar, frameCount++);
         desktop.add(charViewFrame);
         try {
             charViewFrame.setSelected(true);
@@ -203,7 +204,7 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void showCharEditFrame(GameChar gameChar) {
-        CharEditFrame charEditFrame = new CharEditFrame(gameChar);
+        CharEditFrame charEditFrame = new CharEditFrame(gameChar, frameCount++);
         desktop.add(charEditFrame);
         try {
             charEditFrame.setSelected(true);
@@ -216,14 +217,18 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private JMenu createMenu(String key, JMenuBar bar) {
         JMenu menu = new JMenu(bundle.getString(key));
-        bar.add(menu);
+        if (bar != null) {
+            bar.add(menu);
+        }
         return menu;
     }
 
     private JMenuItem createMenuItem(String key, JMenu menu) {
         JMenuItem item = new JMenuItem(bundle.getString(key));
-        menu.add(item);
         item.addActionListener(this);
+        if (menu != null) {
+            menu.add(item);
+        }
         return item;
     }
 }
