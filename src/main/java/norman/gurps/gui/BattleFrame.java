@@ -12,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,7 +31,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     private JButton addCharButton;
     private JButton addGroupButton;
     private JButton startButton;
-    private JList<Combatant> combatantList;
+    private JTable combatantTable;
     private JList<BattleLog> logList;
 
     public BattleFrame() {
@@ -56,12 +58,18 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
         // Battle combatants.
         JPanel combatantPanel = createPanel(null);
-        JScrollPane combatantScroll = makeScrollable(combatantPanel, 100, 100);
         JToolBar toolBar = createToolBar(combatantPanel);
         addCharButton = createButton("norman/gurps/gui/character24.png", "battle.combatant.add.char", toolBar);
         addGroupButton = createButton("norman/gurps/gui/group24.png", "battle.combatant.add.group", toolBar);
         startButton = createButton("norman/gurps/gui/start24.png", "battle.combatant.start", toolBar);
-        combatantList = createList(battle.getCombatants(), combatantPanel);
+
+        Object[] columnNames = {"Name", "ST", "DX", "IQ", "HT", "Speed"};
+        DefaultTableModel combatantModel = new DefaultTableModel(columnNames, 0);
+        combatantTable = new JTable(combatantModel);
+
+        JScrollPane combatantScroll = makeScrollable(combatantTable, 100, 100);
+        combatantTable.setFillsViewportHeight(true); // Does this do anything?
+        combatantPanel.add(combatantScroll);
 
         // Battle logs.
         BattleLog log = new BattleLog(bundle.getString("battle.log.created"), null);
@@ -70,7 +78,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         logList = createList(battleLogs, null);
         JScrollPane logScroll = makeScrollable(logList, 50, 50);
 
-        JSplitPane innerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, combatantScroll, logScroll);
+        JSplitPane innerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, combatantPanel, logScroll);
         JSplitPane outerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapScroll, innerSplitPane);
         this.add(outerSplitPane);
 
@@ -100,13 +108,19 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             }
 
             // Add character.
-            Combatant combatant = new Combatant(choice);
-            battle.getCombatants().add(combatant);
-            DefaultListModel<Combatant> combatantListModel = (DefaultListModel<Combatant>) combatantList.getModel();
-            combatantListModel.addElement(combatant);
+            DefaultTableModel model = (DefaultTableModel) combatantTable.getModel();
+            List<String> existingNames = new ArrayList<>();
+            for (int row = 0; row < model.getRowCount(); row++) {
+                String name = (String) model.getValueAt(row, 0);
+                existingNames.add(name);
+            }
+            Combatant combatant = new Combatant(choice, existingNames);
+            Object[] rowData = {combatant.getName(), combatant.getStrength(), combatant.getDexterity(),
+                    combatant.getIntelligence(), combatant.getHealth(), combatant.getBasicSpeed()};
+            model.addRow(rowData);
 
             // Add log saying we added character.
-            String message = String.format(bundle.getString("battle.log.char.added"), choice.toString());
+            String message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
             BattleLog log = new BattleLog(message, battleJson);
             battle.getBattleLogs().add(log);
             DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
