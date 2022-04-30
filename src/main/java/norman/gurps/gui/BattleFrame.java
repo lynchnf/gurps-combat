@@ -11,9 +11,25 @@ import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import javax.swing.AbstractButton;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JToolBar;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -63,10 +79,25 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         addGroupButton = createButton("norman/gurps/gui/group24.png", "battle.combatant.add.group", toolBar);
         startButton = createButton("norman/gurps/gui/start24.png", "battle.combatant.start", toolBar);
 
-        Object[] columnNames = {"Name", "ST", "DX", "IQ", "HT", "Speed"};
-        DefaultTableModel combatantModel = new DefaultTableModel(columnNames, 0);
+        // Table columns names.
+        String[] colNames =
+                {"", "Name", "ST", "DX", "IQ", "HT", "Speed"}; // TODO Put this in a properties file somewhere.
+        CombatantTableModel combatantModel = new CombatantTableModel(colNames);
         combatantTable = new JTable(combatantModel);
 
+        // Table column widths.
+        int[] colWidths = {20, 530, 50, 50, 50, 50, 50}; // TODO Put this in a properties file somewhere.
+        for (int col = 0; col < colWidths.length; col++) {
+            TableColumn column = combatantTable.getColumnModel().getColumn(col);
+            column.setPreferredWidth(colWidths[col]);
+        }
+
+        // Special renderer for buttons.
+        TableCellRenderer defaultRenderer = combatantTable.getDefaultRenderer(JButton.class);
+        TableButtonRenderer buttonRenderer = new TableButtonRenderer(defaultRenderer);
+        combatantTable.setDefaultRenderer(JButton.class, buttonRenderer);
+
+        // Table scroll bars.
         JScrollPane combatantScroll = makeScrollable(combatantTable, 100, 100);
         combatantTable.setFillsViewportHeight(true); // Does this do anything?
         combatantPanel.add(combatantScroll);
@@ -107,15 +138,18 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
                 throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
             }
 
-            // Add character.
-            DefaultTableModel model = (DefaultTableModel) combatantTable.getModel();
+            // Get names for all combatants currently in the battle so the new combatant will have a different name.
+            CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
             List<String> existingNames = new ArrayList<>();
             for (int row = 0; row < model.getRowCount(); row++) {
-                String name = (String) model.getValueAt(row, 0);
+                String name = (String) model.getValueAt(row, 1);
                 existingNames.add(name);
             }
             Combatant combatant = new Combatant(choice, existingNames);
-            Object[] rowData = {combatant.getName(), combatant.getStrength(), combatant.getDexterity(),
+
+            // Add character to battle.
+            JButton button = createButton("norman/gurps/gui/x8.png", "battle.combatant.remove.char", null);
+            Object[] rowData = {button, combatant.getName(), combatant.getStrength(), combatant.getDexterity(),
                     combatant.getIntelligence(), combatant.getHealth(), combatant.getBasicSpeed()};
             model.addRow(rowData);
 
