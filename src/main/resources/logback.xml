@@ -20,6 +20,7 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
+    <logger name="foo.bar" level="debug"/>
     <logger name="norman.gurps" level="debug"/>
     <root level="info">
         <appender-ref ref="FILE"/>

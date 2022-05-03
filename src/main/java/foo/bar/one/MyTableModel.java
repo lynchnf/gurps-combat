@@ -1,26 +1,20 @@
-package norman.gurps.gui;
+package foo.bar.one;
 
-import norman.gurps.model.BattleAction;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
-public class CombatantTableModel extends AbstractTableModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CombatantTableModel.class);
-    private ResourceBundle bundle;
+public class MyTableModel extends AbstractTableModel {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTableModel.class);
     private final String[] columnNames;
-    private final List<CombatantTableRow> dataList = new ArrayList<>();
+    private final List<MyTableModelRow> dataList = new ArrayList<>();
 
-    public CombatantTableModel() {
-        bundle = ResourceBundle.getBundle("message");
-
-        String columnNameCsv = bundle.getString("combatant.table.column.names");
-        columnNames = StringUtils.split(columnNameCsv, ',');
+    public MyTableModel() {
+        // TODO Put these in a properties file somewhere.
+        columnNames = new String[]{"x", "Name", "ST", "DX", "IQ", "HT", "Speed", "Action"};
     }
 
     @Override
@@ -54,7 +48,7 @@ public class CombatantTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        CombatantTableRow row = dataList.get(rowIndex);
+        MyTableModelRow row = dataList.get(rowIndex);
         if (columnIndex == 0) {
             return null;
         } else if (columnIndex == 1) {
@@ -84,7 +78,7 @@ public class CombatantTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        CombatantTableRow row = dataList.get(rowIndex);
+        MyTableModelRow row = dataList.get(rowIndex);
         if (columnIndex == 0) {
             // Do nothing for now.
         } else if (columnIndex == 1) {
@@ -100,14 +94,14 @@ public class CombatantTableModel extends AbstractTableModel {
         } else if (columnIndex == 6) {
             row.setBasicSpeed((Double) aValue);
         } else if (columnIndex == 7) {
-            row.setAction((BattleAction) aValue);
+            row.setAction((MyAction) aValue);
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
         }
         fireTableCellUpdated(rowIndex, columnIndex);
     }
 
-    public void addRow(CombatantTableRow dataRow) {
+    public void addRow(MyTableModelRow dataRow) {
         int newRowIndex = dataList.size();
         dataList.add(dataRow);
         fireTableRowsInserted(newRowIndex, newRowIndex);

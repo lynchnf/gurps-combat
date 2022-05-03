@@ -5,6 +5,7 @@ import java.util.List;
 public class Combatant {
     private GameChar gameChar;
     private String name;
+    private BattleAction action = BattleAction.DO_NOTHING;
 
     public Combatant(GameChar gameChar, List<String> existingNames) {
         this.gameChar = gameChar;
@@ -18,10 +19,6 @@ public class Combatant {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getStrength() {
@@ -42,5 +39,13 @@ public class Combatant {
 
     public Double getBasicSpeed() {
         return gameChar.getBasicSpeed();
+    }
+
+    public BattleAction getAction() {
+        return action;
+    }
+
+    public void setAction(BattleAction action) {
+        this.action = action;
     }
 }

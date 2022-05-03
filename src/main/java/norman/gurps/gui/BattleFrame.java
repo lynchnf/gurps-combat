@@ -4,17 +4,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
 import norman.gurps.model.Battle;
+import norman.gurps.model.BattleAction;
 import norman.gurps.model.BattleLog;
 import norman.gurps.model.Combatant;
 import norman.gurps.model.GameChar;
 import norman.gurps.service.GameCharService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.AbstractButton;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -24,7 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -57,57 +60,63 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
     private void initComponents() {
         LOGGER.debug("Initializing battle frame.");
-        bundle = ResourceBundle.getBundle("norman.gurps.gui.BattleFrame");
+        bundle = ResourceBundle.getBundle("message");
         loader = Thread.currentThread().getContextClassLoader();
         mapper = new ObjectMapper();
-        setTitle(bundle.getString("battle.title"));
+        setTitle(bundle.getString("battle.frame.title"));
         setLayout(new BorderLayout());
         setResizable(true);
         setClosable(true);
         setMaximizable(true);
         setIconifiable(true);
         battle = new Battle();
-
         // Battlefield map.
-        JLabel mapLabel = createLabel("norman/gurps/gui/battlefield.png", null);
-        JScrollPane mapScroll = makeScrollable(mapLabel, 200, 200);
+        JLabel mapLabel = createLabel("images/battlefield.png", null, null);
+        JScrollPane mapScroll = makeScrollable(mapLabel, 100, 100);
 
-        // Battle combatants.
+        // Combatants pane with tool bar.
         JPanel combatantPanel = createPanel(null);
         JToolBar toolBar = createToolBar(combatantPanel);
-        addCharButton = createButton("norman/gurps/gui/character24.png", "battle.combatant.add.char", toolBar);
-        addGroupButton = createButton("norman/gurps/gui/group24.png", "battle.combatant.add.group", toolBar);
-        startButton = createButton("norman/gurps/gui/start24.png", "battle.combatant.start", toolBar);
+        addCharButton = createButton("images/character16.png", null, "battle.tool.tip.add.char", this, toolBar);
+        addGroupButton = createButton("images/group16.png", null, "battle.tool.tip.add.group", this, toolBar);
+        startButton = createButton("images/start16.png", null, "battle.tool.tip.start", this, toolBar);
 
-        // Table columns names.
-        String[] colNames =
-                {"", "Name", "ST", "DX", "IQ", "HT", "Speed"}; // TODO Put this in a properties file somewhere.
-        CombatantTableModel combatantModel = new CombatantTableModel(colNames);
-        combatantTable = new JTable(combatantModel);
+        // Combatant table.
+        CombatantTableModel model = new CombatantTableModel();
+        combatantTable = new JTable(model);
+        String imagePath = "images/remove8.png";
+        String textKey = null;
+        String toolTipKey = "combatant.table.column.button.tool.tip";
+        ActionListener listener = this;
+        CombatantButtonColumn buttonColumn = new CombatantButtonColumn(
+imagePath, textKey, toolTipKey, listener,
+                combatantTable, 0);
 
-        // Table column widths.
-        int[] colWidths = {20, 530, 50, 50, 50, 50, 50}; // TODO Put this in a properties file somewhere.
-        for (int col = 0; col < colWidths.length; col++) {
-            TableColumn column = combatantTable.getColumnModel().getColumn(col);
-            column.setPreferredWidth(colWidths[col]);
+        JComboBox<BattleAction> actionComboBox = new JComboBox<>(BattleAction.values());
+        DefaultCellEditor actionEditor = new DefaultCellEditor(actionComboBox);
+        TableColumn actionColumn = combatantTable.getColumnModel().getColumn(7);
+        actionColumn.setCellEditor(actionEditor);
+
+        // Combatant table column widths.
+        String columnWidthCsv = bundle.getString("combatant.table.column.widths");
+        String[] columnWidths = StringUtils.split(columnWidthCsv, ',');
+        for (int columnIndex = 0; columnIndex < columnWidths.length; columnIndex++) {
+            TableColumn column = combatantTable.getColumnModel().getColumn(columnIndex);
+            int columnWidth = Integer.parseInt(columnWidths[columnIndex]);
+            column.setPreferredWidth(columnWidth);
         }
 
-        // Special renderer for buttons.
-        TableCellRenderer defaultRenderer = combatantTable.getDefaultRenderer(JButton.class);
-        TableButtonRenderer buttonRenderer = new TableButtonRenderer(defaultRenderer);
-        combatantTable.setDefaultRenderer(JButton.class, buttonRenderer);
-
-        // Table scroll bars.
-        JScrollPane combatantScroll = makeScrollable(combatantTable, 100, 100);
-        combatantTable.setFillsViewportHeight(true); // Does this do anything?
-        combatantPanel.add(combatantScroll);
+        // Make combatant table scrollable.
+        combatantTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
+        combatantTable.setFillsViewportHeight(true);
+        combatantPanel.add(new JScrollPane(combatantTable));
 
         // Battle logs.
         BattleLog log = new BattleLog(bundle.getString("battle.log.created"), null);
         List<BattleLog> battleLogs = battle.getBattleLogs();
         battleLogs.add(log);
         logList = createList(battleLogs, null);
-        JScrollPane logScroll = makeScrollable(logList, 50, 50);
+        JScrollPane logScroll = makeScrollable(logList, 100, 100);
 
         JSplitPane innerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, combatantPanel, logScroll);
         JSplitPane outerSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapScroll, innerSplitPane);
@@ -118,17 +127,22 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        if (actionEvent.getSource().equals(addCharButton)) {
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(addCharButton)) {
             addChar();
+        } else if (e.getSource().equals(addGroupButton)) {
+            //addGroup();
+        } else if (e.getSource().equals(startButton)) {
+            //start();
         } else {
-            LOGGER.debug("Unknown actionEvent=\"" + ((AbstractButton) actionEvent.getSource()).getText() + "\"");
+            LOGGER.debug("ActionEvent=\"" + e + "\"");
         }
     }
 
     private void addChar() {
-        GameChar choice = showSelectCharDialog("battle.combatant.add.char", "battle.combatant.add.char.message");
-        if (choice != null) {
+        GameChar gameChar = showSelectCharDialog("images/character32.png", "combatant.dialog.add.char.title",
+                "combatant.dialog.add.char.message", this);
+        if (gameChar != null) {
             // Save current state of battle.
             // TODO Battle object will grow exponentially. Fix this soon!
             String battleJson = null;
@@ -145,13 +159,11 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
                 String name = (String) model.getValueAt(row, 1);
                 existingNames.add(name);
             }
-            Combatant combatant = new Combatant(choice, existingNames);
+            Combatant combatant = new Combatant(gameChar, existingNames);
 
             // Add character to battle.
-            JButton button = createButton("norman/gurps/gui/x8.png", "battle.combatant.remove.char", null);
-            Object[] rowData = {button, combatant.getName(), combatant.getStrength(), combatant.getDexterity(),
-                    combatant.getIntelligence(), combatant.getHealth(), combatant.getBasicSpeed()};
-            model.addRow(rowData);
+            CombatantTableRow row = new CombatantTableRow(combatant);
+            model.addRow(row);
 
             // Add log saying we added character.
             String message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
@@ -164,20 +176,60 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
     // COMMON METHODS // TODO Refactor these someday.
 
-    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
-        String title = bundle.getString(titleKey);
-        Object message = bundle.getString(messageKey);
-        List<GameChar> allGameChars = GameCharService.findAll();
-        allGameChars.sort(Comparator.comparing(GameChar::getName));
-        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
-        return (GameChar) JOptionPane.showInternalInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, null,
-                selectionValues, null);
+    private JButton createButton(String imagePath, String textKey, String toolTipKey, ActionListener listener,
+            Container container) {
+        JButton button = new JButton();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon icon = new ImageIcon(url);
+            button.setIcon(icon);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            button.setText(text);
+        }
+        if (toolTipKey != null) {
+            String toolTip = bundle.getString(toolTipKey);
+            button.setToolTipText(toolTip);
+        }
+        if (listener != null) {
+            button.addActionListener(listener);
+        }
+        if (container != null) {
+            container.add(button);
+        }
+        return button;
     }
 
-    private JScrollPane makeScrollable(Component view, int width, int height) {
-        JScrollPane scroll = new JScrollPane(view);
-        scroll.setPreferredSize(new Dimension(width, height));
-        return scroll;
+    private JLabel createLabel(String imagePath, String textKey, Container container) {
+        JLabel label = new JLabel();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon image = new ImageIcon(url);
+            label.setIcon(image);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            label.setText(text);
+        }
+        if (container != null) {
+            container.add(label);
+        }
+        return label;
+    }
+
+    private <T> JList<T> createList(List<T> elements, Container container) {
+        DefaultListModel<T> model = new DefaultListModel<>();
+        JList<T> list = new JList<>(model);
+        if (elements != null) {
+            for (T element : elements) {
+                model.addElement(element);
+            }
+        }
+        if (container != null) {
+            container.add(list);
+        }
+        return list;
     }
 
     private JPanel createPanel(Container container) {
@@ -189,18 +241,6 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         return panel;
     }
 
-    private <T> JList<T> createList(List<T> elements, Container container) {
-        DefaultListModel<T> model = new DefaultListModel<>();
-        JList<T> list = new JList<>(model);
-        for (T element : elements) {
-            model.addElement(element);
-        }
-        if (container != null) {
-            container.add(list);
-        }
-        return list;
-    }
-
     private JToolBar createToolBar(Container container) {
         JToolBar bar = new JToolBar();
         if (container != null) {
@@ -209,26 +249,31 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         return bar;
     }
 
-    private JLabel createLabel(String path, Container container) {
-        JLabel label = new JLabel();
-        URL url = loader.getResource(path);
-        ImageIcon image = new ImageIcon(url);
-        label.setIcon(image);
-        if (container != null) {
-            container.add(label);
-        }
-        return label;
+    private JScrollPane makeScrollable(Component view, int width, int height) {
+        JScrollPane scrollable = new JScrollPane(view);
+        scrollable.setPreferredSize(new Dimension(width, height));
+        return scrollable;
     }
 
-    private JButton createButton(String path, String key, Container container) {
-        URL url = loader.getResource(path);
-        ImageIcon icon = new ImageIcon(url);
-        JButton button = new JButton(icon);
-        button.setToolTipText(bundle.getString(key));
-        button.addActionListener(this);
-        if (container != null) {
-            container.add(button);
+    private GameChar showSelectCharDialog(String imagePath, String titleKey, String messageKey,
+            Component parentComponent) {
+        Icon icon = null;
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            icon = new ImageIcon(url);
         }
-        return button;
+        String title = null;
+        if (titleKey != null) {
+            title = bundle.getString(titleKey);
+        }
+        Object message = null;
+        if (messageKey != null) {
+            message = bundle.getString(messageKey);
+        }
+        List<GameChar> allGameChars = GameCharService.findAll();
+        allGameChars.sort(Comparator.comparing(GameChar::getName));
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        return (GameChar) JOptionPane.showInternalInputDialog(parentComponent, message, title,
+                JOptionPane.PLAIN_MESSAGE, icon, selectionValues, null);
     }
 }

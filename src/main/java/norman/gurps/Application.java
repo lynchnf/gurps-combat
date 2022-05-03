@@ -33,7 +33,7 @@ public class Application {
         // much I an do about it except rethrow it as a run time exception.
         try {
             appProps.putAll(loadProps());
-            setLookAndFeel();
+            //setLookAndFeel(); TODO Use a better look and feel.
         } catch (LoggingException e) {
             throw new RuntimeException(e);
         }
