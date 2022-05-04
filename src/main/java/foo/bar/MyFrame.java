@@ -58,8 +58,8 @@ public class MyFrame extends JFrame implements ActionListener {
             }
         };
 
-        ButtonColumn buttonColumn = new ButtonColumn(table, delete, 0);
-        buttonColumn.setMnemonic(KeyEvent.VK_D);
+        MyCellEditor buttonColumn = new MyCellEditor(table, delete, 0);
+        //buttonColumn.setMnemonic(KeyEvent.VK_D);
 
         // Table scroll bars.
         table.setPreferredScrollableViewportSize(new Dimension(1000, 100));
