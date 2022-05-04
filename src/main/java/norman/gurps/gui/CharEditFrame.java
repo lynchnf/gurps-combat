@@ -43,31 +43,31 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
 
     private void initComponents(GameChar gameChar, int frameCount) {
         LOGGER.debug("Initializing character edit frame.");
-        bundle = ResourceBundle.getBundle("norman.gurps.gui.CharEditFrame");
-        setTitle(bundle.getString("char.edit.title"));
+        bundle = ResourceBundle.getBundle("message");
+        setTitle(bundle.getString("char.frame.edit.title"));
         setLayout(new GridBagLayout());
         setResizable(true);
         setClosable(true);
         setMaximizable(true);
         setIconifiable(true);
 
-        gbcInsetx = Integer.parseInt(bundle.getString("char.edit.insets.x"));
-        gbcInsety = Integer.parseInt(bundle.getString("char.edit.insets.y"));
-        int nameCols = Integer.parseInt(bundle.getString("char.edit.name.columns"));
-        int attrCols = Integer.parseInt(bundle.getString("char.edit.attribute.columns"));
-        int speedCols = Integer.parseInt(bundle.getString("char.edit.speed.columns"));
+        gbcInsetx = Integer.parseInt(bundle.getString("char.frame.insets.x"));
+        gbcInsety = Integer.parseInt(bundle.getString("char.frame.insets.y"));
+        int nameCols = Integer.parseInt(bundle.getString("char.name.width"));
+        int attrCols = Integer.parseInt(bundle.getString("char.attribute.width"));
+        int speedCols = Integer.parseInt(bundle.getString("char.basic.speed.width"));
 
-        createLabel("char.edit.name", this, createGbc(0, 0));
+        createLabel("char.name", this, createGbc(0, 0));
         nameField = createField(nameCols, this, createGbc(1, 0));
-        createLabel("char.edit.strength", this, createGbc(0, 1));
+        createLabel("char.strength", this, createGbc(0, 1));
         strengthSpinner = createSpinner(attrCols, this, createGbc(1, 1));
-        createLabel("char.edit.dexterity", this, createGbc(0, 2));
+        createLabel("char.dexterity", this, createGbc(0, 2));
         dexteritySpinner = createSpinner(attrCols, this, createGbc(1, 2));
-        createLabel("char.edit.intelligence", this, createGbc(0, 3));
+        createLabel("char.intelligence", this, createGbc(0, 3));
         intelligenceSpinner = createSpinner(attrCols, this, createGbc(1, 3));
-        createLabel("char.edit.health", this, createGbc(0, 4));
+        createLabel("char.health", this, createGbc(0, 4));
         healthSpinner = createSpinner(attrCols, this, createGbc(1, 4));
-        createLabel("char.edit.basic.speed", this, createGbc(0, 5));
+        createLabel("char.basic.speed", this, createGbc(0, 5));
 
         basicSpeedSpinner = createSpinner(speedCols, 0.00, 0.00, null, 0.25, this, createGbc(1, 5));
         //        SpinnerModel model = new SpinnerNumberModel(0.00, 0.00, null, 0.25);
@@ -78,13 +78,13 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         //        gbc.anchor = GridBagConstraints.LINE_START;
         //        this.add(basicSpeedSpinner, gbc);
 
-        saveButton = createButton("char.edit.save", this, createGbc(1, 6));
+        saveButton = createButton("char.save", this, createGbc(1, 6));
 
         pack();
         setVisible(true);
 
-        int offsetx = Integer.parseInt(bundle.getString("char.edit.offset.x"));
-        int offsety = Integer.parseInt(bundle.getString("char.edit.offset.y"));
+        int offsetx = Integer.parseInt(bundle.getString("char.frame.offset.x"));
+        int offsety = Integer.parseInt(bundle.getString("char.frame.offset.y"));
         setLocation(offsetx * frameCount, offsety * frameCount);
 
         setValues(gameChar);

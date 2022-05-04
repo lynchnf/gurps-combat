@@ -3,8 +3,8 @@ package norman.gurps.model;
 import java.util.List;
 
 public class Combatant {
-    private GameChar gameChar;
-    private String name;
+    private final GameChar gameChar;
+    private final String name;
     private BattleAction action = BattleAction.DO_NOTHING;
 
     public Combatant(GameChar gameChar, List<String> existingNames) {

@@ -36,7 +36,7 @@ import java.util.ResourceBundle;
 public class MainFrame extends JFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private ResourceBundle bundle;
-    private Properties appProps;
+    private final Properties appProps;
     private JDesktopPane desktop;
     private JMenuItem optionsFileItem;
     private JMenuItem exitFileItem;
@@ -63,8 +63,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private void initComponents() {
         LOGGER.debug("Initializing window components. Locale = " + Locale.getDefault());
-        bundle = ResourceBundle.getBundle("norman.gurps.gui.MainFrame");
-        setTitle(bundle.getString("title"));
+        bundle = ResourceBundle.getBundle("message");
+        setTitle(bundle.getString("main.frame.title"));
         desktop = new JDesktopPane();
         desktop.setOpaque(false);
         setContentPane(desktop);
@@ -72,16 +72,16 @@ public class MainFrame extends JFrame implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        JMenu fileMenu = createMenu("menu.file", menuBar);
-        createBattleItem = createMenuItem("menu.file.battle", fileMenu);
-        optionsFileItem = createMenuItem("menu.file.options", fileMenu);
+        JMenu fileMenu = createMenu("main.file", menuBar);
+        createBattleItem = createMenuItem("main.battle", fileMenu);
+        optionsFileItem = createMenuItem("main.options", fileMenu);
         fileMenu.add(new JSeparator());
-        exitFileItem = createMenuItem("menu.file.exit", fileMenu);
+        exitFileItem = createMenuItem("main.exit", fileMenu);
 
-        JMenu charMenu = createMenu("menu.char", menuBar);
-        createCharItem = createMenuItem("menu.char.create", charMenu);
-        updateCharItem = createMenuItem("menu.char.update", charMenu);
-        deleteCharItem = createMenuItem("menu.char.delete", charMenu);
+        JMenu charMenu = createMenu("main.char", menuBar);
+        createCharItem = createMenuItem("main.char.create", charMenu);
+        updateCharItem = createMenuItem("main.char.update", charMenu);
+        deleteCharItem = createMenuItem("main.char.delete", charMenu);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 Application.storeProps(appProps);
             } catch (LoggingException e) {
                 JOptionPane.showMessageDialog(this, bundle.getString("error.message.saving.window.size.and.location"),
-                        bundle.getString("error.dialog.title"), JOptionPane.ERROR_MESSAGE);
+                        bundle.getString("error.title"), JOptionPane.ERROR_MESSAGE);
             }
         }
         super.processWindowEvent(windowEvent);
@@ -140,13 +140,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private void options() {
         JFrame optionsFrame = new JFrame();
-        optionsFrame.setTitle(bundle.getString("options.title"));
+        optionsFrame.setTitle(bundle.getString("main.options.dialog.title"));
         optionsFrame.setResizable(false);
         JPanel optionsPanel = new JPanel();
         optionsFrame.add(optionsPanel);
         optionsPanel.setOpaque(false);
 
-        JLabel langLabel = new JLabel(bundle.getString("options.language"));
+        JLabel langLabel = new JLabel(bundle.getString("main.options.language"));
         optionsPanel.add(langLabel);
 
         LocaleWrapper[] locales = {new LocaleWrapper(Locale.ENGLISH)};
@@ -164,7 +164,7 @@ public class MainFrame extends JFrame implements ActionListener {
             } catch (LoggingException e) {
                 JOptionPane.showMessageDialog(mainFrame,
                         bundle.getString("error.message.saving.window.size.and.location"),
-                        bundle.getString("error.dialog.title"), JOptionPane.ERROR_MESSAGE);
+                        bundle.getString("error.title"), JOptionPane.ERROR_MESSAGE);
             }
 
             Locale.setDefault(newLang.getLocale());
@@ -186,14 +186,14 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void updateChar() {
-        GameChar choice = showSelectCharDialog("menu.char.update", "char.update.message");
+        GameChar choice = showSelectCharDialog("main.char.update.dialog.title", "main.char.update.dialog.message");
         if (choice != null) {
             showCharEditFrame(choice);
         }
     }
 
     private void deleteChar() {
-        GameChar choice = showSelectCharDialog("menu.char.delete", "char.delete.message");
+        GameChar choice = showSelectCharDialog("main.char.delete.dialog.title", "main.char.delete.dialog.message");
         if (choice != null) {
             showCharViewFrame(choice);
         }

@@ -4,7 +4,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class LocaleWrapper {
-    private Locale locale;
+    private final Locale locale;
 
     public LocaleWrapper() {
         this.locale = Locale.getDefault();

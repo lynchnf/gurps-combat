@@ -1,4 +1,4 @@
-package foo.bar.three;
+package foo.bar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

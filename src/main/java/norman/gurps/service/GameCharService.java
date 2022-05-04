@@ -18,7 +18,7 @@ public class GameCharService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
     private static final String APP_DIR_NAME = ".gurps-combat";
     private static final String APP_CHAR_FILE_NAME = "characters.json";
-    private static ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public static List<GameChar> findAll() {
         return loadGameChars();

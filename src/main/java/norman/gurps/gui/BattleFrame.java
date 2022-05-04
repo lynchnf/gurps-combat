@@ -77,20 +77,19 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         // Combatants pane with tool bar.
         JPanel combatantPanel = createPanel(null);
         JToolBar toolBar = createToolBar(combatantPanel);
-        addCharButton = createButton("images/character16.png", null, "battle.tool.tip.add.char", this, toolBar);
-        addGroupButton = createButton("images/group16.png", null, "battle.tool.tip.add.group", this, toolBar);
-        startButton = createButton("images/start16.png", null, "battle.tool.tip.start", this, toolBar);
+        addCharButton = createButton("images/character16.png", null, "battle.add.char.tool.tip", this, toolBar);
+        addGroupButton = createButton("images/group16.png", null, "battle.add.group.tool.tip", this, toolBar);
+        startButton = createButton("images/start16.png", null, "battle.start.tool.tip", this, toolBar);
 
         // Combatant table.
         CombatantTableModel model = new CombatantTableModel();
         combatantTable = new JTable(model);
         String imagePath = "images/remove8.png";
         String textKey = null;
-        String toolTipKey = "combatant.table.column.button.tool.tip";
+        String toolTipKey = "combatant.table.remove.char.tool.tip";
         ActionListener listener = this;
-        CombatantButtonColumn buttonColumn = new CombatantButtonColumn(
-imagePath, textKey, toolTipKey, listener,
-                combatantTable, 0);
+        CombatantButtonColumn buttonColumn =
+                new CombatantButtonColumn(imagePath, textKey, toolTipKey, listener, combatantTable, 0);
 
         JComboBox<BattleAction> actionComboBox = new JComboBox<>(BattleAction.values());
         DefaultCellEditor actionEditor = new DefaultCellEditor(actionComboBox);
@@ -140,8 +139,8 @@ imagePath, textKey, toolTipKey, listener,
     }
 
     private void addChar() {
-        GameChar gameChar = showSelectCharDialog("images/character32.png", "combatant.dialog.add.char.title",
-                "combatant.dialog.add.char.message", this);
+        GameChar gameChar = showSelectCharDialog("images/character32.png", "battle.add.char.dialog.title",
+                "battle.add.char.dialog.message", this);
         if (gameChar != null) {
             // Save current state of battle.
             // TODO Battle object will grow exponentially. Fix this soon!

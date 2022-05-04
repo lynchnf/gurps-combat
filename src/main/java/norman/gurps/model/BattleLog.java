@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class BattleLog {
     public static final DateFormat FORMAT = DateFormat.getTimeInstance(DateFormat.MEDIUM);
-    private Date timestamp = new Date();
+    private final Date timestamp = new Date();
     private String message;
     private String battleJson;
 

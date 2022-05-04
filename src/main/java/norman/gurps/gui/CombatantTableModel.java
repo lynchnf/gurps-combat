@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 public class CombatantTableModel extends AbstractTableModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(CombatantTableModel.class);
-    private ResourceBundle bundle;
+    private final ResourceBundle bundle;
     private final String[] columnNames;
     private final List<CombatantTableRow> dataList = new ArrayList<>();
 

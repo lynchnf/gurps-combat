@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 
 public class CombatantButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CombatantButtonColumn.class);
-    private ResourceBundle bundle;
-    private ClassLoader loader;
+    private final ResourceBundle bundle;
+    private final ClassLoader loader;
     private Object cellEditorValue;
     private final JButton rendererButton;
     private final JButton editorButton;
