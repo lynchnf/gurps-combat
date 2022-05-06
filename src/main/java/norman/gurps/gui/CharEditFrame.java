@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -19,12 +20,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class CharEditFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
     private ResourceBundle bundle;
+    private ClassLoader loader;
     private int gbcInsetx;
     private int gbcInsety;
     private Long modelId;
@@ -44,6 +47,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private void initComponents(GameChar gameChar, int frameCount) {
         LOGGER.debug("Initializing character edit frame.");
         bundle = ResourceBundle.getBundle("message");
+        loader = Thread.currentThread().getContextClassLoader();
         setTitle(bundle.getString("char.frame.edit.title"));
         setLayout(new GridBagLayout());
         setResizable(true);
@@ -57,28 +61,19 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         int attrCols = Integer.parseInt(bundle.getString("char.attribute.width"));
         int speedCols = Integer.parseInt(bundle.getString("char.basic.speed.width"));
 
-        createLabel("char.name", this, createGbc(0, 0));
+        createLabel(null, "char.name", null, this, createGbc(0, 0));
         nameField = createField(nameCols, this, createGbc(1, 0));
-        createLabel("char.strength", this, createGbc(0, 1));
+        createLabel(null, "char.strength", null, this, createGbc(0, 1));
         strengthSpinner = createSpinner(attrCols, this, createGbc(1, 1));
-        createLabel("char.dexterity", this, createGbc(0, 2));
+        createLabel(null, "char.dexterity", null, this, createGbc(0, 2));
         dexteritySpinner = createSpinner(attrCols, this, createGbc(1, 2));
-        createLabel("char.intelligence", this, createGbc(0, 3));
+        createLabel(null, "char.intelligence", null, this, createGbc(0, 3));
         intelligenceSpinner = createSpinner(attrCols, this, createGbc(1, 3));
-        createLabel("char.health", this, createGbc(0, 4));
+        createLabel(null, "char.health", null, this, createGbc(0, 4));
         healthSpinner = createSpinner(attrCols, this, createGbc(1, 4));
-        createLabel("char.basic.speed", this, createGbc(0, 5));
-
+        createLabel(null, "char.basic.speed", null, this, createGbc(0, 5));
         basicSpeedSpinner = createSpinner(speedCols, 0.00, 0.00, null, 0.25, this, createGbc(1, 5));
-        //        SpinnerModel model = new SpinnerNumberModel(0.00, 0.00, null, 0.25);
-        //        basicSpeedSpinner = new JSpinner(model);
-        //        JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) basicSpeedSpinner.getEditor();
-        //        editor.getTextField().setColumns(speedCols);
-        //        GridBagConstraints gbc = createGbc(1, 5);
-        //        gbc.anchor = GridBagConstraints.LINE_START;
-        //        this.add(basicSpeedSpinner, gbc);
-
-        saveButton = createButton("char.save", this, createGbc(1, 6));
+        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 6));
 
         pack();
         setVisible(true);
@@ -131,17 +126,34 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
 
     // COMMON METHODS // TODO Refactor these someday.
 
-    private JLabel createLabel(String key, Container container, GridBagConstraints gbc) {
-        JLabel label = new JLabel(bundle.getString(key));
+    private JButton createButton(String imagePath, String textKey, String toolTipKey, ActionListener listener,
+            Container container, GridBagConstraints gbc) {
+        JButton button = new JButton();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon icon = new ImageIcon(url);
+            button.setIcon(icon);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            button.setText(text);
+        }
+        if (toolTipKey != null) {
+            String toolTip = bundle.getString(toolTipKey);
+            button.setToolTipText(toolTip);
+        }
+        if (listener != null) {
+            button.addActionListener(listener);
+        }
         if (container != null) {
             if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_END;
-                container.add(label, gbc);
+                gbc.anchor = GridBagConstraints.LINE_START;
+                container.add(button, gbc);
             } else {
-                container.add(label);
+                container.add(button);
             }
         }
-        return label;
+        return button;
     }
 
     private JTextField createField(int columns, Container container, GridBagConstraints gbc) {
@@ -155,6 +167,41 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             }
         }
         return field;
+    }
+
+    private GridBagConstraints createGbc(int gridx, int gridy) {
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.gridx = gridx;
+        constraints.gridy = gridy;
+        constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
+        return constraints;
+    }
+
+    private JLabel createLabel(String imagePath, String textKey, String toolTipKey, Container container,
+            GridBagConstraints gbc) {
+        JLabel label = new JLabel();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon icon = new ImageIcon(url);
+            label.setIcon(icon);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            label.setText(text);
+        }
+        if (toolTipKey != null) {
+            String toolTip = bundle.getString(toolTipKey);
+            label.setToolTipText(toolTip);
+        }
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_END;
+                container.add(label, gbc);
+            } else {
+                container.add(label);
+            }
+        }
+        return label;
     }
 
     private JSpinner createSpinner(int columns, Container container, GridBagConstraints gbc) {
@@ -184,27 +231,5 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             }
         }
         return spinner;
-    }
-
-    private JButton createButton(String key, Container container, GridBagConstraints gbc) {
-        JButton button = new JButton(bundle.getString(key));
-        button.addActionListener(this);
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(button, gbc);
-            } else {
-                container.add(button);
-            }
-        }
-        return button;
-    }
-
-    private GridBagConstraints createGbc(int gridx, int gridy) {
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = gridx;
-        constraints.gridy = gridy;
-        constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
-        return constraints;
     }
 }

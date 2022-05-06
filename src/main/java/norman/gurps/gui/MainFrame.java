@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractButton;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -19,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -27,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyVetoException;
+import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +40,7 @@ import java.util.ResourceBundle;
 public class MainFrame extends JFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
     private ResourceBundle bundle;
+    private ClassLoader loader;
     private final Properties appProps;
     private JDesktopPane desktop;
     private JMenuItem optionsFileItem;
@@ -64,6 +69,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private void initComponents() {
         LOGGER.debug("Initializing window components. Locale = " + Locale.getDefault());
         bundle = ResourceBundle.getBundle("message");
+        loader = Thread.currentThread().getContextClassLoader();
         setTitle(bundle.getString("main.frame.title"));
         desktop = new JDesktopPane();
         desktop.setOpaque(false);
@@ -72,16 +78,16 @@ public class MainFrame extends JFrame implements ActionListener {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
-        JMenu fileMenu = createMenu("main.file", menuBar);
-        createBattleItem = createMenuItem("main.battle", fileMenu);
-        optionsFileItem = createMenuItem("main.options", fileMenu);
+        JMenu fileMenu = createMenu(null, "main.file", null, menuBar);
+        createBattleItem = createMenuItem(null, "main.battle", null, this, fileMenu);
+        optionsFileItem = createMenuItem(null, "main.options", null, this, fileMenu);
         fileMenu.add(new JSeparator());
-        exitFileItem = createMenuItem("main.exit", fileMenu);
+        exitFileItem = createMenuItem(null, "main.exit", null, this, fileMenu);
 
-        JMenu charMenu = createMenu("main.char", menuBar);
-        createCharItem = createMenuItem("main.char.create", charMenu);
-        updateCharItem = createMenuItem("main.char.update", charMenu);
-        deleteCharItem = createMenuItem("main.char.delete", charMenu);
+        JMenu charMenu = createMenu(null, "main.char", null, menuBar);
+        createCharItem = createMenuItem(null, "main.char.create", null, this, charMenu);
+        updateCharItem = createMenuItem(null, "main.char.update", null, this, charMenu);
+        deleteCharItem = createMenuItem(null, "main.char.delete", null, this, charMenu);
     }
 
     @Override
@@ -186,16 +192,18 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     private void updateChar() {
-        GameChar choice = showSelectCharDialog("main.char.update.dialog.title", "main.char.update.dialog.message");
-        if (choice != null) {
-            showCharEditFrame(choice);
+        GameChar gameChar = showSelectCharDialog("images/character32.png", "main.char.update.dialog.title",
+                "main.char.update.dialog.message", desktop);
+        if (gameChar != null) {
+            showCharEditFrame(gameChar);
         }
     }
 
     private void deleteChar() {
-        GameChar choice = showSelectCharDialog("main.char.delete.dialog.title", "main.char.delete.dialog.message");
-        if (choice != null) {
-            showCharViewFrame(choice);
+        GameChar gameChar = showSelectCharDialog("images/remove32.png", "main.char.delete.dialog.title",
+                "main.char.delete.dialog.message", desktop);
+        if (gameChar != null) {
+            showCharViewFrame(gameChar);
         }
     }
 
@@ -221,30 +229,71 @@ public class MainFrame extends JFrame implements ActionListener {
 
     // COMMON METHODS // TODO Refactor these someday.
 
-    private GameChar showSelectCharDialog(String titleKey, String messageKey) {
-        String title = bundle.getString(titleKey);
-        Object message = bundle.getString(messageKey);
-        List<GameChar> allGameChars = GameCharService.findAll();
-        allGameChars.sort(Comparator.comparing(GameChar::getName));
-        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
-        return (GameChar) JOptionPane.showInternalInputDialog(desktop, message, title, JOptionPane.PLAIN_MESSAGE, null,
-                selectionValues, null);
-    }
-
-    private JMenu createMenu(String key, JMenuBar bar) {
-        JMenu menu = new JMenu(bundle.getString(key));
+    private JMenu createMenu(String imagePath, String textKey, String toolTipKey, JMenuBar bar) {
+        JMenu menu = new JMenu();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon icon = new ImageIcon(url);
+            menu.setIcon(icon);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            menu.setText(text);
+        }
+        if (toolTipKey != null) {
+            String toolTip = bundle.getString(toolTipKey);
+            menu.setToolTipText(toolTip);
+        }
         if (bar != null) {
             bar.add(menu);
         }
         return menu;
     }
 
-    private JMenuItem createMenuItem(String key, JMenu menu) {
-        JMenuItem item = new JMenuItem(bundle.getString(key));
-        item.addActionListener(this);
+    private JMenuItem createMenuItem(String imagePath, String textKey, String toolTipKey, ActionListener listener,
+            JMenu menu) {
+        JMenuItem item = new JMenuItem();
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            ImageIcon icon = new ImageIcon(url);
+            item.setIcon(icon);
+        }
+        if (textKey != null) {
+            String text = bundle.getString(textKey);
+            item.setText(text);
+        }
+        if (toolTipKey != null) {
+            String toolTip = bundle.getString(toolTipKey);
+            item.setToolTipText(toolTip);
+        }
+        if (listener != null) {
+            item.addActionListener(listener);
+        }
         if (menu != null) {
             menu.add(item);
         }
         return item;
+    }
+
+    private GameChar showSelectCharDialog(String imagePath, String titleKey, String messageKey,
+            Component parentComponent) {
+        Icon icon = null;
+        if (imagePath != null) {
+            URL url = loader.getResource(imagePath);
+            icon = new ImageIcon(url);
+        }
+        String title = null;
+        if (titleKey != null) {
+            title = bundle.getString(titleKey);
+        }
+        Object message = null;
+        if (messageKey != null) {
+            message = bundle.getString(messageKey);
+        }
+        List<GameChar> allGameChars = GameCharService.findAll();
+        allGameChars.sort(Comparator.comparing(GameChar::getName));
+        GameChar[] selectionValues = allGameChars.toArray(new GameChar[0]);
+        return (GameChar) JOptionPane.showInternalInputDialog(parentComponent, message, title,
+                JOptionPane.PLAIN_MESSAGE, icon, selectionValues, null);
     }
 }

@@ -51,6 +51,8 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     private JButton addGroupButton;
     private JButton startButton;
     private JTable combatantTable;
+    private ButtonColumn combatantButtonColumn;
+
     private JList<BattleLog> logList;
 
     public BattleFrame() {
@@ -74,7 +76,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         JLabel mapLabel = createLabel("images/battlefield.png", null, null);
         JScrollPane mapScroll = makeScrollable(mapLabel, 100, 100);
 
-        // Combatants pane with tool bar.
+        // Combatants pane with toolbar.
         JPanel combatantPanel = createPanel(null);
         JToolBar toolBar = createToolBar(combatantPanel);
         addCharButton = createButton("images/character16.png", null, "battle.add.char.tool.tip", this, toolBar);
@@ -84,13 +86,13 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         // Combatant table.
         CombatantTableModel model = new CombatantTableModel();
         combatantTable = new JTable(model);
-        String imagePath = "images/remove8.png";
-        String textKey = null;
-        String toolTipKey = "combatant.table.remove.char.tool.tip";
-        ActionListener listener = this;
-        CombatantButtonColumn buttonColumn =
-                new CombatantButtonColumn(imagePath, textKey, toolTipKey, listener, combatantTable, 0);
 
+        // Renderer and editor for button.
+        combatantButtonColumn = new ButtonColumn(combatantTable, this);
+        combatantTable.getColumnModel().getColumn(0).setCellRenderer(combatantButtonColumn);
+        combatantTable.getColumnModel().getColumn(0).setCellEditor(combatantButtonColumn);
+
+        // Renderer for action.
         JComboBox<BattleAction> actionComboBox = new JComboBox<>(BattleAction.values());
         DefaultCellEditor actionEditor = new DefaultCellEditor(actionComboBox);
         TableColumn actionColumn = combatantTable.getColumnModel().getColumn(7);
@@ -106,9 +108,8 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         }
 
         // Make combatant table scrollable.
-        combatantTable.setPreferredScrollableViewportSize(new Dimension(100, 100));
-        combatantTable.setFillsViewportHeight(true);
-        combatantPanel.add(new JScrollPane(combatantTable));
+        JScrollPane combatantScrollable = makeScrollable(combatantTable, 100, 100);
+        combatantPanel.add(combatantScrollable);
 
         // Battle logs.
         BattleLog log = new BattleLog(bundle.getString("battle.log.created"), null);
@@ -133,6 +134,8 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             //addGroup();
         } else if (e.getSource().equals(startButton)) {
             //start();
+        } else if (e.getSource().equals(combatantButtonColumn.getButton())) {
+            removeChar();
         } else {
             LOGGER.debug("ActionEvent=\"" + e + "\"");
         }
@@ -161,7 +164,9 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             Combatant combatant = new Combatant(gameChar, existingNames);
 
             // Add character to battle.
-            CombatantTableRow row = new CombatantTableRow(combatant);
+            ButtonDescriptor descriptor =
+                    new ButtonDescriptor("images/remove8.png", null, "combatant.table.remove.char.tool.tip");
+            CombatantTableRow row = new CombatantTableRow(combatant, descriptor);
             model.addRow(row);
 
             // Add log saying we added character.
@@ -171,6 +176,30 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
             logListModel.addElement(log);
         }
+    }
+
+    private void removeChar() {
+        // Save current state of battle.
+        // TODO Battle object will grow exponentially. Fix this soon!
+        String battleJson = null;
+        try {
+            battleJson = mapper.writeValueAsString(battle);
+        } catch (JsonProcessingException e) {
+            throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
+        }
+
+        // Remove character from battle.
+        int rowIndex = combatantButtonColumn.getEditingRow();
+        CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
+        String name = (String) model.getValueAt(rowIndex, 1);
+        model.removeRow(rowIndex);
+
+        // Add log saying we removed character.
+        String message = String.format(bundle.getString("battle.log.char.removed"), name);
+        BattleLog log = new BattleLog(message, battleJson);
+        battle.getBattleLogs().add(log);
+        DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
+        logListModel.addElement(log);
     }
 
     // COMMON METHODS // TODO Refactor these someday.

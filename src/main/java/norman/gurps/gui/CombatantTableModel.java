@@ -12,13 +12,11 @@ import java.util.ResourceBundle;
 
 public class CombatantTableModel extends AbstractTableModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(CombatantTableModel.class);
-    private final ResourceBundle bundle;
     private final String[] columnNames;
     private final List<CombatantTableRow> dataList = new ArrayList<>();
 
     public CombatantTableModel() {
-        bundle = ResourceBundle.getBundle("message");
-
+        ResourceBundle bundle = ResourceBundle.getBundle("message");
         String columnNameCsv = bundle.getString("combatant.table.column.names");
         columnNames = StringUtils.split(columnNameCsv, ',');
     }
@@ -56,7 +54,7 @@ public class CombatantTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         CombatantTableRow row = dataList.get(rowIndex);
         if (columnIndex == 0) {
-            return null;
+            return row.getButtonDescriptor();
         } else if (columnIndex == 1) {
             return row.getName();
         } else if (columnIndex == 2) {
@@ -86,7 +84,7 @@ public class CombatantTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         CombatantTableRow row = dataList.get(rowIndex);
         if (columnIndex == 0) {
-            // Do nothing for now.
+            row.setButtonDescriptor((ButtonDescriptor) aValue);
         } else if (columnIndex == 1) {
             row.setName((String) aValue);
         } else if (columnIndex == 2) {
@@ -113,8 +111,8 @@ public class CombatantTableModel extends AbstractTableModel {
         fireTableRowsInserted(newRowIndex, newRowIndex);
     }
 
-    public void removeRow(int index) {
-        dataList.remove(index);
-        fireTableRowsDeleted(index, index);
+    public void removeRow(int rowIndex) {
+        dataList.remove(rowIndex);
+        fireTableRowsDeleted(rowIndex, rowIndex);
     }
 }
