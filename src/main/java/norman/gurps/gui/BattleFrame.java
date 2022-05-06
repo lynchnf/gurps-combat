@@ -133,7 +133,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         } else if (e.getSource().equals(addGroupButton)) {
             //addGroup();
         } else if (e.getSource().equals(startButton)) {
-            //start();
+            start();
         } else if (e.getSource().equals(combatantButtonColumn.getButton())) {
             removeChar();
         } else {
@@ -200,6 +200,31 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         battle.getBattleLogs().add(log);
         DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
         logListModel.addElement(log);
+    }
+
+    private void start() {
+        // Save current state of battle.
+        // TODO Battle object will grow exponentially. Fix this soon!
+        String battleJson = null;
+        try {
+            battleJson = mapper.writeValueAsString(battle);
+        } catch (JsonProcessingException e) {
+            throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
+        }
+
+        // Sort characters
+        CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
+        model.sort();
+
+
+        // Add log saying we removed character.
+        String message = bundle.getString("battle.log.start");
+        BattleLog log = new BattleLog(message, battleJson);
+        battle.getBattleLogs().add(log);
+        DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
+        logListModel.addElement(log);
+
+        startButton.setEnabled(false);
     }
 
     // COMMON METHODS // TODO Refactor these someday.

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -114,5 +115,11 @@ public class CombatantTableModel extends AbstractTableModel {
     public void removeRow(int rowIndex) {
         dataList.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
+    }
+
+    public void sort() {
+        dataList.sort(
+                Comparator.comparing(CombatantTableRow::getBasicSpeed).thenComparing(CombatantTableRow::getDexterity));
+        fireTableDataChanged();
     }
 }
