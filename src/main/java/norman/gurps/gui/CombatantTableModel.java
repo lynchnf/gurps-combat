@@ -1,6 +1,5 @@
 package norman.gurps.gui;
 
-import norman.gurps.model.BattleAction;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ public class CombatantTableModel extends AbstractTableModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(CombatantTableModel.class);
     private final String[] columnNames;
     private final List<CombatantTableRow> dataList = new ArrayList<>();
+    private boolean started = false;
 
     public CombatantTableModel() {
         ResourceBundle bundle = ResourceBundle.getBundle("message");
@@ -67,9 +67,11 @@ public class CombatantTableModel extends AbstractTableModel {
         } else if (columnIndex == 5) {
             return row.getHealth();
         } else if (columnIndex == 6) {
-            return row.getBasicSpeed();
+            return row.getHitPoints();
         } else if (columnIndex == 7) {
-            return row.getAction();
+            return row.getBasicSpeed();
+        } else if (columnIndex == 8) {
+            return row.getDamageResistance();
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
             return null;
@@ -78,7 +80,12 @@ public class CombatantTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        // Before battle starts, name column may not be changed. After battle starts, only the button many be "changed".
+        if (started) {
+            return columnIndex == 0;
+        } else {
+            return columnIndex != 1;
+        }
     }
 
     @Override
@@ -86,24 +93,37 @@ public class CombatantTableModel extends AbstractTableModel {
         CombatantTableRow row = dataList.get(rowIndex);
         if (columnIndex == 0) {
             row.setButtonDescriptor((ButtonDescriptor) aValue);
+            fireTableCellUpdated(rowIndex, 0);
         } else if (columnIndex == 1) {
             row.setName((String) aValue);
+            fireTableCellUpdated(rowIndex, 1);
         } else if (columnIndex == 2) {
             row.setStrength((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 2);
+            fireTableCellUpdated(rowIndex, 6);
         } else if (columnIndex == 3) {
             row.setDexterity((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 3);
+            fireTableCellUpdated(rowIndex, 7);
         } else if (columnIndex == 4) {
             row.setIntelligence((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 4);
         } else if (columnIndex == 5) {
             row.setHealth((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 5);
         } else if (columnIndex == 6) {
-            row.setBasicSpeed((Double) aValue);
+            row.setHitPoints((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 6);
+            fireTableCellUpdated(rowIndex, 7);
         } else if (columnIndex == 7) {
-            row.setAction((BattleAction) aValue);
+            row.setBasicSpeed((Double) aValue);
+            fireTableCellUpdated(rowIndex, 7);
+        } else if (columnIndex == 8) {
+            row.setDamageResistance((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 8);
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
         }
-        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     public void addRow(CombatantTableRow dataRow) {
@@ -117,9 +137,15 @@ public class CombatantTableModel extends AbstractTableModel {
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void sort() {
+    public void start() {
+        started = true;
         dataList.sort(
-                Comparator.comparing(CombatantTableRow::getBasicSpeed).thenComparing(CombatantTableRow::getDexterity));
+                Comparator.comparing(CombatantTableRow::getBasicSpeed).thenComparing(CombatantTableRow::getDexterity)
+                        .reversed());
         fireTableDataChanged();
+    }
+
+    public boolean isStarted() {
+        return started;
     }
 }

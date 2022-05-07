@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class GameCharService {
     private static final Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
@@ -25,32 +26,41 @@ public class GameCharService {
     }
 
     public static List<String> validate(GameChar gameChar) {
+        ResourceBundle bundle = ResourceBundle.getBundle("message");
+
         List<String> errors = new ArrayList<>();
         if (gameChar.getName() == null) {
-            errors.add("Name may not be blank.");
+            errors.add(bundle.getString("char.error.name.blank"));
         } else {
             List<GameChar> oldGameChars = loadGameChars();
             for (GameChar oldGameChar : oldGameChars) {
                 if (oldGameChar.getName().equals(gameChar.getName()) &&
                         !Objects.equals(oldGameChar.getId(), gameChar.getId())) {
-                    errors.add("Name " + gameChar.getName() + " is not unique.");
+                    String error = String.format(bundle.getString("char.error.name.non.unique"), gameChar.getName());
+                    errors.add(error);
                 }
             }
         }
         if (gameChar.getStrength() < 0) {
-            errors.add("ST may not be less than zero.");
+            errors.add(bundle.getString("char.error.strength.negative"));
         }
         if (gameChar.getDexterity() < 0) {
-            errors.add("DX may not be less than zero.");
+            errors.add(bundle.getString("char.error.dexterity.negative"));
         }
         if (gameChar.getIntelligence() < 0) {
-            errors.add("IQ may not be less than zero.");
+            errors.add(bundle.getString("char.error.intelligence.negative"));
         }
         if (gameChar.getHealth() < 0) {
-            errors.add("HT may not be less than zero.");
+            errors.add(bundle.getString("char.error.health.negative"));
+        }
+        if (gameChar.getHitPoints() < 0) {
+            errors.add(bundle.getString("char.error.hit.point.negative"));
         }
         if (gameChar.getBasicSpeed() < 0.0) {
-            errors.add("Basic Speed may not be less than zero.");
+            errors.add(bundle.getString("char.error.basic.speed.negative"));
+        }
+        if (gameChar.getDamageResistance() < 0) {
+            errors.add(bundle.getString("char.error.hit.damage.resistance.negative"));
         }
         return errors;
     }

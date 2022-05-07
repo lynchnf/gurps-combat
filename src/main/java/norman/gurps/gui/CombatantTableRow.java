@@ -1,6 +1,5 @@
 package norman.gurps.gui;
 
-import norman.gurps.model.BattleAction;
 import norman.gurps.model.Combatant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +26,6 @@ public class CombatantTableRow {
         return combatant.getName();
     }
 
-    // TODO Remove setter.
     public void setName(String name) {
         combatant.setName(name);
     }
@@ -64,6 +62,14 @@ public class CombatantTableRow {
         combatant.setHealth(health);
     }
 
+    public Integer getHitPoints() {
+        return combatant.getHitPoints();
+    }
+
+    public void setHitPoints(Integer hitPoints) {
+        combatant.setHitPoints(hitPoints);
+    }
+
     public Double getBasicSpeed() {
         return combatant.getBasicSpeed();
     }
@@ -72,11 +78,11 @@ public class CombatantTableRow {
         combatant.setBasicSpeed(basicSpeed);
     }
 
-    public BattleAction getAction() {
-        return combatant.getAction();
+    public Integer getDamageResistance() {
+        return combatant.getDamageResistance();
     }
 
-    public void setAction(BattleAction action) {
-        combatant.setAction(action);
+    public void setDamageResistance(Integer damageResistance) {
+        combatant.setDamageResistance(damageResistance);
     }
 }

@@ -7,24 +7,9 @@ public class GameChar {
     private Integer dexterity = 10;
     private Integer intelligence = 10;
     private Integer health = 10;
-    // TODO Uncomment these later.
-    //private Integer damageThrustDice;
-    //private Integer damageThrustAdds;
-    //private Integer damageSwingDice;
-    //private Integer damageSwingAdds;
-    //private Float basicLift;
-    //private Integer hitPoints;
-    //private Integer hitPointsAdj;
-    //private Integer will;
-    //private Integer willAdj;
-    //private Integer perception;
-    //private Integer perceptionAdj;
-    //private Integer fatigueHits;
-    //private Integer fatigueHitsAdj;
-    private Double basicSpeed = 5.00;
-    //private Double basicSpeedAdj = 0.0;
-    //private Integer basicMove;
-    //private Integer basicMoveAdj;
+    private Integer hitPointsAdj = 0;
+    private Double basicSpeedAdj = 0.0;
+    private Integer damageResistance = 0;
 
     public Long getId() {
         return id;
@@ -74,12 +59,77 @@ public class GameChar {
         this.health = health;
     }
 
+    //public Integer getDamageThrustDice() {
+    //    if (strength <= 0) {
+    //        return 0;
+    //    } else if (strength < 11) {
+    //        return 1;
+    //    } else {
+    //        return (strength - 11) / 8 + 1;
+    //    }
+    //}
+    //
+    //public Integer getDamageThrustAdds() {
+    //    if (strength <= 0) {
+    //        return 0;
+    //    } else if (strength < 11) {
+    //        return (strength - 1) / 2 - 6;
+    //    } else {
+    //        return (strength - 11) / 2 % 4 - 1;
+    //    }
+    //}
+    //
+    //public Integer getDamageSwingDice() {
+    //    if (strength <= 0) {
+    //        return 0;
+    //    } else if (strength < 9) {
+    //        return 1;
+    //    } else {
+    //        return (strength - 9) / 4 + 1;
+    //    }
+    //}
+    //
+    //public Integer getDamageSwingAdds() {
+    //    if (strength <= 0) {
+    //        return 0;
+    //    } else if (strength < 9) {
+    //        return (strength - 1) / 2 - 5;
+    //    } else {
+    //        return (strength - 9) % 4 - 1;
+    //    }
+    //}
+    //
+    //public Double getBasicLift() {
+    //    double basicLift = (double) (strength * strength) / 5;
+    //    if (basicLift < 10.0) {
+    //        return basicLift;
+    //    } else {
+    //        return (double) Math.round(basicLift);
+    //    }
+    //}
+
+    public Integer getHitPoints() {
+        return strength + hitPointsAdj;
+    }
+
+    public void setHitPoints(Integer hitPoints) {
+        hitPointsAdj = hitPoints - strength;
+    }
+
     public Double getBasicSpeed() {
-        return basicSpeed;
+        return (dexterity + health) / 4.0 + basicSpeedAdj;
     }
 
     public void setBasicSpeed(Double basicSpeed) {
-        this.basicSpeed = basicSpeed;
+        basicSpeedAdj = basicSpeed - (dexterity + health) / 4.0;
+    }
+
+    public Integer getDamageResistance() {
+        return damageResistance;
+    }
+
+    public void setDamageResistance(Integer damageResistance) {
+        this.damageResistance = damageResistance;
     }
 
     @Override

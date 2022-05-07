@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
 import norman.gurps.model.Battle;
-import norman.gurps.model.BattleAction;
 import norman.gurps.model.BattleLog;
 import norman.gurps.model.Combatant;
 import norman.gurps.model.GameChar;
@@ -13,12 +12,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -46,7 +43,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     private ResourceBundle bundle;
     private ClassLoader loader;
     private ObjectMapper mapper;
-    private Battle battle;
+    private final Battle battle;
     private JButton addCharButton;
     private JButton addGroupButton;
     private JButton startButton;
@@ -57,6 +54,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
     public BattleFrame() {
         super();
+        battle = new Battle();
         initComponents();
     }
 
@@ -71,7 +69,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         setClosable(true);
         setMaximizable(true);
         setIconifiable(true);
-        battle = new Battle();
+
         // Battlefield map.
         JLabel mapLabel = createLabel("images/battlefield.png", null, null);
         JScrollPane mapScroll = makeScrollable(mapLabel, 100, 100);
@@ -93,10 +91,10 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         combatantTable.getColumnModel().getColumn(0).setCellEditor(combatantButtonColumn);
 
         // Renderer for action.
-        JComboBox<BattleAction> actionComboBox = new JComboBox<>(BattleAction.values());
-        DefaultCellEditor actionEditor = new DefaultCellEditor(actionComboBox);
-        TableColumn actionColumn = combatantTable.getColumnModel().getColumn(7);
-        actionColumn.setCellEditor(actionEditor);
+        //JComboBox<BattleAction> actionComboBox = new JComboBox<>(BattleAction.values());
+        //DefaultCellEditor actionEditor = new DefaultCellEditor(actionComboBox);
+        //TableColumn actionColumn = combatantTable.getColumnModel().getColumn(7);
+        //actionColumn.setCellEditor(actionEditor);
 
         // Combatant table column widths.
         String columnWidthCsv = bundle.getString("combatant.table.column.widths");
@@ -170,7 +168,13 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             model.addRow(row);
 
             // Add log saying we added character.
-            String message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
+            String message;
+            if (model.isStarted()) {
+                model.start();
+                message = String.format(bundle.getString("battle.log.char.added.and.sorted"), combatant.getName());
+            } else {
+                message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
+            }
             BattleLog log = new BattleLog(message, battleJson);
             battle.getBattleLogs().add(log);
             DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
@@ -212,10 +216,9 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
         }
 
-        // Sort characters
+        // Sort and initialize characters
         CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
-        model.sort();
-
+        model.start();
 
         // Add log saying we removed character.
         String message = bundle.getString("battle.log.start");

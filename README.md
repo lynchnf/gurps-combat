@@ -16,8 +16,8 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 | Remove GameChar from Battle           | 1   | 4/25/2022  | 5/5/2022  | 10   |
 | Start Battle (log)                    | 2   | 5/5/2022   | 5/6/2022  | 1    |
 | Start Battle (sort)                   | 2   | 5/6/2022   | 5/6/2022  | 0    |
-| Validate GameChar                     | 2   |            |           |      |
-| Start Battle (init GameChars)         | 1   |            |           |      |
+| Validate GameChar                     | 2   | 5/6/2022   | 5/7/2022  | 1    |
+| Start Battle (init GameChars)         | 1   | 5/7/2022   | 5/7/2022  | 0    |
 | Step through Battle (do nothing)      | 3   |            |           |      |
 | [Hardening] Address ToDo's            |     |            |           |      |
 | [Hardening] Combine .properties files | 1   | 5/5/2022   | 5/5/2022  | 0    |
