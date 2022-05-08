@@ -1,0 +1,359 @@
+[
+  {
+    "name": "Axe",
+    "skills": [
+      {
+        "skillName": "Axe/Mace",
+        "minimumStrength": 11,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "chop",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "CUTTING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Mace",
+    "skills": [
+      {
+        "skillName": "Axe/Mace",
+        "minimumStrength": 12,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 3,
+            "damageType": "CRUSHING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Brass Knuckles",
+    "skills": [
+      {
+        "skillName": "Brawling",
+        "minimumStrength": null,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "punch",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "CRUSHING"
+          }
+        ]
+      },
+      {
+        "skillName": "Karate",
+        "minimumStrength": null,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "punch",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "CRUSHING"
+          }
+        ]
+      },
+      {
+        "skillName": "DX",
+        "minimumStrength": null,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "punch",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "CRUSHING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Broadsword",
+    "skills": [
+      {
+        "skillName": "Broadsword",
+        "minimumStrength": 10,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 1,
+            "damageType": "CUTTING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 1,
+            "damageType": "CRUSHING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Thrusting Broadsword",
+    "skills": [
+      {
+        "skillName": "Broadsword",
+        "minimumStrength": 10,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 1,
+            "damageType": "CUTTING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Large Knife",
+    "skills": [
+      {
+        "skillName": "Knife",
+        "minimumStrength": 6,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "slash",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": -2,
+            "damageType": "CUTTING"
+          },
+          {
+            "modeName": "stab",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Poleaxe",
+    "skills": [
+      {
+        "skillName": "Polearm",
+        "minimumStrength": 12,
+        "unReadied": true,
+        "modes": [
+          {
+            "modeName": "blade",
+            "twoHanded": true,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 4,
+            "damageType": "CUTTING"
+          },
+          {
+            "modeName": "hammer",
+            "twoHanded": true,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 4,
+            "damageType": "CRUSHING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Rapier",
+    "skills": [
+      {
+        "skillName": "Rapier",
+        "minimumStrength": 9,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "stab",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 1,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Shortsword",
+    "skills": [
+      {
+        "skillName": "Shortsword",
+        "minimumStrength": 8,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": false,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "CUTTING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 0,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Spear",
+    "skills": [
+      {
+        "skillName": "Spear",
+        "minimumStrength": 9,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "onehand",
+            "twoHanded": false,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "IMPALING"
+          },
+          {
+            "modeName": "twohands",
+            "twoHanded": true,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 3,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Quarterstaff",
+    "skills": [
+      {
+        "skillName": "Staff",
+        "minimumStrength": 7,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": true,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "CRUSHING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": true,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "CRUSHING"
+          }
+        ]
+      },
+      {
+        "skillName": "Two-handed Sword",
+        "minimumStrength": 9,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": true,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 2,
+            "damageType": "CRUSHING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": true,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 1,
+            "damageType": "CRUSHING"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Thrusting Greatsword",
+    "skills": [
+      {
+        "skillName": "Two-handed Sword",
+        "minimumStrength": 9,
+        "unReadied": false,
+        "modes": [
+          {
+            "modeName": "swing",
+            "twoHanded": true,
+            "attackType": "SWING",
+            "damageDice": 0,
+            "damageAdds": 3,
+            "damageType": "CRUSHING"
+          },
+          {
+            "modeName": "thrust",
+            "twoHanded": true,
+            "attackType": "THRUST",
+            "damageDice": 0,
+            "damageAdds": 3,
+            "damageType": "IMPALING"
+          }
+        ]
+      }
+    ]
+  }
+]

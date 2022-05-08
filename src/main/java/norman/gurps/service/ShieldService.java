@@ -31,7 +31,6 @@ public class ShieldService {
         } catch (IOException e) {
             throw new LoggingException(LOGGER, "Error loading shields from resource " + SHIELDS_RESOURCE + ".", e);
         }
-
         return shieldList;
     }
 }
