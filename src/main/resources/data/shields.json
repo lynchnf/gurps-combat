@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Small Shield",
+    "defenseBonus": 1
+  },
+  {
+    "name": "Medium Shield",
+    "defenseBonus": 2
+  },
+  {
+    "name": "Large Shield",
+    "defenseBonus": 3
+  }
+]

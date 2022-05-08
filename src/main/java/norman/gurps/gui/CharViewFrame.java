@@ -35,6 +35,8 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
     private JTextField hitPointsField;
     private JTextField basicSpeedField;
     private JTextField damageResistanceField;
+    private JTextField shieldNameField;
+    private JTextField shieldDefenseBonusField;
     private JButton deleteButton;
 
     public CharViewFrame(GameChar gameChar, int frameCount) {
@@ -56,12 +58,13 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         gbcInsetx = Integer.parseInt(bundle.getString("char.frame.insets.x"));
         gbcInsety = Integer.parseInt(bundle.getString("char.frame.insets.y"));
         int nameCols = Integer.parseInt(bundle.getString("char.name.width"));
-        int attrCols = Integer.parseInt(bundle.getString("char.attribute.width"));
-        int speedCols = Integer.parseInt(bundle.getString("char.basic.speed.width"));
+        int attrCols = Integer.parseInt(bundle.getString("char.integer.width"));
+        int speedCols = Integer.parseInt(bundle.getString("char.double.width"));
+        int stringCols = Integer.parseInt(bundle.getString("char.string.width"));
 
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
-        nameField = createFieldReadOnly(nameCols, this, createGbc(1, 0));
+        nameField = createFieldReadOnly(nameCols, this, createGbc(1, 0, 3));
         nameField.setText(gameChar.getName());
         createLabel(null, "char.strength", null, this, createGbc(0, 1));
         strengthField = createFieldReadOnly(attrCols, this, createGbc(1, 1));
@@ -84,7 +87,15 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         createLabel(null, "char.damage.resist", null, this, createGbc(0, 7));
         damageResistanceField = createFieldReadOnly(attrCols, this, createGbc(1, 7));
         damageResistanceField.setText(String.valueOf(gameChar.getDamageResistance()));
-        deleteButton = createButton(null, "char.delete", null, this, this, createGbc(1, 8));
+        createLabel(null, "char.shield.name", null, this, createGbc(0, 8));
+        shieldNameField = createFieldReadOnly(stringCols, this, createGbc(1, 8));
+        shieldNameField.setText(gameChar.getShieldName());
+        createLabel(null, "char.shield.defense.bonus", null, this, createGbc(2, 8));
+        shieldDefenseBonusField = createFieldReadOnly(attrCols, this, createGbc(3, 8));
+        if (gameChar.getShieldDefenseBonus() != null) {
+            shieldDefenseBonusField.setText(String.valueOf(gameChar.getShieldDefenseBonus()));
+        }
+        deleteButton = createButton(null, "char.delete", null, this, this, createGbc(1, 9));
 
         pack();
         setVisible(true);
@@ -155,9 +166,14 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
     }
 
     private GridBagConstraints createGbc(int gridx, int gridy) {
+        return createGbc(gridx, gridy, 1);
+    }
+
+    private GridBagConstraints createGbc(int gridx, int gridy, int gridwidth) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
         constraints.gridy = gridy;
+        constraints.gridwidth = gridwidth;
         constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
         return constraints;
     }

@@ -1,7 +1,9 @@
 package norman.gurps.gui;
 
 import norman.gurps.model.GameChar;
+import norman.gurps.model.Shield;
 import norman.gurps.service.GameCharService;
+import norman.gurps.service.ShieldService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +25,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -40,6 +44,8 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private JSpinner hitPointsSpinner;
     private JSpinner basicSpeedSpinner;
     private JSpinner damageResistanceSpinner;
+    private JComboBox<String> shieldNameComboBox;
+    private JTextField shieldDefenseBonusField;
     private JButton saveButton;
 
     public CharEditFrame(GameChar gameChar, int frameCount) {
@@ -61,35 +67,51 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gbcInsetx = Integer.parseInt(bundle.getString("char.frame.insets.x"));
         gbcInsety = Integer.parseInt(bundle.getString("char.frame.insets.y"));
         int nameCols = Integer.parseInt(bundle.getString("char.name.width"));
-        int attrCols = Integer.parseInt(bundle.getString("char.attribute.width"));
-        int speedCols = Integer.parseInt(bundle.getString("char.basic.speed.width"));
+        int integerCols = Integer.parseInt(bundle.getString("char.integer.width"));
+        int doubleCols = Integer.parseInt(bundle.getString("char.double.width"));
+        List<Shield> shields = ShieldService.findAll();
+        List<String> shieldNames = new ArrayList<>();
+        for (Shield shield : shields) {
+            shieldNames.add(shield.getName());
+        }
 
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
-        nameField = createField(nameCols, this, createGbc(1, 0));
+        nameField = createField(nameCols, this, createGbc(1, 0, 3));
         nameField.setText(gameChar.getName());
         createLabel(null, "char.strength", null, this, createGbc(0, 1));
-        strengthSpinner = createSpinner(attrCols, this, createGbc(1, 1));
+        strengthSpinner = createSpinner(integerCols, this, createGbc(1, 1));
         strengthSpinner.setValue(gameChar.getStrength());
         createLabel(null, "char.dexterity", null, this, createGbc(0, 2));
-        dexteritySpinner = createSpinner(attrCols, this, createGbc(1, 2));
+        dexteritySpinner = createSpinner(integerCols, this, createGbc(1, 2));
         dexteritySpinner.setValue(gameChar.getDexterity());
         createLabel(null, "char.intelligence", null, this, createGbc(0, 3));
-        intelligenceSpinner = createSpinner(attrCols, this, createGbc(1, 3));
+        intelligenceSpinner = createSpinner(integerCols, this, createGbc(1, 3));
         intelligenceSpinner.setValue(gameChar.getIntelligence());
         createLabel(null, "char.health", null, this, createGbc(0, 4));
-        healthSpinner = createSpinner(attrCols, this, createGbc(1, 4));
+        healthSpinner = createSpinner(integerCols, this, createGbc(1, 4));
         healthSpinner.setValue(gameChar.getHealth());
         createLabel(null, "char.hit.points", null, this, createGbc(0, 5));
-        hitPointsSpinner = createSpinner(attrCols, this, createGbc(1, 5));
+        hitPointsSpinner = createSpinner(integerCols, this, createGbc(1, 5));
         hitPointsSpinner.setValue(gameChar.getHitPoints());
         createLabel(null, "char.basic.speed", null, this, createGbc(0, 6));
-        basicSpeedSpinner = createSpinner(speedCols, 0.00, null, null, 0.25, this, createGbc(1, 6));
+        basicSpeedSpinner = createSpinner(doubleCols, 0.00, null, null, 0.25, this, createGbc(1, 6));
         basicSpeedSpinner.setValue(gameChar.getBasicSpeed());
         createLabel(null, "char.damage.resist", null, this, createGbc(0, 7));
-        damageResistanceSpinner = createSpinner(attrCols, this, createGbc(1, 7));
+        damageResistanceSpinner = createSpinner(integerCols, this, createGbc(1, 7));
         damageResistanceSpinner.setValue(gameChar.getDamageResistance());
-        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 8));
+        createLabel(null, "char.shield.name", null, this, createGbc(0, 8));
+        shieldNameComboBox = createComboBox(shieldNames, this, createGbc(1, 8));
+        int shieldIdx = shieldNames.indexOf(gameChar.getShieldName());
+        if (shieldIdx >= 0) {
+            shieldNameComboBox.setSelectedIndex(shieldIdx + 1);
+        }
+        createLabel(null, "char.shield.defense.bonus", null, this, createGbc(2, 8));
+        shieldDefenseBonusField = createFieldReadOnly(integerCols, this, createGbc(3, 8));
+        if (shieldIdx >= 0) {
+            shieldDefenseBonusField.setText(String.valueOf(shields.get(shieldIdx).getDefenseBonus()));
+        }
+        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 9));
 
         strengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
@@ -129,6 +151,20 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             Integer value = (Integer) spinner.getValue();
             gameChar.setDamageResistance(value);
         });
+        shieldNameComboBox.addActionListener(e -> {
+            JComboBox<String> comboBox = (JComboBox<String>) e.getSource();
+            String name = (String) comboBox.getSelectedItem();
+            gameChar.setShieldName(name);
+            int idx = shieldNames.indexOf(name);
+            if (idx < 0) {
+                gameChar.setShieldDefenseBonus(null);
+                shieldDefenseBonusField.setText(null);
+            } else {
+                Integer db = shields.get(idx).getDefenseBonus();
+                gameChar.setShieldDefenseBonus(db);
+                shieldDefenseBonusField.setText(String.valueOf(db));
+            }
+        });
 
         pack();
         setVisible(true);
@@ -158,6 +194,14 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gameChar.setHitPoints((Integer) hitPointsSpinner.getValue());
         gameChar.setBasicSpeed((Double) basicSpeedSpinner.getValue());
         gameChar.setDamageResistance((Integer) damageResistanceSpinner.getValue());
+        String name = (String) shieldNameComboBox.getSelectedItem();
+        gameChar.setShieldName(name);
+        String db = StringUtils.trimToNull(shieldDefenseBonusField.getText());
+        if (db == null) {
+            gameChar.setShieldDefenseBonus(null);
+        } else {
+            gameChar.setShieldDefenseBonus(Integer.valueOf(db));
+        }
         return gameChar;
     }
 
@@ -213,6 +257,23 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         return button;
     }
 
+    private <T> JComboBox<T> createComboBox(List<T> items, Container container, GridBagConstraints gbc) {
+        JComboBox<T> comboBox = new JComboBox<>();
+        comboBox.addItem(null);
+        for (T item : items) {
+            comboBox.addItem(item);
+        }
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_START;
+                container.add(comboBox, gbc);
+            } else {
+                container.add(comboBox);
+            }
+        }
+        return comboBox;
+    }
+
     private JTextField createField(int columns, Container container, GridBagConstraints gbc) {
         JTextField field = new JTextField(columns);
         if (container != null) {
@@ -226,10 +287,29 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         return field;
     }
 
+    private JTextField createFieldReadOnly(int columns, Container container, GridBagConstraints gbc) {
+        JTextField field = new JTextField(columns);
+        field.setEditable(false);
+        if (container != null) {
+            if (gbc != null) {
+                gbc.anchor = GridBagConstraints.LINE_START;
+                container.add(field, gbc);
+            } else {
+                container.add(field);
+            }
+        }
+        return field;
+    }
+
     private GridBagConstraints createGbc(int gridx, int gridy) {
+        return createGbc(gridx, gridy, 1);
+    }
+
+    private GridBagConstraints createGbc(int gridx, int gridy, int gridwidth) {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.gridx = gridx;
         constraints.gridy = gridy;
+        constraints.gridwidth = gridwidth;
         constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
         return constraints;
     }

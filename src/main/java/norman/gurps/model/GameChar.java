@@ -1,5 +1,8 @@
 package norman.gurps.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameChar {
     private Long id;
     private String name;
@@ -10,6 +13,11 @@ public class GameChar {
     private Integer hitPointsAdj = 0;
     private Double basicSpeedAdj = 0.0;
     private Integer damageResistance = 0;
+    private String shieldName;
+    private Integer shieldDefenseBonus = 0;
+    private final List<MeleeWeapon> meleeWeapons = new ArrayList<>();
+    private final List<RangedWeapon> rangedWeapons = new ArrayList<>();
+    private final Double weightCarried = 0.0;
 
     public Long getId() {
         return id;
@@ -130,6 +138,22 @@ public class GameChar {
 
     public void setDamageResistance(Integer damageResistance) {
         this.damageResistance = damageResistance;
+    }
+
+    public String getShieldName() {
+        return shieldName;
+    }
+
+    public void setShieldName(String shieldName) {
+        this.shieldName = shieldName;
+    }
+
+    public Integer getShieldDefenseBonus() {
+        return shieldDefenseBonus;
+    }
+
+    public void setShieldDefenseBonus(Integer shieldDefenseBonus) {
+        this.shieldDefenseBonus = shieldDefenseBonus;
     }
 
     @Override
