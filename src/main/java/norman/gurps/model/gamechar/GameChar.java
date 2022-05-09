@@ -1,4 +1,7 @@
-package norman.gurps.model;
+package norman.gurps.model.gamechar;
+
+import norman.gurps.model.equipment.MeleeWeapon;
+import norman.gurps.model.equipment.RangedWeapon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +17,7 @@ public class GameChar {
     private Double basicSpeedAdj = 0.0;
     private Integer damageResistance = 0;
     private String shieldName;
-    private Integer shieldDefenseBonus = 0;
+    private Integer shieldSkillLevel = 0;
     private final List<MeleeWeapon> meleeWeapons = new ArrayList<>();
     private final List<RangedWeapon> rangedWeapons = new ArrayList<>();
     private final Double weightCarried = 0.0;
@@ -67,55 +70,6 @@ public class GameChar {
         this.health = health;
     }
 
-    //public Integer getDamageThrustDice() {
-    //    if (strength <= 0) {
-    //        return 0;
-    //    } else if (strength < 11) {
-    //        return 1;
-    //    } else {
-    //        return (strength - 11) / 8 + 1;
-    //    }
-    //}
-    //
-    //public Integer getDamageThrustAdds() {
-    //    if (strength <= 0) {
-    //        return 0;
-    //    } else if (strength < 11) {
-    //        return (strength - 1) / 2 - 6;
-    //    } else {
-    //        return (strength - 11) / 2 % 4 - 1;
-    //    }
-    //}
-    //
-    //public Integer getDamageSwingDice() {
-    //    if (strength <= 0) {
-    //        return 0;
-    //    } else if (strength < 9) {
-    //        return 1;
-    //    } else {
-    //        return (strength - 9) / 4 + 1;
-    //    }
-    //}
-    //
-    //public Integer getDamageSwingAdds() {
-    //    if (strength <= 0) {
-    //        return 0;
-    //    } else if (strength < 9) {
-    //        return (strength - 1) / 2 - 5;
-    //    } else {
-    //        return (strength - 9) % 4 - 1;
-    //    }
-    //}
-    //
-    //public Double getBasicLift() {
-    //    double basicLift = (double) (strength * strength) / 5;
-    //    if (basicLift < 10.0) {
-    //        return basicLift;
-    //    } else {
-    //        return (double) Math.round(basicLift);
-    //    }
-    //}
-
     public Integer getHitPoints() {
         return strength + hitPointsAdj;
     }
@@ -148,12 +102,12 @@ public class GameChar {
         this.shieldName = shieldName;
     }
 
-    public Integer getShieldDefenseBonus() {
-        return shieldDefenseBonus;
+    public Integer getShieldSkillLevel() {
+        return shieldSkillLevel;
     }
 
-    public void setShieldDefenseBonus(Integer shieldDefenseBonus) {
-        this.shieldDefenseBonus = shieldDefenseBonus;
+    public void setShieldSkillLevel(Integer shieldSkillLevel) {
+        this.shieldSkillLevel = shieldSkillLevel;
     }
 
     @Override

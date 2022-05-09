@@ -1,4 +1,4 @@
-package norman.gurps.model;
+package norman.gurps.model.equipment;
 
 public class Shield {
     private String name;

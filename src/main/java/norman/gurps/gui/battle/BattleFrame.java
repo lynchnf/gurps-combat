@@ -1,12 +1,14 @@
-package norman.gurps.gui;
+package norman.gurps.gui.battle;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
-import norman.gurps.model.Battle;
-import norman.gurps.model.BattleLog;
-import norman.gurps.model.Combatant;
-import norman.gurps.model.GameChar;
+import norman.gurps.gui.ButtonColumn;
+import norman.gurps.gui.ButtonDescriptor;
+import norman.gurps.model.battle.Battle;
+import norman.gurps.model.battle.BattleLog;
+import norman.gurps.model.battle.Combatant;
+import norman.gurps.model.gamechar.GameChar;
 import norman.gurps.service.GameCharService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,8 +30,6 @@ import javax.swing.JToolBar;
 import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -37,6 +37,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static norman.gurps.gui.GuiUtils.createButton;
+import static norman.gurps.gui.GuiUtils.createLabel;
+import static norman.gurps.gui.GuiUtils.createList;
+import static norman.gurps.gui.GuiUtils.createPanel;
+import static norman.gurps.gui.GuiUtils.createToolBar;
+import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class BattleFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(BattleFrame.class);
@@ -71,7 +78,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         setIconifiable(true);
 
         // Battlefield map.
-        JLabel mapLabel = createLabel("images/battlefield.png", null, null);
+        JLabel mapLabel = createLabel("images/battlefield.png", null, null, null);
         JScrollPane mapScroll = makeScrollable(mapLabel, 100, 100);
 
         // Combatants pane with toolbar.
@@ -85,7 +92,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         CombatantTableModel model = new CombatantTableModel();
         combatantTable = new JTable(model);
 
-        // Renderer and editor for button.
+        // Renderer and editor for remove button.
         combatantButtonColumn = new ButtonColumn(combatantTable, this);
         combatantTable.getColumnModel().getColumn(0).setCellRenderer(combatantButtonColumn);
         combatantTable.getColumnModel().getColumn(0).setCellEditor(combatantButtonColumn);
@@ -231,85 +238,6 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     }
 
     // COMMON METHODS // TODO Refactor these someday.
-
-    private JButton createButton(String imagePath, String textKey, String toolTipKey, ActionListener listener,
-            Container container) {
-        JButton button = new JButton();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon icon = new ImageIcon(url);
-            button.setIcon(icon);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            button.setText(text);
-        }
-        if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
-            button.setToolTipText(toolTip);
-        }
-        if (listener != null) {
-            button.addActionListener(listener);
-        }
-        if (container != null) {
-            container.add(button);
-        }
-        return button;
-    }
-
-    private JLabel createLabel(String imagePath, String textKey, Container container) {
-        JLabel label = new JLabel();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon image = new ImageIcon(url);
-            label.setIcon(image);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            label.setText(text);
-        }
-        if (container != null) {
-            container.add(label);
-        }
-        return label;
-    }
-
-    private <T> JList<T> createList(List<T> elements, Container container) {
-        DefaultListModel<T> model = new DefaultListModel<>();
-        JList<T> list = new JList<>(model);
-        if (elements != null) {
-            for (T element : elements) {
-                model.addElement(element);
-            }
-        }
-        if (container != null) {
-            container.add(list);
-        }
-        return list;
-    }
-
-    private JPanel createPanel(Container container) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        if (container != null) {
-            container.add(panel);
-        }
-        return panel;
-    }
-
-    private JToolBar createToolBar(Container container) {
-        JToolBar bar = new JToolBar();
-        if (container != null) {
-            container.add(bar, BorderLayout.NORTH);
-        }
-        return bar;
-    }
-
-    private JScrollPane makeScrollable(Component view, int width, int height) {
-        JScrollPane scrollable = new JScrollPane(view);
-        scrollable.setPreferredSize(new Dimension(width, height));
-        return scrollable;
-    }
 
     private GameChar showSelectCharDialog(String imagePath, String titleKey, String messageKey,
             Component parentComponent) {

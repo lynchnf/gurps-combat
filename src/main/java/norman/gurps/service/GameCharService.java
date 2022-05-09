@@ -2,7 +2,7 @@ package norman.gurps.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
-import norman.gurps.model.GameChar;
+import norman.gurps.model.gamechar.GameChar;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +60,10 @@ public class GameCharService {
             errors.add(bundle.getString("char.error.basic.speed.negative"));
         }
         if (gameChar.getDamageResistance() < 0) {
-            errors.add(bundle.getString("char.error.hit.damage.resistance.negative"));
+            errors.add(bundle.getString("char.error.damage.resistance.negative"));
+        }
+        if (gameChar.getShieldSkillLevel() < 0) {
+            errors.add(bundle.getString("char.error.shield.level.negative"));
         }
         return errors;
     }

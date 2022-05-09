@@ -1,40 +1,51 @@
-package norman.gurps.gui;
+package norman.gurps.gui.gamechar;
 
-import norman.gurps.model.GameChar;
-import norman.gurps.model.Shield;
+import norman.gurps.gui.ButtonColumn;
+import norman.gurps.gui.ButtonDescriptor;
+import norman.gurps.gui.SpinnerCellEditor;
+import norman.gurps.model.equipment.MeleeWeapon;
+import norman.gurps.model.equipment.Shield;
+import norman.gurps.model.gamechar.CharWeapon;
+import norman.gurps.model.gamechar.GameChar;
 import norman.gurps.service.GameCharService;
+import norman.gurps.service.MeleeWeaponService;
 import norman.gurps.service.ShieldService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractButton;
-import javax.swing.ImageIcon;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import java.awt.Container;
+import javax.swing.table.TableColumn;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static norman.gurps.gui.GuiUtils.createButton;
+import static norman.gurps.gui.GuiUtils.createComboBox;
+import static norman.gurps.gui.GuiUtils.createField;
+import static norman.gurps.gui.GuiUtils.createGbc;
+import static norman.gurps.gui.GuiUtils.createLabel;
+import static norman.gurps.gui.GuiUtils.createSpinner;
+import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class CharEditFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
     private ResourceBundle bundle;
     private ClassLoader loader;
-    private int gbcInsetx;
-    private int gbcInsety;
     private Long modelId;
     private JTextField nameField;
     private JSpinner strengthSpinner;
@@ -45,7 +56,9 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private JSpinner basicSpeedSpinner;
     private JSpinner damageResistanceSpinner;
     private JComboBox<String> shieldNameComboBox;
-    private JTextField shieldDefenseBonusField;
+    private JSpinner shieldSkillLevelSpinner;
+    private JButton addWeaponButton;
+    private JTable weaponTable;
     private JButton saveButton;
 
     public CharEditFrame(GameChar gameChar, int frameCount) {
@@ -64,15 +77,22 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         setMaximizable(true);
         setIconifiable(true);
 
-        gbcInsetx = Integer.parseInt(bundle.getString("char.frame.insets.x"));
-        gbcInsety = Integer.parseInt(bundle.getString("char.frame.insets.y"));
         int nameCols = Integer.parseInt(bundle.getString("char.name.width"));
         int integerCols = Integer.parseInt(bundle.getString("char.integer.width"));
         int doubleCols = Integer.parseInt(bundle.getString("char.double.width"));
+        int weaponTableWidth = Integer.parseInt(bundle.getString("char.weapon.table.width"));
+        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.tabel.height"));
+
         List<Shield> shields = ShieldService.findAll();
         List<String> shieldNames = new ArrayList<>();
         for (Shield shield : shields) {
             shieldNames.add(shield.getName());
+        }
+
+        List<MeleeWeapon> weapons = MeleeWeaponService.findAll();
+        List<String> weaponNames = new ArrayList<>();
+        for (MeleeWeapon weapon : weapons) {
+            weaponNames.add(weapon.getName());
         }
 
         modelId = gameChar.getId();
@@ -106,12 +126,55 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         if (shieldIdx >= 0) {
             shieldNameComboBox.setSelectedIndex(shieldIdx + 1);
         }
-        createLabel(null, "char.shield.defense.bonus", null, this, createGbc(2, 8));
-        shieldDefenseBonusField = createFieldReadOnly(integerCols, this, createGbc(3, 8));
-        if (shieldIdx >= 0) {
-            shieldDefenseBonusField.setText(String.valueOf(shields.get(shieldIdx).getDefenseBonus()));
+        createLabel(null, "char.shield.level", null, this, createGbc(2, 8));
+        shieldSkillLevelSpinner = createSpinner(integerCols, this, createGbc(3, 8));
+        shieldSkillLevelSpinner.setValue(gameChar.getShieldSkillLevel());
+        addWeaponButton = createButton("images/plus16.png", "char.weapon.add", "char.weapon.add.tool.tip", this, this,
+                createGbc(0, 9));
+
+        // Weapon table.
+        CharWeaponTableModel weaponModel = new CharWeaponTableModel();
+        weaponTable = new JTable(weaponModel);
+
+        // Renderer and editor for remove button.
+        ButtonColumn removeWeaponButtonColumn = new ButtonColumn(weaponTable, this);
+        weaponTable.getColumnModel().getColumn(0).setCellRenderer(removeWeaponButtonColumn);
+        weaponTable.getColumnModel().getColumn(0).setCellEditor(removeWeaponButtonColumn);
+
+        // Renderer for weapon name.
+        JComboBox<String> weaponNameComboBox = createComboBox(weaponNames, null);
+        DefaultCellEditor weaponNameEditor = new DefaultCellEditor(weaponNameComboBox);
+        TableColumn weaponNameColumn = weaponTable.getColumnModel().getColumn(1);
+        weaponNameColumn.setCellEditor(weaponNameEditor);
+
+        // Renderer for skill name.
+        List<String> skillNames = Arrays.asList("Axe/Mace", "Brawling", "Broadsword", "Knife");
+        JComboBox<String> skillNameComboBox = createComboBox(skillNames, null);
+        DefaultCellEditor skillNameEditor = new DefaultCellEditor(skillNameComboBox);
+        TableColumn skillNameColumn = weaponTable.getColumnModel().getColumn(2);
+        skillNameColumn.setCellEditor(skillNameEditor);
+
+        // Renderer and editor for skill level spinner.
+        SpinnerCellEditor skillLevelEditor = new SpinnerCellEditor();
+        TableColumn skillLevelColumn = weaponTable.getColumnModel().getColumn(3);
+        skillLevelColumn.setCellEditor(skillLevelEditor);
+
+        // Table column widths.
+        String columnWidthCsv = bundle.getString("char.weapon.table.column.widths");
+        String[] columnWidths = StringUtils.split(columnWidthCsv, ',');
+        for (int columnIndex = 0; columnIndex < columnWidths.length; columnIndex++) {
+            TableColumn column = weaponTable.getColumnModel().getColumn(columnIndex);
+            int columnWidth = Integer.parseInt(columnWidths[columnIndex]);
+            column.setPreferredWidth(columnWidth);
         }
-        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 9));
+
+        // Make table scrollable.
+        JScrollPane scrollable = makeScrollable(weaponTable, weaponTableWidth, weaponTableHeight);
+        GridBagConstraints gbc = createGbc(1, 9, 3);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        add(scrollable, gbc);
+
+        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 10, 3));
 
         strengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
@@ -153,17 +216,13 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         });
         shieldNameComboBox.addActionListener(e -> {
             JComboBox<String> comboBox = (JComboBox<String>) e.getSource();
-            String name = (String) comboBox.getSelectedItem();
-            gameChar.setShieldName(name);
-            int idx = shieldNames.indexOf(name);
-            if (idx < 0) {
-                gameChar.setShieldDefenseBonus(null);
-                shieldDefenseBonusField.setText(null);
-            } else {
-                Integer db = shields.get(idx).getDefenseBonus();
-                gameChar.setShieldDefenseBonus(db);
-                shieldDefenseBonusField.setText(String.valueOf(db));
-            }
+            String selectedItem = (String) comboBox.getSelectedItem();
+            gameChar.setShieldName(selectedItem);
+        });
+        shieldSkillLevelSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            Integer value = (Integer) spinner.getValue();
+            gameChar.setShieldSkillLevel(value);
         });
 
         pack();
@@ -178,12 +237,14 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(saveButton)) {
             saveChar();
+        } else if (e.getSource().equals(addWeaponButton)) {
+            addWeapon();
         } else {
             LOGGER.warn("Unknown ActionEvent=\"" + ((AbstractButton) e.getSource()).getText() + "\"");
         }
     }
 
-    public GameChar toModel() {
+    private GameChar toModel() {
         GameChar gameChar = new GameChar();
         gameChar.setId(modelId);
         gameChar.setName(StringUtils.trimToNull(nameField.getText()));
@@ -194,14 +255,8 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gameChar.setHitPoints((Integer) hitPointsSpinner.getValue());
         gameChar.setBasicSpeed((Double) basicSpeedSpinner.getValue());
         gameChar.setDamageResistance((Integer) damageResistanceSpinner.getValue());
-        String name = (String) shieldNameComboBox.getSelectedItem();
-        gameChar.setShieldName(name);
-        String db = StringUtils.trimToNull(shieldDefenseBonusField.getText());
-        if (db == null) {
-            gameChar.setShieldDefenseBonus(null);
-        } else {
-            gameChar.setShieldDefenseBonus(Integer.valueOf(db));
-        }
+        gameChar.setShieldName((String) shieldNameComboBox.getSelectedItem());
+        gameChar.setShieldSkillLevel((Integer) shieldSkillLevelSpinner.getValue());
         return gameChar;
     }
 
@@ -225,148 +280,11 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         }
     }
 
-    // COMMON METHODS // TODO Refactor these someday.
-
-    private JButton createButton(String imagePath, String textKey, String toolTipKey, ActionListener listener,
-            Container container, GridBagConstraints gbc) {
-        JButton button = new JButton();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon icon = new ImageIcon(url);
-            button.setIcon(icon);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            button.setText(text);
-        }
-        if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
-            button.setToolTipText(toolTip);
-        }
-        if (listener != null) {
-            button.addActionListener(listener);
-        }
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(button, gbc);
-            } else {
-                container.add(button);
-            }
-        }
-        return button;
-    }
-
-    private <T> JComboBox<T> createComboBox(List<T> items, Container container, GridBagConstraints gbc) {
-        JComboBox<T> comboBox = new JComboBox<>();
-        comboBox.addItem(null);
-        for (T item : items) {
-            comboBox.addItem(item);
-        }
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(comboBox, gbc);
-            } else {
-                container.add(comboBox);
-            }
-        }
-        return comboBox;
-    }
-
-    private JTextField createField(int columns, Container container, GridBagConstraints gbc) {
-        JTextField field = new JTextField(columns);
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(field, gbc);
-            } else {
-                container.add(field);
-            }
-        }
-        return field;
-    }
-
-    private JTextField createFieldReadOnly(int columns, Container container, GridBagConstraints gbc) {
-        JTextField field = new JTextField(columns);
-        field.setEditable(false);
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(field, gbc);
-            } else {
-                container.add(field);
-            }
-        }
-        return field;
-    }
-
-    private GridBagConstraints createGbc(int gridx, int gridy) {
-        return createGbc(gridx, gridy, 1);
-    }
-
-    private GridBagConstraints createGbc(int gridx, int gridy, int gridwidth) {
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = gridx;
-        constraints.gridy = gridy;
-        constraints.gridwidth = gridwidth;
-        constraints.insets = new Insets(gbcInsety, gbcInsetx, gbcInsety, gbcInsetx);
-        return constraints;
-    }
-
-    private JLabel createLabel(String imagePath, String textKey, String toolTipKey, Container container,
-            GridBagConstraints gbc) {
-        JLabel label = new JLabel();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon icon = new ImageIcon(url);
-            label.setIcon(icon);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            label.setText(text);
-        }
-        if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
-            label.setToolTipText(toolTip);
-        }
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_END;
-                container.add(label, gbc);
-            } else {
-                container.add(label);
-            }
-        }
-        return label;
-    }
-
-    private JSpinner createSpinner(int columns, Container container, GridBagConstraints gbc) {
-        return createSpinner(columns, null, null, null, null, container, gbc);
-    }
-
-    private JSpinner createSpinner(int columns, Number val, Comparable min, Comparable max, Number step,
-            Container container, GridBagConstraints gbc) {
-        Number value = Integer.valueOf(0);
-        if (val != null) {
-            value = val;
-        }
-        Number stepSize = Integer.valueOf(1);
-        if (step != null) {
-            stepSize = step;
-        }
-        SpinnerNumberModel model = new SpinnerNumberModel(value, min, max, stepSize);
-        JSpinner spinner = new JSpinner(model);
-        JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner.getEditor();
-        editor.getTextField().setColumns(columns);
-        if (container != null) {
-            if (gbc != null) {
-                gbc.anchor = GridBagConstraints.LINE_START;
-                container.add(spinner, gbc);
-            } else {
-                container.add(spinner);
-            }
-        }
-        return spinner;
+    private void addWeapon() {
+        CharWeapon weapon = new CharWeapon();
+        ButtonDescriptor descriptor = new ButtonDescriptor("images/remove8.png", null, "char.weapon.remove.tool.tip");
+        CharWeaponTableRow row = new CharWeaponTableRow(weapon, descriptor);
+        CharWeaponTableModel model = (CharWeaponTableModel) weaponTable.getModel();
+        model.addRow(row);
     }
 }

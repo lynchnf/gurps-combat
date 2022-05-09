@@ -1,4 +1,6 @@
-package norman.gurps.model;
+package norman.gurps.model.battle;
+
+import norman.gurps.model.gamechar.GameChar;
 
 import java.util.List;
 

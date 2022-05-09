@@ -1,5 +1,6 @@
-package norman.gurps.gui;
+package norman.gurps.gui.battle;
 
+import norman.gurps.gui.ButtonDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

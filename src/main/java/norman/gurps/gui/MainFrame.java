@@ -2,7 +2,10 @@ package norman.gurps.gui;
 
 import norman.gurps.Application;
 import norman.gurps.LoggingException;
-import norman.gurps.model.GameChar;
+import norman.gurps.gui.battle.BattleFrame;
+import norman.gurps.gui.gamechar.CharEditFrame;
+import norman.gurps.gui.gamechar.CharViewFrame;
+import norman.gurps.model.gamechar.GameChar;
 import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+import static norman.gurps.gui.GuiUtils.createMenu;
+import static norman.gurps.gui.GuiUtils.createMenuItem;
 
 public class MainFrame extends JFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
@@ -228,52 +234,6 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     // COMMON METHODS // TODO Refactor these someday.
-
-    private JMenu createMenu(String imagePath, String textKey, String toolTipKey, JMenuBar bar) {
-        JMenu menu = new JMenu();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon icon = new ImageIcon(url);
-            menu.setIcon(icon);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            menu.setText(text);
-        }
-        if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
-            menu.setToolTipText(toolTip);
-        }
-        if (bar != null) {
-            bar.add(menu);
-        }
-        return menu;
-    }
-
-    private JMenuItem createMenuItem(String imagePath, String textKey, String toolTipKey, ActionListener listener,
-            JMenu menu) {
-        JMenuItem item = new JMenuItem();
-        if (imagePath != null) {
-            URL url = loader.getResource(imagePath);
-            ImageIcon icon = new ImageIcon(url);
-            item.setIcon(icon);
-        }
-        if (textKey != null) {
-            String text = bundle.getString(textKey);
-            item.setText(text);
-        }
-        if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
-            item.setToolTipText(toolTip);
-        }
-        if (listener != null) {
-            item.addActionListener(listener);
-        }
-        if (menu != null) {
-            menu.add(item);
-        }
-        return item;
-    }
 
     private GameChar showSelectCharDialog(String imagePath, String titleKey, String messageKey,
             Component parentComponent) {

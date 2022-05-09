@@ -1,4 +1,4 @@
-package norman.gurps.model;
+package norman.gurps.model.battle;
 
 import java.text.DateFormat;
 import java.util.Date;

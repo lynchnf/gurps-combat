@@ -2,7 +2,7 @@ package norman.gurps.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
-import norman.gurps.model.Shield;
+import norman.gurps.model.equipment.Shield;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
