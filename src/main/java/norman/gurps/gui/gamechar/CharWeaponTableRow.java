@@ -2,8 +2,11 @@ package norman.gurps.gui.gamechar;
 
 import norman.gurps.gui.ButtonDescriptor;
 import norman.gurps.model.gamechar.CharWeapon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CharWeaponTableRow {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CharWeaponTableRow.class);
     private final CharWeapon charWeapon;
     private ButtonDescriptor buttonDescriptor;
 

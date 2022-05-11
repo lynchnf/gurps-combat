@@ -2,6 +2,7 @@ package norman.gurps.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
+import norman.gurps.model.gamechar.CharWeapon;
 import norman.gurps.model.gamechar.GameChar;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -65,6 +66,19 @@ public class GameCharService {
         if (gameChar.getShieldSkillLevel() < 0) {
             errors.add(bundle.getString("char.error.shield.level.negative"));
         }
+        List<CharWeapon> weapons = gameChar.getCharWeapons();
+        for (CharWeapon weapon : weapons) {
+            if (weapon.getWeaponName() == null) {
+                errors.add(bundle.getString("char.error.weapon.name.blank"));
+            }
+            if (weapon.getSkillName() == null) {
+                errors.add(bundle.getString("char.error.weapon.skill.name.blank"));
+            }
+            if (weapon.getSkillLevel() < 0) {
+                errors.add(bundle.getString("char.error.weapon.level.negative"));
+            }
+        }
+
         return errors;
     }
 

@@ -3,6 +3,7 @@ package norman.gurps.gui.gamechar;
 import norman.gurps.gui.ButtonColumn;
 import norman.gurps.gui.ButtonDescriptor;
 import norman.gurps.gui.SpinnerCellEditor;
+import norman.gurps.gui.battle.CombatantTableModel;
 import norman.gurps.model.equipment.MeleeWeapon;
 import norman.gurps.model.equipment.Shield;
 import norman.gurps.model.gamechar.CharWeapon;
@@ -46,6 +47,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
     private ResourceBundle bundle;
     private ClassLoader loader;
+    private GameChar gameChar;
     private Long modelId;
     private JTextField nameField;
     private JSpinner strengthSpinner;
@@ -58,6 +60,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private JComboBox<String> shieldNameComboBox;
     private JSpinner shieldSkillLevelSpinner;
     private JButton addWeaponButton;
+    private ButtonColumn removeWeaponButtonColumn;
     private JTable weaponTable;
     private JButton saveButton;
 
@@ -95,6 +98,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             weaponNames.add(weapon.getName());
         }
 
+        this.gameChar = gameChar;
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
         nameField = createField(nameCols, this, createGbc(1, 0, 3));
@@ -137,7 +141,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         weaponTable = new JTable(weaponModel);
 
         // Renderer and editor for remove button.
-        ButtonColumn removeWeaponButtonColumn = new ButtonColumn(weaponTable, this);
+        removeWeaponButtonColumn = new ButtonColumn(weaponTable, this);
         weaponTable.getColumnModel().getColumn(0).setCellRenderer(removeWeaponButtonColumn);
         weaponTable.getColumnModel().getColumn(0).setCellEditor(removeWeaponButtonColumn);
 
@@ -173,6 +177,8 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         GridBagConstraints gbc = createGbc(1, 9, 3);
         gbc.anchor = GridBagConstraints.LINE_START;
         add(scrollable, gbc);
+
+        // Load table with original weapons.
 
         saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 10, 3));
 
@@ -239,12 +245,14 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             saveChar();
         } else if (e.getSource().equals(addWeaponButton)) {
             addWeapon();
+        } else if (e.getSource().equals(removeWeaponButtonColumn.getButton())) {
+            removeWeapon();
         } else {
             LOGGER.warn("Unknown ActionEvent=\"" + ((AbstractButton) e.getSource()).getText() + "\"");
         }
     }
 
-    private GameChar toModel() {
+    private void saveChar() {
         GameChar gameChar = new GameChar();
         gameChar.setId(modelId);
         gameChar.setName(StringUtils.trimToNull(nameField.getText()));
@@ -257,11 +265,23 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gameChar.setDamageResistance((Integer) damageResistanceSpinner.getValue());
         gameChar.setShieldName((String) shieldNameComboBox.getSelectedItem());
         gameChar.setShieldSkillLevel((Integer) shieldSkillLevelSpinner.getValue());
-        return gameChar;
-    }
 
-    private void saveChar() {
-        GameChar gameChar = toModel();
+        CharWeaponTableModel model = (CharWeaponTableModel) weaponTable.getModel();
+        List<CharWeaponTableRow> rows = model.getDataList();
+        for (CharWeaponTableRow row : rows) {
+            CharWeapon weapon = new CharWeapon();
+            weapon.setWeaponName(StringUtils.trimToNull(row.getWeaponName()));
+            weapon.setSkillName(StringUtils.trimToNull(row.getSkillName()));
+            if (row.getSkillLevel() == null) {
+                weapon.setSkillLevel(0);
+            } else {
+                weapon.setSkillLevel(row.getSkillLevel());
+            }
+            if (weapon.getWeaponName() != null || weapon.getSkillName() != null || weapon.getSkillLevel() != 0) {
+                gameChar.getCharWeapons().add(weapon);
+            }
+        }
+
         List<String> errors = GameCharService.validate(gameChar);
 
         if (errors.isEmpty()) {
@@ -282,9 +302,16 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
 
     private void addWeapon() {
         CharWeapon weapon = new CharWeapon();
+        gameChar.getCharWeapons().add(weapon);
         ButtonDescriptor descriptor = new ButtonDescriptor("images/remove8.png", null, "char.weapon.remove.tool.tip");
         CharWeaponTableRow row = new CharWeaponTableRow(weapon, descriptor);
         CharWeaponTableModel model = (CharWeaponTableModel) weaponTable.getModel();
         model.addRow(row);
+    }
+
+    private void removeWeapon() {
+        int rowIndex = removeWeaponButtonColumn.getEditingRow();
+        CombatantTableModel model = (CombatantTableModel) weaponTable.getModel();
+        model.removeRow(rowIndex);
     }
 }

@@ -1,8 +1,5 @@
 package norman.gurps.model.gamechar;
 
-import norman.gurps.model.equipment.MeleeWeapon;
-import norman.gurps.model.equipment.RangedWeapon;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,8 +15,7 @@ public class GameChar {
     private Integer damageResistance = 0;
     private String shieldName;
     private Integer shieldSkillLevel = 0;
-    private final List<MeleeWeapon> meleeWeapons = new ArrayList<>();
-    private final List<RangedWeapon> rangedWeapons = new ArrayList<>();
+    private final List<CharWeapon> charWeapons = new ArrayList<>();
     private final Double weightCarried = 0.0;
 
     public Long getId() {
@@ -108,6 +104,10 @@ public class GameChar {
 
     public void setShieldSkillLevel(Integer shieldSkillLevel) {
         this.shieldSkillLevel = shieldSkillLevel;
+    }
+
+    public List<CharWeapon> getCharWeapons() {
+        return charWeapons;
     }
 
     @Override

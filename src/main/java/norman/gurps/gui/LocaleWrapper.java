@@ -1,9 +1,13 @@
 package norman.gurps.gui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Locale;
 import java.util.Objects;
 
 public class LocaleWrapper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocaleWrapper.class);
     private final Locale locale;
 
     public LocaleWrapper() {

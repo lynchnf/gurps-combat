@@ -69,7 +69,21 @@ public class CharWeaponTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        // The remove button and weapon name are always editable.
+        if (columnIndex <= 1) {
+            return true;
+        } else {
+            // Otherwise, the cell is editable is the previous column is not blank.
+            CharWeaponTableRow row = dataList.get(rowIndex);
+            if (columnIndex == 2) {
+                return StringUtils.isNotBlank(row.getWeaponName());
+            } else if (columnIndex == 3) {
+                return StringUtils.isNotBlank(row.getSkillName());
+            } else {
+                LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
+                return false;
+            }
+        }
     }
 
     @Override
@@ -101,5 +115,9 @@ public class CharWeaponTableModel extends AbstractTableModel {
     public void removeRow(int rowIndex) {
         dataList.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
+    }
+
+    public List<CharWeaponTableRow> getDataList() {
+        return dataList;
     }
 }
