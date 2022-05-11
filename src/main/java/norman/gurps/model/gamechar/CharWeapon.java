@@ -28,4 +28,9 @@ public class CharWeapon {
     public void setSkillLevel(Integer skillLevel) {
         this.skillLevel = skillLevel;
     }
+
+    @Override
+    public String toString() {
+        return weaponName + " - " + skillName + " (" + skillLevel + ")";
+    }
 }

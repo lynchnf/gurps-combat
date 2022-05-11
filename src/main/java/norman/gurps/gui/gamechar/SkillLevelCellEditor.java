@@ -1,4 +1,4 @@
-package norman.gurps.gui;
+package norman.gurps.gui.gamechar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +9,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 
-public class SpinnerCellEditor extends AbstractCellEditor implements TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpinnerCellEditor.class);
-    private final JSpinner spinner;
-
-    public SpinnerCellEditor() {
-        spinner = new JSpinner();
-    }
+public class SkillLevelCellEditor extends AbstractCellEditor implements TableCellEditor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SkillLevelCellEditor.class);
+    private final JSpinner spinner = new JSpinner();
 
     @Override
     public Object getCellEditorValue() {
@@ -24,7 +20,9 @@ public class SpinnerCellEditor extends AbstractCellEditor implements TableCellEd
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        if (value != null) {
+        if (value == null) {
+            spinner.setValue(0);
+        } else {
             spinner.setValue(value);
         }
         return spinner;

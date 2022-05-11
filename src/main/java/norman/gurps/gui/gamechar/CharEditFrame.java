@@ -2,21 +2,16 @@ package norman.gurps.gui.gamechar;
 
 import norman.gurps.gui.ButtonColumn;
 import norman.gurps.gui.ButtonDescriptor;
-import norman.gurps.gui.SpinnerCellEditor;
-import norman.gurps.gui.battle.CombatantTableModel;
-import norman.gurps.model.equipment.MeleeWeapon;
 import norman.gurps.model.equipment.Shield;
 import norman.gurps.model.gamechar.CharWeapon;
 import norman.gurps.model.gamechar.GameChar;
 import norman.gurps.service.GameCharService;
-import norman.gurps.service.MeleeWeaponService;
 import norman.gurps.service.ShieldService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractButton;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JInternalFrame;
@@ -31,7 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -62,6 +56,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
     private JButton addWeaponButton;
     private ButtonColumn removeWeaponButtonColumn;
     private JTable weaponTable;
+    private JSpinner weightCarriedSpinner;
     private JButton saveButton;
 
     public CharEditFrame(GameChar gameChar, int frameCount) {
@@ -92,12 +87,6 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             shieldNames.add(shield.getName());
         }
 
-        List<MeleeWeapon> weapons = MeleeWeaponService.findAll();
-        List<String> weaponNames = new ArrayList<>();
-        for (MeleeWeapon weapon : weapons) {
-            weaponNames.add(weapon.getName());
-        }
-
         this.gameChar = gameChar;
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
@@ -126,18 +115,23 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         damageResistanceSpinner.setValue(gameChar.getDamageResistance());
         createLabel(null, "char.shield.name", null, this, createGbc(0, 8));
         shieldNameComboBox = createComboBox(shieldNames, this, createGbc(1, 8));
-        int shieldIdx = shieldNames.indexOf(gameChar.getShieldName());
-        if (shieldIdx >= 0) {
-            shieldNameComboBox.setSelectedIndex(shieldIdx + 1);
-        }
+        shieldNameComboBox.setSelectedItem(gameChar.getShieldName());
         createLabel(null, "char.shield.level", null, this, createGbc(2, 8));
         shieldSkillLevelSpinner = createSpinner(integerCols, this, createGbc(3, 8));
         shieldSkillLevelSpinner.setValue(gameChar.getShieldSkillLevel());
+
         addWeaponButton = createButton("images/plus16.png", "char.weapon.add", "char.weapon.add.tool.tip", this, this,
                 createGbc(0, 9));
 
         // Weapon table.
         CharWeaponTableModel weaponModel = new CharWeaponTableModel();
+        List<CharWeapon> weapons = gameChar.getCharWeapons();
+        for (CharWeapon weapon : weapons) {
+            ButtonDescriptor descriptor =
+                    new ButtonDescriptor("images/remove8.png", null, "char.weapon.remove.tool.tip");
+            CharWeaponTableRow row = new CharWeaponTableRow(weapon, descriptor);
+            weaponModel.addRow(row);
+        }
         weaponTable = new JTable(weaponModel);
 
         // Renderer and editor for remove button.
@@ -146,20 +140,17 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         weaponTable.getColumnModel().getColumn(0).setCellEditor(removeWeaponButtonColumn);
 
         // Renderer for weapon name.
-        JComboBox<String> weaponNameComboBox = createComboBox(weaponNames, null);
-        DefaultCellEditor weaponNameEditor = new DefaultCellEditor(weaponNameComboBox);
+        WeaponNameCellEditor weaponNameEditor = new WeaponNameCellEditor();
         TableColumn weaponNameColumn = weaponTable.getColumnModel().getColumn(1);
         weaponNameColumn.setCellEditor(weaponNameEditor);
 
         // Renderer for skill name.
-        List<String> skillNames = Arrays.asList("Axe/Mace", "Brawling", "Broadsword", "Knife");
-        JComboBox<String> skillNameComboBox = createComboBox(skillNames, null);
-        DefaultCellEditor skillNameEditor = new DefaultCellEditor(skillNameComboBox);
+        SkillNameCellEditor skillNameEditor = new SkillNameCellEditor();
         TableColumn skillNameColumn = weaponTable.getColumnModel().getColumn(2);
         skillNameColumn.setCellEditor(skillNameEditor);
 
         // Renderer and editor for skill level spinner.
-        SpinnerCellEditor skillLevelEditor = new SpinnerCellEditor();
+        SkillLevelCellEditor skillLevelEditor = new SkillLevelCellEditor();
         TableColumn skillLevelColumn = weaponTable.getColumnModel().getColumn(3);
         skillLevelColumn.setCellEditor(skillLevelEditor);
 
@@ -178,9 +169,11 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gbc.anchor = GridBagConstraints.LINE_START;
         add(scrollable, gbc);
 
-        // Load table with original weapons.
+        createLabel(null, "char.weight.carried", null, this, createGbc(0, 10));
+        weightCarriedSpinner = createSpinner(doubleCols, 0.00, null, null, 0.01, this, createGbc(1, 10));
+        weightCarriedSpinner.setValue(gameChar.getWeightCarried());
 
-        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 10, 3));
+        saveButton = createButton(null, "char.save", null, this, this, createGbc(1, 11, 3));
 
         strengthSpinner.addChangeListener(e -> {
             JSpinner spinner = (JSpinner) e.getSource();
@@ -230,6 +223,11 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             Integer value = (Integer) spinner.getValue();
             gameChar.setShieldSkillLevel(value);
         });
+        weightCarriedSpinner.addChangeListener(e -> {
+            JSpinner spinner = (JSpinner) e.getSource();
+            Double value = (Double) spinner.getValue();
+            gameChar.setWeightCarried(value);
+        });
 
         pack();
         setVisible(true);
@@ -265,6 +263,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         gameChar.setDamageResistance((Integer) damageResistanceSpinner.getValue());
         gameChar.setShieldName((String) shieldNameComboBox.getSelectedItem());
         gameChar.setShieldSkillLevel((Integer) shieldSkillLevelSpinner.getValue());
+        gameChar.setWeightCarried((Double) weightCarriedSpinner.getValue());
 
         CharWeaponTableModel model = (CharWeaponTableModel) weaponTable.getModel();
         List<CharWeaponTableRow> rows = model.getDataList();
@@ -311,7 +310,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
 
     private void removeWeapon() {
         int rowIndex = removeWeaponButtonColumn.getEditingRow();
-        CombatantTableModel model = (CombatantTableModel) weaponTable.getModel();
+        CharWeaponTableModel model = (CharWeaponTableModel) weaponTable.getModel();
         model.removeRow(rowIndex);
     }
 }

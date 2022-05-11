@@ -19,9 +19,9 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 | Validate GameChar                     | 2   | 5/6/2022  | 5/7/2022  | 1    |
 | Start Battle (init GameChars)         | 1   | 5/7/2022  | 5/7/2022  | 0    |
 | Shields                               | 5   | 5/7/2022  | 5/7/2022  | 0    |
-| Melee Weapons                         | 8   | 5/7/2022  |           |      |
-| Ranged Weapons                        | 3   |           |           |      |
+| Melee Weapons                         | 8   | 5/7/2022  | 5/11/2022 | 4    |
 | Step through Battle                   | 3   |           |           |      |
+| Ranged Weapons                        | 3   |           |           |      |
 | [Hardening] Address ToDo's            |     |           |           |      |
 | [Hardening] Combine .properties files | 1   | 5/5/2022  | 5/5/2022  | 0    |
 | [Hardening] Unit tests                | 2   |           |           |      |

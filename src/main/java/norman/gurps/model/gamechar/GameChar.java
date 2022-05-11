@@ -15,8 +15,8 @@ public class GameChar {
     private Integer damageResistance = 0;
     private String shieldName;
     private Integer shieldSkillLevel = 0;
-    private final List<CharWeapon> charWeapons = new ArrayList<>();
-    private final Double weightCarried = 0.0;
+    private List<CharWeapon> charWeapons = new ArrayList<>();
+    private Double weightCarried = 0.0;
 
     public Long getId() {
         return id;
@@ -108,6 +108,18 @@ public class GameChar {
 
     public List<CharWeapon> getCharWeapons() {
         return charWeapons;
+    }
+
+    public void setCharWeapons(List<CharWeapon> charWeapons) {
+        this.charWeapons = charWeapons;
+    }
+
+    public Double getWeightCarried() {
+        return weightCarried;
+    }
+
+    public void setWeightCarried(Double weightCarried) {
+        this.weightCarried = weightCarried;
     }
 
     @Override

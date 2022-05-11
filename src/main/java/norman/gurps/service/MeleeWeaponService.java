@@ -3,6 +3,7 @@ package norman.gurps.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.LoggingException;
 import norman.gurps.model.equipment.MeleeWeapon;
+import norman.gurps.model.equipment.WeaponSkill;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,5 +34,16 @@ public class MeleeWeaponService {
                     "Error loading meleeWeapons from resource " + MELEE_WEAPONS_RESOURCE + ".", e);
         }
         return meleeWeaponList;
+    }
+
+    public static List<WeaponSkill> findWeaponSkills(String weaponName) {
+        List<WeaponSkill> skills = new ArrayList<>();
+        List<MeleeWeapon> weapons = loadMeleeWeapons();
+        for (MeleeWeapon weapon : weapons) {
+            if (weapon.getName().equals(weaponName)) {
+                skills.addAll(weapon.getSkills());
+            }
+        }
+        return skills;
     }
 }

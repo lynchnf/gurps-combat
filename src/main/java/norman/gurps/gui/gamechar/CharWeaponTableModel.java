@@ -95,9 +95,15 @@ public class CharWeaponTableModel extends AbstractTableModel {
         } else if (columnIndex == 1) {
             row.setWeaponName((String) aValue);
             fireTableCellUpdated(rowIndex, 1);
+            row.setSkillName(null);
+            fireTableCellUpdated(rowIndex, 2);
+            row.setSkillLevel(null);
+            fireTableCellUpdated(rowIndex, 3);
         } else if (columnIndex == 2) {
             row.setSkillName((String) aValue);
-            fireTableCellUpdated(rowIndex, 1);
+            fireTableCellUpdated(rowIndex, 2);
+            row.setSkillLevel(null);
+            fireTableCellUpdated(rowIndex, 3);
         } else if (columnIndex == 3) {
             row.setSkillLevel((Integer) aValue);
             fireTableCellUpdated(rowIndex, 3);

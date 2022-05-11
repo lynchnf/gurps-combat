@@ -78,6 +78,9 @@ public class GameCharService {
                 errors.add(bundle.getString("char.error.weapon.level.negative"));
             }
         }
+        if (gameChar.getWeightCarried() < 0.0) {
+            errors.add(bundle.getString("char.error.weight.carried.negative"));
+        }
 
         return errors;
     }

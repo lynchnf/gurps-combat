@@ -1,23 +1,30 @@
 package norman.gurps.gui.gamechar;
 
+import norman.gurps.model.gamechar.CharWeapon;
 import norman.gurps.model.gamechar.GameChar;
 import norman.gurps.service.GameCharService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.AbstractButton;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static norman.gurps.gui.GuiUtils.createButton;
 import static norman.gurps.gui.GuiUtils.createFieldReadOnly;
 import static norman.gurps.gui.GuiUtils.createGbc;
 import static norman.gurps.gui.GuiUtils.createLabel;
+import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class CharViewFrame extends JInternalFrame implements ActionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CharViewFrame.class);
@@ -33,6 +40,9 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
     private JTextField basicSpeedField;
     private JTextField damageResistanceField;
     private JTextField shieldNameField;
+    private JTextField shieldSkillLevelField;
+    private JTextField weightCarriedField;
+    private JList<CharWeapon> weaponList;
     private JButton deleteButton;
 
     public CharViewFrame(GameChar gameChar, int frameCount) {
@@ -55,6 +65,8 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         int integerCols = Integer.parseInt(bundle.getString("char.integer.width"));
         int doubleCols = Integer.parseInt(bundle.getString("char.double.width"));
         int stringCols = Integer.parseInt(bundle.getString("char.string.width"));
+        int weaponTableWidth = Integer.parseInt(bundle.getString("char.weapon.table.width"));
+        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.tabel.height"));
 
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
@@ -84,7 +96,26 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         createLabel(null, "char.shield.name", null, this, createGbc(0, 8));
         shieldNameField = createFieldReadOnly(stringCols, this, createGbc(1, 8));
         shieldNameField.setText(gameChar.getShieldName());
-        deleteButton = createButton(null, "char.delete", null, this, this, createGbc(1, 9));
+        createLabel(null, "char.shield.level", null, this, createGbc(2, 8));
+        shieldSkillLevelField = createFieldReadOnly(integerCols, this, createGbc(3, 8));
+        shieldSkillLevelField.setText(String.valueOf(gameChar.getShieldSkillLevel()));
+
+        DefaultListModel<CharWeapon> weaponModel = new DefaultListModel<>();
+        List<CharWeapon> weapons = gameChar.getCharWeapons();
+        for (CharWeapon weapon : weapons) {
+            weaponModel.addElement(weapon);
+        }
+        weaponList = new JList<>(weaponModel);
+        JScrollPane scrollable = makeScrollable(weaponList, weaponTableWidth, weaponTableHeight);
+        GridBagConstraints gbc = createGbc(1, 9, 3);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        add(scrollable, gbc);
+
+        createLabel(null, "char.weight.carried", null, this, createGbc(0, 10));
+        weightCarriedField = createFieldReadOnly(doubleCols, this, createGbc(1, 10));
+        weightCarriedField.setText(String.valueOf(gameChar.getWeightCarried()));
+
+        deleteButton = createButton(null, "char.delete", null, this, this, createGbc(1, 11));
 
         pack();
         setVisible(true);
