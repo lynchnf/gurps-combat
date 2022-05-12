@@ -79,7 +79,7 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
         int integerCols = Integer.parseInt(bundle.getString("char.integer.width"));
         int doubleCols = Integer.parseInt(bundle.getString("char.double.width"));
         int weaponTableWidth = Integer.parseInt(bundle.getString("char.weapon.table.width"));
-        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.tabel.height"));
+        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.table.height"));
 
         List<Shield> shields = ShieldService.findAll();
         List<String> shieldNames = new ArrayList<>();

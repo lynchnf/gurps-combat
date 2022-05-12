@@ -80,6 +80,14 @@ public class GameCharService {
         }
         if (gameChar.getWeightCarried() < 0.0) {
             errors.add(bundle.getString("char.error.weight.carried.negative"));
+        } else {
+            double basicLift = (gameChar.getStrength() * gameChar.getStrength()) / 5.0;
+            if (basicLift >= 10.0) {
+                basicLift = Math.round(basicLift);
+            }
+            if (gameChar.getWeightCarried() > basicLift * 10.0) {
+                errors.add(bundle.getString("char.error.weight.carried.to.high"));
+            }
         }
 
         return errors;

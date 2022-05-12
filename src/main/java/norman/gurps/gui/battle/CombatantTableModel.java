@@ -1,6 +1,8 @@
 package norman.gurps.gui.battle;
 
 import norman.gurps.gui.ButtonDescriptor;
+import norman.gurps.model.battle.Battle;
+import norman.gurps.model.battle.BattleAction;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +17,13 @@ public class CombatantTableModel extends AbstractTableModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(CombatantTableModel.class);
     private final String[] columnNames;
     private final List<CombatantTableRow> dataList = new ArrayList<>();
-    private boolean started = false;
+    private final Battle battle;
 
-    public CombatantTableModel() {
+    public CombatantTableModel(Battle battle) {
         ResourceBundle bundle = ResourceBundle.getBundle("message");
         String columnNameCsv = bundle.getString("combatant.table.column.names");
         columnNames = StringUtils.split(columnNameCsv, ',');
+        this.battle = battle;
     }
 
     @Override
@@ -73,6 +76,10 @@ public class CombatantTableModel extends AbstractTableModel {
             return row.getBasicSpeed();
         } else if (columnIndex == 8) {
             return row.getDamageResistance();
+        } else if (columnIndex == 9) {
+            return row.getEncumbrance();
+        } else if (columnIndex == 10) {
+            return row.getLastAction();
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
             return null;
@@ -81,11 +88,17 @@ public class CombatantTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        // Before battle starts, name column may not be changed. After battle starts, only the button many be "changed".
-        if (started) {
-            return columnIndex == 0;
+        // Before battle starts, name and action columns may not be changed.
+        if (!battle.isStarted()) {
+            return columnIndex != 1 && columnIndex != 10;
         } else {
-            return columnIndex != 1;
+            // After battle starts, ...
+            if (columnIndex == 0) {
+                return true;
+            } else {
+                CombatantTableRow row = dataList.get(rowIndex);
+                return row.getName().equals(battle.getCurrentCombatant());
+            }
         }
     }
 
@@ -102,6 +115,7 @@ public class CombatantTableModel extends AbstractTableModel {
             row.setStrength((Integer) aValue);
             fireTableCellUpdated(rowIndex, 2);
             fireTableCellUpdated(rowIndex, 6);
+            fireTableCellUpdated(rowIndex, 9);
         } else if (columnIndex == 3) {
             row.setDexterity((Integer) aValue);
             fireTableCellUpdated(rowIndex, 3);
@@ -122,6 +136,12 @@ public class CombatantTableModel extends AbstractTableModel {
         } else if (columnIndex == 8) {
             row.setDamageResistance((Integer) aValue);
             fireTableCellUpdated(rowIndex, 8);
+        } else if (columnIndex == 9) {
+            row.setEncumbrance((Integer) aValue);
+            fireTableCellUpdated(rowIndex, 9);
+        } else if (columnIndex == 10) {
+            row.setLastAction((BattleAction) aValue);
+            fireTableCellUpdated(rowIndex, 10);
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
         }
@@ -134,19 +154,30 @@ public class CombatantTableModel extends AbstractTableModel {
     }
 
     public void removeRow(int rowIndex) {
+        String combatantToRemove = dataList.get(rowIndex).getName();
+        if (battle.isStarted() && battle.getCurrentCombatant().equals(combatantToRemove)) {
+            int nextRowIndex = (rowIndex + 1) % dataList.size();
+            String nextCombatant = dataList.get(nextRowIndex).getName();
+            battle.setCurrentCombatant(nextCombatant);
+        }
         dataList.remove(rowIndex);
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
     public void start() {
-        started = true;
+        battle.setStarted(true);
         dataList.sort(
                 Comparator.comparing(CombatantTableRow::getBasicSpeed).thenComparing(CombatantTableRow::getDexterity)
                         .reversed());
+        battle.setCurrentCombatant(dataList.get(0).getName());
         fireTableDataChanged();
     }
 
-    public boolean isStarted() {
-        return started;
+    public boolean isHiLited(int row, int column) {
+        boolean battleIsStarted = battle.isStarted();
+        String rowName = dataList.get(row).getName();
+        boolean rowIsCurrent = rowName.equals(battle.getCurrentCombatant());
+        boolean columnIsAction = column == 10;
+        return battleIsStarted && rowIsCurrent && columnIsAction;
     }
 }

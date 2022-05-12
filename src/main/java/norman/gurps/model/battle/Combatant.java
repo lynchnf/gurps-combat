@@ -13,6 +13,9 @@ public class Combatant {
     private Integer hitPointsAdj;
     private Double basicSpeedAdj;
     private Integer damageResistance;
+    private Double weightCarried;
+    private Integer encumbranceAdj;
+    private BattleAction lastAction;
 
     public Combatant(GameChar gameChar, List<String> existingNames) {
         String name = gameChar.getName();
@@ -28,6 +31,8 @@ public class Combatant {
         hitPointsAdj = gameChar.getHitPoints() - strength;
         basicSpeedAdj = gameChar.getBasicSpeed() - (dexterity + health) / 4.0;
         damageResistance = gameChar.getDamageResistance();
+        weightCarried = gameChar.getWeightCarried();
+        encumbranceAdj = 0;
     }
 
     public String getName() {
@@ -110,14 +115,6 @@ public class Combatant {
     //    }
     //}
     //
-    //public Double getBasicLift() {
-    //    double basicLift = (double) (strength * strength) / 5;
-    //    if (basicLift < 10.0) {
-    //        return basicLift;
-    //    } else {
-    //        return (double) Math.round(basicLift);
-    //    }
-    //}
 
     public Integer getHitPoints() {
         return strength + hitPointsAdj;
@@ -143,8 +140,58 @@ public class Combatant {
         this.damageResistance = damageResistance;
     }
 
+    public Double getWeightCarried() {
+        return weightCarried;
+    }
+
+    public void setWeightCarried(Double weightCarried) {
+        this.weightCarried = weightCarried;
+    }
+
+    public Integer getEncumbrance() {
+        return encumbrance() + encumbranceAdj;
+    }
+
+    public void setEncumbrance(Integer encumbrance) {
+        encumbranceAdj = encumbrance - encumbrance();
+    }
+
+    public BattleAction getLastAction() {
+        return lastAction;
+    }
+
+    public void setLastAction(BattleAction lastAction) {
+        this.lastAction = lastAction;
+    }
+
     @Override
     public String toString() {
         return name;
+    }
+
+    private double basicLift() {
+        double basicLift = (strength * strength) / 5.0;
+        if (basicLift >= 10.0) {
+            return Math.round(basicLift);
+        } else {
+            return basicLift;
+        }
+    }
+
+    private int encumbrance() {
+        double encumbranceRatio = weightCarried / basicLift();
+        if (encumbranceRatio <= 1.0) {
+            return 0;
+        } else if (encumbranceRatio <= 2.0) {
+            return 1;
+        } else if (encumbranceRatio <= 3.0) {
+            return 2;
+        } else if (encumbranceRatio <= 6.0) {
+            return 3;
+        } else if (encumbranceRatio <= 10.0) {
+            return 4;
+        } else {
+            return 5;
+        }
     }
 }

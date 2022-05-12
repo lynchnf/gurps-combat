@@ -1,6 +1,7 @@
 package norman.gurps.gui.battle;
 
 import norman.gurps.gui.ButtonDescriptor;
+import norman.gurps.model.battle.BattleAction;
 import norman.gurps.model.battle.Combatant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,5 +86,21 @@ public class CombatantTableRow {
 
     public void setDamageResistance(Integer damageResistance) {
         combatant.setDamageResistance(damageResistance);
+    }
+
+    public Integer getEncumbrance() {
+        return combatant.getEncumbrance();
+    }
+
+    public void setEncumbrance(Integer encumbrance) {
+        combatant.setEncumbrance(encumbrance);
+    }
+
+    public BattleAction getLastAction() {
+        return combatant.getLastAction();
+    }
+
+    public void setLastAction(BattleAction lastAction) {
+        combatant.setLastAction(lastAction);
     }
 }

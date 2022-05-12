@@ -66,7 +66,7 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
         int doubleCols = Integer.parseInt(bundle.getString("char.double.width"));
         int stringCols = Integer.parseInt(bundle.getString("char.string.width"));
         int weaponTableWidth = Integer.parseInt(bundle.getString("char.weapon.table.width"));
-        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.tabel.height"));
+        int weaponTableHeight = Integer.parseInt(bundle.getString("char.weapon.table.height"));
 
         modelId = gameChar.getId();
         createLabel(null, "char.name", null, this, createGbc(0, 0));
