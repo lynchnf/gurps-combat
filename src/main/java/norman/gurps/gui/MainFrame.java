@@ -44,10 +44,10 @@ import static norman.gurps.gui.GuiUtils.createMenu;
 import static norman.gurps.gui.GuiUtils.createMenuItem;
 
 public class MainFrame extends JFrame implements ActionListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
-    private ResourceBundle bundle;
-    private ClassLoader loader;
-    private final Properties appProps;
+    private static Logger LOGGER = LoggerFactory.getLogger(MainFrame.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private Properties appProps;
     private JDesktopPane desktop;
     private JMenuItem optionsFileItem;
     private JMenuItem exitFileItem;
@@ -74,8 +74,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private void initComponents() {
         LOGGER.debug("Initializing window components. Locale = " + Locale.getDefault());
-        bundle = ResourceBundle.getBundle("message");
-        loader = Thread.currentThread().getContextClassLoader();
         setTitle(bundle.getString("main.frame.title"));
         desktop = new JDesktopPane();
         desktop.setOpaque(false);

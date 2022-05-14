@@ -18,16 +18,16 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Application {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
-    private static final ResourceBundle BUNDLE = ResourceBundle.getBundle("application");
-    private static final String APP_DIR_NAME = ".gurps-combat";
-    private static final String APP_PROPS_FILE_NAME = "gurps-combat.properties";
-    private static final String APP_PROPS_FILE_COMMENTS = "GURPS Combat Dashboard";
+    private static Logger LOGGER = LoggerFactory.getLogger(Application.class);
+    private static ResourceBundle BUNDLE = ResourceBundle.getBundle("application");
+    private static String APP_DIR_NAME = ".gurps-combat";
+    private static String APP_PROPS_FILE_NAME = "gurps-combat.properties";
+    private static String APP_PROPS_FILE_COMMENTS = "GURPS Combat Dashboard";
 
     public static void main(String[] args) {
         LOGGER.debug("Starting Application");
 
-        final Properties appProps = new Properties();
+        Properties appProps = new Properties();
 
         // Load properties and set Look and Feel. If there's an error, there's not
         // much I an do about it except rethrow it as a run time exception.

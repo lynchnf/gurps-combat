@@ -6,8 +6,8 @@ import java.util.List;
 public class WeaponSkill {
     private String skillName;
     private Integer minimumStrength;
-    private Boolean unReadied;
-    private final List<WeaponMode> modes = new ArrayList<>();
+    private Boolean becomesUnReadied;
+    private List<WeaponMode> modes = new ArrayList<>();
 
     public String getSkillName() {
         return skillName;
@@ -25,15 +25,19 @@ public class WeaponSkill {
         this.minimumStrength = minimumStrength;
     }
 
-    public Boolean getUnReadied() {
-        return unReadied;
+    public Boolean getBecomesUnReadied() {
+        return becomesUnReadied;
     }
 
-    public void setUnReadied(Boolean unReadied) {
-        this.unReadied = unReadied;
+    public void setBecomesUnReadied(Boolean becomesUnReadied) {
+        this.becomesUnReadied = becomesUnReadied;
     }
 
     public List<WeaponMode> getModes() {
         return modes;
+    }
+
+    public void setModes(List<WeaponMode> modes) {
+        this.modes = modes;
     }
 }

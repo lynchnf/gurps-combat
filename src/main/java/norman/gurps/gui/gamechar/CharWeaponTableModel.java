@@ -11,12 +11,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class CharWeaponTableModel extends AbstractTableModel {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharWeaponTableModel.class);
-    private final String[] columnNames;
-    private final List<CharWeaponTableRow> dataList = new ArrayList<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(CharWeaponTableModel.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private String[] columnNames;
+    private List<CharWeaponTableRow> dataList = new ArrayList<>();
 
     public CharWeaponTableModel() {
-        ResourceBundle bundle = ResourceBundle.getBundle("message");
         String columnNameCsv = bundle.getString("char.weapon.table.column.names");
         columnNames = StringUtils.split(columnNameCsv, ',');
     }
@@ -61,6 +61,8 @@ public class CharWeaponTableModel extends AbstractTableModel {
             return row.getSkillName();
         } else if (columnIndex == 3) {
             return row.getSkillLevel();
+        } else if (columnIndex == 4) {
+            return row.isFavorite();
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
             return null;
@@ -79,6 +81,8 @@ public class CharWeaponTableModel extends AbstractTableModel {
                 return StringUtils.isNotBlank(row.getWeaponName());
             } else if (columnIndex == 3) {
                 return StringUtils.isNotBlank(row.getSkillName());
+            } else if (columnIndex == 4) {
+                return row.getSkillLevel() != null;
             } else {
                 LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
                 return false;
@@ -99,14 +103,23 @@ public class CharWeaponTableModel extends AbstractTableModel {
             fireTableCellUpdated(rowIndex, 2);
             row.setSkillLevel(null);
             fireTableCellUpdated(rowIndex, 3);
+            row.setFavorite(false);
+            fireTableCellUpdated(rowIndex, 4);
         } else if (columnIndex == 2) {
             row.setSkillName((String) aValue);
             fireTableCellUpdated(rowIndex, 2);
             row.setSkillLevel(null);
             fireTableCellUpdated(rowIndex, 3);
+            row.setFavorite(false);
+            fireTableCellUpdated(rowIndex, 4);
         } else if (columnIndex == 3) {
             row.setSkillLevel((Integer) aValue);
             fireTableCellUpdated(rowIndex, 3);
+            row.setFavorite(false);
+            fireTableCellUpdated(rowIndex, 4);
+        } else if (columnIndex == 4) {
+            row.setFavorite((Boolean) aValue);
+            fireTableCellUpdated(rowIndex, 4);
         } else {
             LOGGER.warn("Invalid columnIndex=\"" + columnIndex + "\"");
         }

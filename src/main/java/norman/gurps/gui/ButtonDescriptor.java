@@ -9,26 +9,30 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ButtonDescriptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ButtonDescriptor.class);
-    private final ResourceBundle bundle;
-    private final ClassLoader loader;
+    private static Logger LOGGER = LoggerFactory.getLogger(ButtonDescriptor.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private Icon icon;
     private String text;
     private String toolTip;
+    private boolean enabled;
 
     public ButtonDescriptor(String imagePath, String textKey, String toolTipKey) {
-        bundle = ResourceBundle.getBundle("message");
-        loader = Thread.currentThread().getContextClassLoader();
+        this(imagePath, textKey, toolTipKey, true);
+    }
+
+    public ButtonDescriptor(String imagePath, String textKey, String toolTipKey, boolean enabled) {
         if (imagePath != null) {
             URL url = loader.getResource(imagePath);
             icon = new ImageIcon(url);
         }
         if (textKey != null) {
-            String text = bundle.getString(textKey);
+            text = bundle.getString(textKey);
         }
         if (toolTipKey != null) {
-            String toolTip = bundle.getString(toolTipKey);
+            toolTip = bundle.getString(toolTipKey);
         }
+        this.enabled = enabled;
     }
 
     public Icon getIcon() {
@@ -41,5 +45,13 @@ public class ButtonDescriptor {
 
     public String getToolTip() {
         return toolTip;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

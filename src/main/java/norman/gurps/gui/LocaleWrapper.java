@@ -7,8 +7,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class LocaleWrapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocaleWrapper.class);
-    private final Locale locale;
+    private static Logger LOGGER = LoggerFactory.getLogger(LocaleWrapper.class);
+    private Locale locale;
 
     public LocaleWrapper() {
         this.locale = Locale.getDefault();

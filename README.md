@@ -21,12 +21,12 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 | Shields                               | 5   | 5/7/2022  | 5/7/2022  | 0    |
 | Melee Weapons                         | 8   | 5/7/2022  | 5/11/2022 | 4    |
 | Translate Action to English           | 3   | 5/11/2022 | 5/12/2022 | 1    |
-| Character favorite weapon.            | 2   |           |           |      |
-| Disable Remove from Battle            | 2   |           |           |      |
-| Show weapon before battle starts      | 3   |           |           |      |
-| Show shield before battle starts      | 3   |           |           |      |
-| Show hit points before battle starts  | 1   |           |           |      |
-| Validate when battle starts           | 2   |           |           |      |
+| Character favorite weapon.            | 2   | 5/12/2022 | 5/14/2022 | 2    |
+| Disable Remove from Battle            | 2   | 5/14/2022 | 5/14/2022 | 0    |
+| Show weapon before battle starts      | 3   | 5/14/2022 |           |      |
+| Show shield before battle starts      | 3   | 5/14/2022 | 5/14/2022 | 0    |
+| Show hit points before battle starts  | 1   | 5/14/2022 | 5/14/2022 | 0    |
+| Validate when battle starts           | 2   | 5/14/2022 | 5/14/2022 | 0    |
 | Show more after battle starts         | 5   |           |           |      |
 | Step through Battle                   | 3   |           |           |      |
 | Ranged Weapons                        | 3   |           |           |      |

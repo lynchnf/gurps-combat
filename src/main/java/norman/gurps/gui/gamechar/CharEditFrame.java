@@ -38,9 +38,9 @@ import static norman.gurps.gui.GuiUtils.createSpinner;
 import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class CharEditFrame extends JInternalFrame implements ActionListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
-    private ResourceBundle bundle;
-    private ClassLoader loader;
+    private static Logger LOGGER = LoggerFactory.getLogger(CharEditFrame.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private GameChar gameChar;
     private Long modelId;
     private JTextField nameField;
@@ -66,8 +66,6 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
 
     private void initComponents(GameChar gameChar, int frameCount) {
         LOGGER.debug("Initializing character edit frame.");
-        bundle = ResourceBundle.getBundle("message");
-        loader = Thread.currentThread().getContextClassLoader();
         setTitle(bundle.getString("char.frame.edit.title"));
         setLayout(new GridBagLayout());
         setResizable(true);
@@ -276,7 +274,13 @@ public class CharEditFrame extends JInternalFrame implements ActionListener {
             } else {
                 weapon.setSkillLevel(row.getSkillLevel());
             }
-            if (weapon.getWeaponName() != null || weapon.getSkillName() != null || weapon.getSkillLevel() != 0) {
+            if (row.isFavorite() == null) {
+                weapon.setFavorite(false);
+            } else {
+                weapon.setFavorite(row.isFavorite());
+            }
+            if (weapon.getWeaponName() != null || weapon.getSkillName() != null || weapon.getSkillLevel() != 0 ||
+                    weapon.getFavorite()) {
                 gameChar.getCharWeapons().add(weapon);
             }
         }

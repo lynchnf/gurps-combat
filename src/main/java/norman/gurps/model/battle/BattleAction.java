@@ -8,7 +8,7 @@ public enum BattleAction {
     ALL_OUT_DEFENCE_INCREASED("combatant.action.all.out.defense.increased"),
     ALL_OUT_DEFENCE_DOUBLE("combatant.action.all.out.defense.double");
 
-    private final String key;
+    private String key;
 
     BattleAction(String key) {
         this.key = key;

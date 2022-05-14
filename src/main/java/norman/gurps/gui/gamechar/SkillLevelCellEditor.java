@@ -10,8 +10,8 @@ import javax.swing.table.TableCellEditor;
 import java.awt.Component;
 
 public class SkillLevelCellEditor extends AbstractCellEditor implements TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillLevelCellEditor.class);
-    private final JSpinner spinner = new JSpinner();
+    private static Logger LOGGER = LoggerFactory.getLogger(SkillLevelCellEditor.class);
+    private JSpinner spinner = new JSpinner();
 
     @Override
     public Object getCellEditorValue() {

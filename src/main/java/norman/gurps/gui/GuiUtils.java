@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class GuiUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GuiUtils.class);
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("message");
-    private static final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    private static final int gbcInsetx = Integer.parseInt(bundle.getString("grid.bag.constraints.insets.x"));
-    private static final int gbcInsety = Integer.parseInt(bundle.getString("grid.bag.constraints.insets.y"));
+    private static Logger LOGGER = LoggerFactory.getLogger(GuiUtils.class);
+    private static ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private static ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private static int gbcInsetx = Integer.parseInt(bundle.getString("grid.bag.constraints.insets.x"));
+    private static int gbcInsety = Integer.parseInt(bundle.getString("grid.bag.constraints.insets.y"));
 
     public static JButton createButton(String imagePath, String textKey, String toolTipKey, ActionListener listener,
             Container container) {

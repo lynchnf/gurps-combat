@@ -17,18 +17,17 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class GameCharService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
-    private static final String APP_DIR_NAME = ".gurps-combat";
-    private static final String APP_CHAR_FILE_NAME = "characters.json";
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
+    private static ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static String APP_DIR_NAME = ".gurps-combat";
+    private static String APP_CHAR_FILE_NAME = "characters.json";
 
     public static List<GameChar> findAll() {
         return loadGameChars();
     }
 
     public static List<String> validate(GameChar gameChar) {
-        ResourceBundle bundle = ResourceBundle.getBundle("message");
-
         List<String> errors = new ArrayList<>();
         if (gameChar.getName() == null) {
             errors.add(bundle.getString("char.error.name.blank"));
@@ -67,6 +66,7 @@ public class GameCharService {
             errors.add(bundle.getString("char.error.shield.level.negative"));
         }
         List<CharWeapon> weapons = gameChar.getCharWeapons();
+        int favoriteCount = 0;
         for (CharWeapon weapon : weapons) {
             if (weapon.getWeaponName() == null) {
                 errors.add(bundle.getString("char.error.weapon.name.blank"));
@@ -77,6 +77,14 @@ public class GameCharService {
             if (weapon.getSkillLevel() < 0) {
                 errors.add(bundle.getString("char.error.weapon.level.negative"));
             }
+            if (weapon.getFavorite()) {
+                favoriteCount++;
+            }
+        }
+        if (favoriteCount < 1) {
+            errors.add(bundle.getString("char.error.weapon.favorite.required"));
+        } else if (favoriteCount > 1) {
+            errors.add(bundle.getString("char.error.weapon.favorite.too.many"));
         }
         if (gameChar.getWeightCarried() < 0.0) {
             errors.add(bundle.getString("char.error.weight.carried.negative"));
@@ -86,7 +94,7 @@ public class GameCharService {
                 basicLift = Math.round(basicLift);
             }
             if (gameChar.getWeightCarried() > basicLift * 10.0) {
-                errors.add(bundle.getString("char.error.weight.carried.to.high"));
+                errors.add(bundle.getString("char.error.weight.carried.too.high"));
             }
         }
 

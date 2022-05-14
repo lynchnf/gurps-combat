@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class BattleActionColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BattleActionColumn.class);
-    private final ResourceBundle bundle = ResourceBundle.getBundle("message");
-    private final JTextField field = new JTextField();
-    private final Color defaultFieldBackground;
-    private final JComboBox<String> comboBox = new JComboBox<>();
-    private final Color defaultComboBoxBackground;
-    private final Color hiliteBackground;
-    private final Map<String, BattleAction> reverseLookup = new HashMap<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(BattleActionColumn.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private JTextField field = new JTextField();
+    private Color defaultFieldBackground;
+    private JComboBox<String> comboBox = new JComboBox<>();
+    private Color defaultComboBoxBackground;
+    private Color hiliteBackground;
+    private Map<String, BattleAction> reverseLookup = new HashMap<>();
 
     public BattleActionColumn() {
         field.setEditable(false);

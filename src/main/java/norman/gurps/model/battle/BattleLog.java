@@ -4,8 +4,8 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class BattleLog {
-    public static final DateFormat FORMAT = DateFormat.getTimeInstance(DateFormat.MEDIUM);
-    private final Date timestamp = new Date();
+    public static DateFormat FORMAT = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+    private Date timestamp = new Date();
     private String message;
     private String battleJson;
 
@@ -16,6 +16,10 @@ public class BattleLog {
 
     public Date getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getMessage() {

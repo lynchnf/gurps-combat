@@ -4,6 +4,7 @@ public class CharWeapon {
     private String weaponName;
     private String skillName;
     private Integer skillLevel;
+    private Boolean favorite = false;
 
     public String getWeaponName() {
         return weaponName;
@@ -29,8 +30,16 @@ public class CharWeapon {
         this.skillLevel = skillLevel;
     }
 
+    public Boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(Boolean favorite) {
+        this.favorite = favorite;
+    }
+
     @Override
     public String toString() {
-        return weaponName + " - " + skillName + " (" + skillLevel + ")";
+        return weaponName + " - " + skillName + " (" + skillLevel + ")" + (favorite ? " favorite!" : "");
     }
 }

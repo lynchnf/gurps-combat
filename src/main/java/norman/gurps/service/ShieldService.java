@@ -13,13 +13,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ShieldService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShieldService.class);
-    public static final String SHIELDS_RESOURCE = "data/shields.json";
-    private static final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static Logger LOGGER = LoggerFactory.getLogger(ShieldService.class);
+    private static ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private static ObjectMapper mapper = new ObjectMapper();
+    private static String SHIELDS_RESOURCE = "data/shields.json";
 
     public static List<Shield> findAll() {
         return loadShields();
+    }
+
+    public static Shield getShield(String shieldName) {
+        Shield returnShield = null;
+        List<Shield> shields = loadShields();
+        for (Shield shield : shields) {
+            if (shield.getName().equals(shieldName)) {
+                returnShield = shield;
+                break;
+            }
+        }
+        return returnShield;
     }
 
     private static List<Shield> loadShields() {

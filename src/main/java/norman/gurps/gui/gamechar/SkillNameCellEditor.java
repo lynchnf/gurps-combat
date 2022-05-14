@@ -14,8 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class SkillNameCellEditor extends AbstractCellEditor implements TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SkillNameCellEditor.class);
-    private final JComboBox<String> comboBox = new JComboBox<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(SkillNameCellEditor.class);
+    private JComboBox<String> comboBox = new JComboBox<>();
 
     @Override
     public Object getCellEditorValue() {

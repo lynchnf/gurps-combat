@@ -6,8 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CharWeaponTableRow {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharWeaponTableRow.class);
-    private final CharWeapon charWeapon;
+    private static Logger LOGGER = LoggerFactory.getLogger(CharWeaponTableRow.class);
+    private CharWeapon charWeapon;
     private ButtonDescriptor buttonDescriptor;
 
     public CharWeaponTableRow(CharWeapon charWeapon, ButtonDescriptor buttonDescriptor) {
@@ -45,5 +45,13 @@ public class CharWeaponTableRow {
 
     public void setSkillLevel(Integer skillLevel) {
         charWeapon.setSkillLevel(skillLevel);
+    }
+
+    public Boolean isFavorite() {
+        return charWeapon.getFavorite();
+    }
+
+    public void setFavorite(Boolean favorite) {
+        charWeapon.setFavorite(favorite);
     }
 }

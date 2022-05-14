@@ -27,9 +27,9 @@ import static norman.gurps.gui.GuiUtils.createLabel;
 import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class CharViewFrame extends JInternalFrame implements ActionListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CharViewFrame.class);
-    private ResourceBundle bundle;
-    private ClassLoader loader;
+    private static Logger LOGGER = LoggerFactory.getLogger(CharViewFrame.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
     private Long modelId;
     private JTextField nameField;
     private JTextField strengthField;
@@ -52,8 +52,6 @@ public class CharViewFrame extends JInternalFrame implements ActionListener {
 
     private void initComponents(GameChar gameChar, int frameCount) {
         LOGGER.debug("Initializing character view frame.");
-        bundle = ResourceBundle.getBundle("message");
-        loader = Thread.currentThread().getContextClassLoader();
         setTitle(bundle.getString("char.frame.view.title"));
         setLayout(new GridBagLayout());
         setResizable(true);

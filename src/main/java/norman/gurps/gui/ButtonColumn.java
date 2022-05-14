@@ -12,9 +12,9 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 
 public class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ButtonColumn.class);
-    private final JTable table;
-    private final JButton button;
+    private static Logger LOGGER = LoggerFactory.getLogger(ButtonColumn.class);
+    private JTable table;
+    private JButton button;
     private Object value;
 
     public ButtonColumn(JTable table, ActionListener listener) {
@@ -61,6 +61,7 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
         if (descriptor.getToolTip() != null) {
             button.setToolTipText(descriptor.getToolTip());
         }
+        button.setEnabled(descriptor.isEnabled());
         return button;
     }
 }

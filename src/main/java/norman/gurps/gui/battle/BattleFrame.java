@@ -9,6 +9,7 @@ import norman.gurps.model.battle.Battle;
 import norman.gurps.model.battle.BattleLog;
 import norman.gurps.model.battle.Combatant;
 import norman.gurps.model.gamechar.GameChar;
+import norman.gurps.service.BattleService;
 import norman.gurps.service.GameCharService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,14 +47,15 @@ import static norman.gurps.gui.GuiUtils.createToolBar;
 import static norman.gurps.gui.GuiUtils.makeScrollable;
 
 public class BattleFrame extends JInternalFrame implements ActionListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BattleFrame.class);
-    private ResourceBundle bundle;
-    private ClassLoader loader;
-    private ObjectMapper mapper;
-    private final Battle battle = new Battle();
-    private final List<BattleLog> battleLogs = new ArrayList<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(BattleFrame.class);
+    private ResourceBundle bundle = ResourceBundle.getBundle("message");
+    private ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private ObjectMapper mapper = new ObjectMapper();
+    private Battle battle = new Battle();
+    private List<BattleLog> battleLogs = new ArrayList<>();
     private JButton addCharButton;
     private JButton startButton;
+    private JButton haltButton;
     private JTable combatantTable;
     private ButtonColumn combatantButtonColumn;
 
@@ -66,9 +68,6 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
 
     private void initComponents() {
         LOGGER.debug("Initializing battle frame.");
-        bundle = ResourceBundle.getBundle("message");
-        loader = Thread.currentThread().getContextClassLoader();
-        mapper = new ObjectMapper();
         setTitle(bundle.getString("battle.frame.title"));
         setLayout(new BorderLayout());
         setResizable(true);
@@ -85,6 +84,8 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         JToolBar toolBar = createToolBar(combatantPanel);
         addCharButton = createButton("images/character16.png", null, "battle.add.char.tool.tip", this, toolBar);
         startButton = createButton("images/start16.png", null, "battle.start.tool.tip", this, toolBar);
+        haltButton = createButton("images/halt16.png", null, "battle.halt.tool.tip", this, toolBar);
+        haltButton.setEnabled(false);
 
         // Combatant table.
         CombatantTableModel model = new CombatantTableModel(battle);
@@ -95,10 +96,15 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         combatantTable.getColumnModel().getColumn(0).setCellRenderer(combatantButtonColumn);
         combatantTable.getColumnModel().getColumn(0).setCellEditor(combatantButtonColumn);
 
+        // Renderer for shield.
+        CombatantShieldColumn shieldColumn = new CombatantShieldColumn();
+        combatantTable.getColumnModel().getColumn(12).setCellRenderer(shieldColumn);
+        combatantTable.getColumnModel().getColumn(12).setCellEditor(shieldColumn);
+
         // Renderer for action.
         BattleActionColumn actionColumn = new BattleActionColumn();
-        combatantTable.getColumnModel().getColumn(10).setCellRenderer(actionColumn);
-        combatantTable.getColumnModel().getColumn(10).setCellEditor(actionColumn);
+        combatantTable.getColumnModel().getColumn(13).setCellRenderer(actionColumn);
+        combatantTable.getColumnModel().getColumn(13).setCellEditor(actionColumn);
 
         // Combatant table column widths.
         String columnWidthCsv = bundle.getString("combatant.table.column.widths");
@@ -141,6 +147,7 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     }
 
     private void addChar() {
+        // Select character to add.
         GameChar gameChar = showSelectCharDialog("images/character32.png", "battle.add.char.dialog.title",
                 "battle.add.char.dialog.message", this);
         if (gameChar != null) {
@@ -154,79 +161,75 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
             }
             Combatant combatant = new Combatant(gameChar, existingNames);
 
-            // Add character to battle.
+            // Add character to battle and table.
+            battle.getCombatants().add(combatant);
             ButtonDescriptor descriptor =
                     new ButtonDescriptor("images/remove8.png", null, "combatant.table.remove.char.tool.tip");
             CombatantTableRow row = new CombatantTableRow(combatant, descriptor);
             model.addRow(row);
 
-            // Save current state of battle.
-            String battleJson = null;
-            try {
-                battleJson = mapper.writeValueAsString(battle);
-            } catch (JsonProcessingException e) {
-                throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
-            }
-
             // Add log saying we added character.
-            String message;
-            if (battle.isStarted()) {
-                model.start();
-                message = String.format(bundle.getString("battle.log.char.added.and.sorted"), combatant.getName());
-            } else {
-                message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
-            }
-            BattleLog log = new BattleLog(message, battleJson);
-            battleLogs.add(log);
-            DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
-            logListModel.addElement(log);
+            String message = String.format(bundle.getString("battle.log.char.added"), combatant.getName());
+            addBattleLog(message);
         }
     }
 
     private void removeChar() {
-        // Remove character from battle.
+        // Remove character from battle and table.
         int rowIndex = combatantButtonColumn.getEditingRow();
         CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
         String name = (String) model.getValueAt(rowIndex, 1);
+        battle.getCombatants().remove(rowIndex);
         model.removeRow(rowIndex);
-
-        // Save current state of battle.
-        String battleJson = null;
-        try {
-            battleJson = mapper.writeValueAsString(battle);
-        } catch (JsonProcessingException e) {
-            throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
-        }
 
         // Add log saying we removed character.
         String message = String.format(bundle.getString("battle.log.char.removed"), name);
-        BattleLog log = new BattleLog(message, battleJson);
-        battleLogs.add(log);
-        DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
-        logListModel.addElement(log);
+        addBattleLog(message);
     }
 
     private void start() {
-        // Sort and initialize characters
-        CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
-        model.start();
+        // Before we start the battle, validate it.
+        List<String> errors = BattleService.validate(battle);
 
-        // Save current state of battle.
-        String battleJson = null;
+        // If validation errors, display them.
+        if (!errors.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            for (int i = 0; i < errors.size(); i++) {
+                if (i != 0) {
+                    message.append(System.getProperty("line.separator"));
+                }
+                message.append(errors.get(i));
+            }
+            JOptionPane.showInternalMessageDialog(this, message.toString(), bundle.getString("battle.error.title"),
+                    JOptionPane.ERROR_MESSAGE, null);
+        } else {
+            // If no errors, start battle.
+            BattleService.start(battle);
+            CombatantTableModel model = (CombatantTableModel) combatantTable.getModel();
+            model.sortDataAndDisableRemove();
+
+            addCharButton.setEnabled(false);
+            startButton.setEnabled(false);
+            haltButton.setEnabled(true);
+
+            // Add log saying we started battle.
+            String message = bundle.getString("battle.log.start");
+            addBattleLog(message);
+        }
+    }
+
+    private void addBattleLog(String message) {
         try {
-            battleJson = mapper.writeValueAsString(battle);
+            // Save current state of battle.
+            String battleJson = mapper.writeValueAsString(battle);
+
+            BattleLog log = new BattleLog(message, battleJson);
+            battleLogs.add(log);
+            DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
+            logListModel.addElement(log);
         } catch (JsonProcessingException e) {
             throw new LoggingException(LOGGER, "Unable to convert to JSON: battle=\"" + battle + "\".");
         }
-
-        // Add log saying we removed character.
-        String message = bundle.getString("battle.log.start");
-        BattleLog log = new BattleLog(message, battleJson);
-        battleLogs.add(log);
-        DefaultListModel<BattleLog> logListModel = (DefaultListModel<BattleLog>) logList.getModel();
-        logListModel.addElement(log);
-
-        startButton.setEnabled(false);
     }
 
     // COMMON METHODS // TODO Refactor these someday.

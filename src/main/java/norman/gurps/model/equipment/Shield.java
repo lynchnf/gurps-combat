@@ -19,9 +19,4 @@ public class Shield {
     public void setDefenseBonus(Integer defenseBonus) {
         this.defenseBonus = defenseBonus;
     }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }

@@ -14,8 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class WeaponNameCellEditor extends AbstractCellEditor implements TableCellEditor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeaponNameCellEditor.class);
-    private final JComboBox<String> comboBox = new JComboBox<>();
+    private static Logger LOGGER = LoggerFactory.getLogger(WeaponNameCellEditor.class);
+    private JComboBox<String> comboBox = new JComboBox<>();
 
     public WeaponNameCellEditor() {
         comboBox.addItem(null);

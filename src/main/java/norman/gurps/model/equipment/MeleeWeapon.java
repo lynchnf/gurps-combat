@@ -5,7 +5,7 @@ import java.util.List;
 
 public class MeleeWeapon {
     private String name;
-    private final List<WeaponSkill> skills = new ArrayList<>();
+    private List<WeaponSkill> skills = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -17,5 +17,9 @@ public class MeleeWeapon {
 
     public List<WeaponSkill> getSkills() {
         return skills;
+    }
+
+    public void setSkills(List<WeaponSkill> skills) {
+        this.skills = skills;
     }
 }
