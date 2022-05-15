@@ -108,12 +108,8 @@ public class CombatantTableRow {
         combatant.setCurrentHitPoints(currentHitPoints);
     }
 
-    public List<CombatantWeapon> getCombatantWeapons() {
+    public List<CombatantWeapon> combatantWeapons() {
         return combatant.getCombatantWeapons();
-    }
-
-    public void setCombatantWeapons(List<CombatantWeapon> combatantWeapons) {
-        combatant.setCombatantWeapons(combatantWeapons);
     }
 
     public Integer getReadyWeaponIndex() {
@@ -128,20 +124,12 @@ public class CombatantTableRow {
         return combatant.getCombatantShield();
     }
 
-    public CombatantShield getReadyShield() {
-        if (combatant.getShieldReady()) {
-            return combatant.getCombatantShield();
-        } else {
-            return null;
-        }
+    public Boolean getShieldReady() {
+        return combatant.getShieldReady();
     }
 
-    public void setReadyShield(CombatantShield readyShield) {
-        if (readyShield == null) {
-            combatant.setShieldReady(false);
-        } else {
-            combatant.setShieldReady(true);
-        }
+    public void setShieldReady(Boolean shieldReady) {
+        combatant.setShieldReady(shieldReady);
     }
 
     public BattleAction getLastAction() {

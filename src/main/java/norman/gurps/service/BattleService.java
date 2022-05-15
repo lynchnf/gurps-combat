@@ -2,6 +2,7 @@ package norman.gurps.service;
 
 import norman.gurps.model.battle.Battle;
 import norman.gurps.model.battle.Combatant;
+import norman.gurps.model.battle.CombatantWeapon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,38 +31,42 @@ public class BattleService {
         return errors;
     }
 
-    public static List<String> validate(Combatant gameChar) {
+    public static List<String> validate(Combatant combatant) {
         List<String> errors = new ArrayList<>();
-        if (gameChar.getStrength() < 0) {
+        if (combatant.getStrength() < 0) {
             errors.add(bundle.getString("battle.error.strength.negative"));
         }
-        if (gameChar.getDexterity() < 0) {
+        if (combatant.getDexterity() < 0) {
             errors.add(bundle.getString("battle.error.dexterity.negative"));
         }
-        if (gameChar.getIntelligence() < 0) {
+        if (combatant.getIntelligence() < 0) {
             errors.add(bundle.getString("battle.error.intelligence.negative"));
         }
-        if (gameChar.getHealth() < 0) {
+        if (combatant.getHealth() < 0) {
             errors.add(bundle.getString("battle.error.health.negative"));
         }
-        if (gameChar.getBasicSpeed() < 0.0) {
+        if (combatant.getBasicSpeed() < 0.0) {
             errors.add(bundle.getString("battle.error.basic.speed.negative"));
         }
-        if (gameChar.getDamageResistance() < 0) {
+        if (combatant.getDamageResistance() < 0) {
             errors.add(bundle.getString("battle.error.damage.resistance.negative"));
         }
-        if (gameChar.getEncumbrance() < 0) {
+        if (combatant.getEncumbrance() < 0) {
             errors.add(bundle.getString("battle.error.encumbrance.negative"));
-        } else if (gameChar.getEncumbrance() > 4) {
+        } else if (combatant.getEncumbrance() > 4) {
             errors.add(bundle.getString("battle.error.encumbrance.too.high"));
         }
-        if (gameChar.getHitPoints() < 0) {
+        if (combatant.getHitPoints() < 0) {
             errors.add(bundle.getString("battle.error.hit.point.negative"));
         }
-        if (gameChar.getCurrentHitPoints() < 0) {
+        if (combatant.getCurrentHitPoints() < 0) {
             errors.add(bundle.getString("battle.error.current.hit.point.negative"));
-        } else if (gameChar.getCurrentHitPoints() > gameChar.getHitPoints()) {
+        } else if (combatant.getCurrentHitPoints() > combatant.getHitPoints()) {
             errors.add(bundle.getString("battle.error.current.hit.point.too.high"));
+        }
+        CombatantWeapon weapon = combatant.getCombatantWeapons().get(combatant.getReadyWeaponIndex());
+        if (weapon.getTwoHanded() && combatant.getShieldReady()) {
+            errors.add(bundle.getString("battle.error.shield.cannot.be.ready"));
         }
 
         return errors;

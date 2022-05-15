@@ -51,6 +51,7 @@ public class Combatant {
         hitPointsAdj = gameChar.getHitPoints() - strength;
         currentHitPoints = gameChar.getHitPoints();
         List<CharWeapon> charWeapons = gameChar.getCharWeapons();
+        readyWeaponIndex = -1;
         for (CharWeapon charWeapon : charWeapons) {
             String weaponName = charWeapon.getWeaponName();
             String skillName = charWeapon.getSkillName();
@@ -71,15 +72,17 @@ public class Combatant {
                 combatantWeapon.setDamageType(weaponMode.getDamageType());
                 combatantWeapons.add(combatantWeapon);
             }
+            if (charWeapon.getFavorite() && readyWeaponIndex < 0) {
+                readyWeaponIndex = combatantWeapons.size() - 1;
+            }
         }
-        readyWeaponIndex = -1;
         combatantShield = new CombatantShield();
         String shieldName = gameChar.getShieldName();
         combatantShield.setShieldName(shieldName);
         combatantShield.setShieldSkillLevel(gameChar.getShieldSkillLevel());
         Shield shield = ShieldService.getShield(shieldName);
         combatantShield.setDefenseBonus(shield.getDefenseBonus());
-        shieldReady = false;
+        shieldReady = !combatantWeapons.get(readyWeaponIndex).getTwoHanded();
     }
 
     public String getName() {

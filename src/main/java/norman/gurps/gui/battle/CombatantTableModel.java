@@ -4,7 +4,6 @@ import norman.gurps.gui.ButtonDescriptor;
 import norman.gurps.model.battle.Battle;
 import norman.gurps.model.battle.BattleAction;
 import norman.gurps.model.battle.BattleStage;
-import norman.gurps.model.battle.CombatantShield;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,9 +82,9 @@ public class CombatantTableModel extends AbstractTableModel {
         } else if (columnIndex == 10) {
             return row.getCurrentHitPoints();
         } else if (columnIndex == 11) {
-            return row.getCombatantWeapons().get(0);
+            return row.getReadyWeaponIndex();
         } else if (columnIndex == 12) {
-            return row.getReadyShield();
+            return row.getShieldReady();
         } else if (columnIndex == 13) {
             return row.getLastAction();
         } else {
@@ -96,9 +95,9 @@ public class CombatantTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        // Before battle starts, only the button and the columns between Strength and Current Hit Points (inclusive) can be changed.
+        // Before battle starts, only the button and the columns between Strength and Ready Shield (inclusive) can be changed.
         if (!battle.getStarted()) {
-            return columnIndex == 0 || columnIndex >= 2 && columnIndex <= 10 || columnIndex == 12;
+            return columnIndex == 0 || columnIndex >= 2 && columnIndex <= 12;
         } else {
             // After battle starts, ...
             return false;
@@ -146,10 +145,10 @@ public class CombatantTableModel extends AbstractTableModel {
             row.setCurrentHitPoints((Integer) aValue);
             fireTableCellUpdated(rowIndex, 10);
         } else if (columnIndex == 11) {
-            //row.setReadyWeapon(aValue);
+            row.setReadyWeaponIndex((Integer) aValue);
             fireTableCellUpdated(rowIndex, 11);
         } else if (columnIndex == 12) {
-            row.setReadyShield((CombatantShield) aValue);
+            row.setShieldReady((Boolean) aValue);
             fireTableCellUpdated(rowIndex, 12);
         } else if (columnIndex == 13) {
             row.setLastAction((BattleAction) aValue);

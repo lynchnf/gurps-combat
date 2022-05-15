@@ -23,7 +23,7 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 | Translate Action to English           | 3   | 5/11/2022 | 5/12/2022 | 1    |
 | Character favorite weapon.            | 2   | 5/12/2022 | 5/14/2022 | 2    |
 | Disable Remove from Battle            | 2   | 5/14/2022 | 5/14/2022 | 0    |
-| Show weapon before battle starts      | 3   | 5/14/2022 |           |      |
+| Show weapon before battle starts      | 3   | 5/14/2022 | 5/15/2022 | 1    |
 | Show shield before battle starts      | 3   | 5/14/2022 | 5/14/2022 | 0    |
 | Show hit points before battle starts  | 1   | 5/14/2022 | 5/14/2022 | 0    |
 | Validate when battle starts           | 2   | 5/14/2022 | 5/14/2022 | 0    |

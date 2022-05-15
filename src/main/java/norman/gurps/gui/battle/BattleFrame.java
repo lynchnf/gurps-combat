@@ -58,7 +58,6 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
     private JButton haltButton;
     private JTable combatantTable;
     private ButtonColumn combatantButtonColumn;
-
     private JList<BattleLog> logList;
 
     public BattleFrame() {
@@ -95,6 +94,11 @@ public class BattleFrame extends JInternalFrame implements ActionListener {
         combatantButtonColumn = new ButtonColumn(combatantTable, this);
         combatantTable.getColumnModel().getColumn(0).setCellRenderer(combatantButtonColumn);
         combatantTable.getColumnModel().getColumn(0).setCellEditor(combatantButtonColumn);
+
+        // Renderer for shield.
+        CombatantWeaponColumn weaponColumn = new CombatantWeaponColumn();
+        combatantTable.getColumnModel().getColumn(11).setCellRenderer(weaponColumn);
+        combatantTable.getColumnModel().getColumn(11).setCellEditor(weaponColumn);
 
         // Renderer for shield.
         CombatantShieldColumn shieldColumn = new CombatantShieldColumn();

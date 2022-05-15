@@ -1,6 +1,6 @@
 package norman.gurps.gui.battle;
 
-import norman.gurps.model.battle.CombatantShield;
+import norman.gurps.model.battle.CombatantWeapon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,32 +11,34 @@ import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.Component;
+import java.util.List;
 
-public class CombatantShieldColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
-    private static Logger LOGGER = LoggerFactory.getLogger(CombatantShieldColumn.class);
+public class CombatantWeaponColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor {
+    private static Logger LOGGER = LoggerFactory.getLogger(CombatantWeaponColumn.class);
     private JTextField field = new JTextField();
-    private JComboBox<CombatantShield> comboBox = new JComboBox<>();
+    private JComboBox<CombatantWeapon> comboBox = new JComboBox<>();
 
-    public CombatantShieldColumn() {
+    public CombatantWeaponColumn() {
         field.setEditable(false);
     }
 
     @Override
     public Object getCellEditorValue() {
-        return comboBox.getSelectedIndex() > 0;
+        return comboBox.getSelectedIndex() - 1;
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
-        boolean ready = (boolean) value;
-        if (ready) {
+        int index = (int) value;
+        if (index < 0) {
+            field.setText(null);
+        } else {
             CombatantTableModel model = (CombatantTableModel) table.getModel();
             CombatantTableRow modelRow = model.getDataList().get(row);
-            CombatantShield shield = modelRow.combatantShield();
-            field.setText(shield.toString());
-        } else {
-            field.setText(null);
+            List<CombatantWeapon> weapons = modelRow.combatantWeapons();
+            CombatantWeapon weapon = weapons.get(index);
+            field.setText(weapon.toString());
         }
         return field;
     }
@@ -47,15 +49,12 @@ public class CombatantShieldColumn extends AbstractCellEditor implements TableCe
         comboBox.addItem(null);
         CombatantTableModel model = (CombatantTableModel) table.getModel();
         CombatantTableRow modelRow = model.getDataList().get(row);
-        CombatantShield shield = modelRow.combatantShield();
-        comboBox.addItem(shield);
-
-        boolean ready = (boolean) value;
-        if (ready) {
-            comboBox.setSelectedIndex(0);
-        } else {
-            comboBox.setSelectedIndex(1);
+        List<CombatantWeapon> weapons = modelRow.combatantWeapons();
+        for (CombatantWeapon weapon : weapons) {
+            comboBox.addItem(weapon);
         }
+        int index = (int) value;
+        comboBox.setSelectedIndex(index + 1);
         return comboBox;
     }
 }
