@@ -91,7 +91,7 @@ public class GameCharService {
                         "Error loading stored game chars file from " + storageGameCharFile + ".", e);
             }
         } else {
-            LOGGER.debug("Saving stored game chars file.");
+            LOGGER.debug("Saving new stored game chars file.");
             saveStoredGameChars(gameCharMap);
         }
 
@@ -99,7 +99,7 @@ public class GameCharService {
     }
 
     public void saveStoredGameChars(Map<String, GameChar> gameChars) {
-        LOGGER.debug("Storing application properties.");
+        LOGGER.debug("Storing game chars to local storage.");
         File storageGameCharFile = new File(storageDir, STORAGE_GAME_CHAR_FILE_NAME);
         try {
             mapper.writeValue(storageGameCharFile, gameChars.values());

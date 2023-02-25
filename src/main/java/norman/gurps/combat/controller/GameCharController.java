@@ -60,7 +60,7 @@ public class GameCharController {
     }
 
     @PostMapping("/char/remove")
-    public CombatResponse removeChar(RemoveCharRequest req) {
+    public CombatResponse removeChar(@RequestBody RemoveCharRequest req) {
         LOGGER.debug("Removing stored game character: {}", req);
         CombatResponse resp = new CombatResponse();
 
