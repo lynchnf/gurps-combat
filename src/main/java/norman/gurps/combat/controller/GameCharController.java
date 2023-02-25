@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,7 +29,8 @@ public class GameCharController {
     }
 
     @PostMapping("/char/store")
-    public CombatResponse storeChar(StoreCharRequest req) {
+    public CombatResponse storeChar(@RequestBody StoreCharRequest req) {
+        LOGGER.debug("Storing game character: {}", req);
         CombatResponse resp = new CombatResponse();
 
         // Validate new Game Character.
@@ -44,8 +46,8 @@ public class GameCharController {
         Map<String, GameChar> gameChars = service.getStoredGameChars();
         if (gameChars.containsKey(newGameChar.getName())) {
             resp.setSuccessful(false);
-            resp.setMessage(String.format("A character with name %s already exists in the stored characters.",
-                    newGameChar.getName()));
+            resp.setMessage(
+                    "A character with name " + newGameChar.getName() + " already exists in the stored characters.");
             return resp;
         }
 
@@ -53,12 +55,13 @@ public class GameCharController {
         gameChars.put(newGameChar.getName(), newGameChar);
         service.saveStoredGameChars(gameChars);
         resp.setSuccessful(true);
-        resp.setMessage(String.format("Successfully saved character %s to local storage.", newGameChar.getName()));
+        resp.setMessage("Successfully saved character " + newGameChar.getName() + " to local storage.");
         return resp;
     }
 
     @PostMapping("/char/remove")
     public CombatResponse removeChar(RemoveCharRequest req) {
+        LOGGER.debug("Removing stored game character: {}", req);
         CombatResponse resp = new CombatResponse();
 
         // Get name to remove.
@@ -69,11 +72,11 @@ public class GameCharController {
             return resp;
         }
 
-        // Verify character to remove exists.
+        // Verify character to remove does exist.
         Map<String, GameChar> gameChars = service.getStoredGameChars();
         if (!gameChars.containsKey(name)) {
             resp.setSuccessful(false);
-            resp.setMessage(String.format("Character %s not found in local storage.", name));
+            resp.setMessage("Character " + name + " not found in local storage.");
             return resp;
         }
 
@@ -81,19 +84,20 @@ public class GameCharController {
         gameChars.remove(name);
         service.saveStoredGameChars(gameChars);
         resp.setSuccessful(true);
-        resp.setMessage(String.format("Successfully removed character %s from local storage.", name));
+        resp.setMessage("Successfully removed character " + name + " from local storage.");
         return resp;
     }
 
     @GetMapping("/char/show")
     public ShowStoredCharsResponse showStoredChars() {
+        LOGGER.debug("Showing all stored game characters");
         ShowStoredCharsResponse resp = new ShowStoredCharsResponse();
         resp.setSuccessful(true);
         Map<String, GameChar> gameChars = service.getStoredGameChars();
         if (gameChars.isEmpty()) {
             resp.setMessage("No characters found in local storage.");
         } else {
-            resp.setMessage(String.format("Found %d characters in local storage.", gameChars.size()));
+            resp.setMessage("Found " + gameChars.size() + " characters in local storage.");
             resp.getGameChars().addAll(gameChars.values());
         }
         return resp;

@@ -1,6 +1,5 @@
 package norman.gurps.combat.controller;
 
-import norman.gurps.combat.JsonTestHelper;
 import norman.gurps.combat.controller.request.RemoveCharRequest;
 import norman.gurps.combat.controller.request.StoreCharRequest;
 import norman.gurps.combat.controller.response.CombatResponse;
@@ -26,13 +25,9 @@ import static org.mockito.Mockito.when;
 class GameCharControllerTest {
     GameCharController controller;
     GameCharService service;
-    JsonTestHelper helper;
 
     @BeforeEach
     void setUp() {
-        helper = new JsonTestHelper();
-        helper.initialize();
-
         // Mock service.
         service = Mockito.mock(GameCharService.class);
         when(service.validate(any(GameChar.class))).thenReturn(new ArrayList<>());
@@ -51,34 +46,52 @@ class GameCharControllerTest {
 
     @Test
     void storeCharHappyPath() throws Exception {
-        StoreCharRequest req = helper.getObject(StoreCharRequest.class, "store_char_request.json");
+        StoreCharRequest req = new StoreCharRequest();
         req.setName("Another Test Character Name");
+        req.setStrength(10);
+        req.setDexterity(10);
+        req.setIntelligence(10);
+        req.setHealth(10);
+
         CombatResponse resp = controller.storeChar(req);
+
         assertTrue(resp.getSuccessful());
         assertNotNull(StringUtils.trimToNull(resp.getMessage()));
     }
 
     @Test
     void storeCharAlreadyExists() throws Exception {
-        StoreCharRequest req = helper.getObject(StoreCharRequest.class, "store_char_request.json");
+        StoreCharRequest req = new StoreCharRequest();
+        req.setName("Test Character Name");
+        req.setStrength(10);
+        req.setDexterity(10);
+        req.setIntelligence(10);
+        req.setHealth(10);
+
         CombatResponse resp = controller.storeChar(req);
+
         assertFalse(resp.getSuccessful());
         assertNotNull(StringUtils.trimToNull(resp.getMessage()));
     }
 
     @Test
     void removeCharHappyPath() throws Exception {
-        RemoveCharRequest req = helper.getObject(RemoveCharRequest.class, "remove_char_request.json");
+        RemoveCharRequest req = new RemoveCharRequest();
+        req.setName("Test Character Name");
+
         CombatResponse resp = controller.removeChar(req);
+
         assertTrue(resp.getSuccessful());
         assertNotNull(StringUtils.trimToNull(resp.getMessage()));
     }
 
     @Test
     void removeCharNotExist() throws Exception {
-        RemoveCharRequest req = helper.getObject(RemoveCharRequest.class, "remove_char_request.json");
+        RemoveCharRequest req = new RemoveCharRequest();
         req.setName("Another Test Character Name");
+
         CombatResponse resp = controller.removeChar(req);
+
         assertFalse(resp.getSuccessful());
         assertNotNull(StringUtils.trimToNull(resp.getMessage()));
     }
@@ -86,14 +99,15 @@ class GameCharControllerTest {
     @Test
     void showStoredChars() {
         ShowStoredCharsResponse resp = controller.showStoredChars();
+
         assertTrue(resp.getSuccessful());
         assertNotNull(StringUtils.trimToNull(resp.getMessage()));
-        assertEquals(resp.getGameChars().size(), 1);
+        assertEquals(1, resp.getGameChars().size());
         GameChar gameChar = resp.getGameChars().get(0);
-        assertEquals(gameChar.getName(), "Test Character Name");
-        assertEquals(gameChar.getStrength(), 14);
-        assertEquals(gameChar.getDexterity(), 13);
-        assertEquals(gameChar.getIntelligence(), 12);
-        assertEquals(gameChar.getHealth(), 11);
+        assertEquals("Test Character Name", gameChar.getName());
+        assertEquals(14, gameChar.getStrength());
+        assertEquals(13, gameChar.getDexterity());
+        assertEquals(12, gameChar.getIntelligence());
+        assertEquals(11, gameChar.getHealth());
     }
 }

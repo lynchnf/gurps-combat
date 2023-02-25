@@ -59,4 +59,16 @@ public class StoreCharRequest {
         gameChar.setHealth(health);
         return gameChar;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("StoreCharRequest{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", strength=").append(strength);
+        sb.append(", dexterity=").append(dexterity);
+        sb.append(", intelligence=").append(intelligence);
+        sb.append(", health=").append(health);
+        sb.append('}');
+        return sb.toString();
+    }
 }

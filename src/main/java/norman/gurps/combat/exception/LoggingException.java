@@ -1,4 +1,4 @@
-package norman.gurps.combat;
+package norman.gurps.combat.exception;
 
 import org.slf4j.Logger;
 
