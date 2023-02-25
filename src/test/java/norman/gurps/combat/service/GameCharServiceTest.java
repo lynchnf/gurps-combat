@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.combat.model.GameChar;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -28,7 +29,10 @@ class GameCharServiceTest {
 
         // Override storage directory for testing.
         tempDir = Files.createTempDirectory("gurps-combat-temp-").toFile();
-        service.setStorageDir(tempDir);
+        ReflectionTestUtils.setField(service, "storageDir", tempDir);
+
+        // Override storage file for testing.
+        ReflectionTestUtils.setField(service, "storageGameCharFileName", "game-char.json");
 
         testGameChar = new GameChar();
         testGameChar.setName("Test Character Name");

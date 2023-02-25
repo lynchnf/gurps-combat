@@ -8,8 +8,10 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,20 +23,21 @@ import java.util.Map;
 @Service
 public class GameCharService {
     private static Logger LOGGER = LoggerFactory.getLogger(GameCharService.class);
-    private static final String STORAGE_DIR_NAME = ".gurps-combat";
-    private static final String STORAGE_GAME_CHAR_FILE_NAME = "game-char.json";
+    @Value("${storage.dir.name}")
+    private String storageDirName;
+    @Value("${storage.game.char.file.name}")
+    private String storageGameCharFileName;
     private ObjectMapper mapper;
     private File storageDir;
 
     @Autowired
     public GameCharService(ObjectMapper mapper) {
         this.mapper = mapper;
-        storageDir = new File(SystemUtils.USER_HOME, STORAGE_DIR_NAME);
     }
 
-    // This method is just used to make testing easier.
-    protected void setStorageDir(File storageDir) {
-        this.storageDir = storageDir;
+    @PostConstruct
+    private void postConstruct() {
+        storageDir = new File(SystemUtils.USER_HOME, storageDirName);
     }
 
     public List<String> validate(GameChar gameChar) {
@@ -75,7 +78,7 @@ public class GameCharService {
         }
 
         // Load stored chars file. Create it if it does not already exist.
-        File storageGameCharFile = new File(storageDir, STORAGE_GAME_CHAR_FILE_NAME);
+        File storageGameCharFile = new File(storageDir, storageGameCharFileName);
         Map<String, GameChar> gameCharMap = new HashMap<>();
         if (storageGameCharFile.exists()) {
             LOGGER.debug("Loading stored game chars.");
@@ -100,7 +103,7 @@ public class GameCharService {
 
     public void saveStoredGameChars(Map<String, GameChar> gameChars) {
         LOGGER.debug("Storing game chars to local storage.");
-        File storageGameCharFile = new File(storageDir, STORAGE_GAME_CHAR_FILE_NAME);
+        File storageGameCharFile = new File(storageDir, storageGameCharFileName);
         try {
             mapper.writeValue(storageGameCharFile, gameChars.values());
         } catch (IOException e) {
