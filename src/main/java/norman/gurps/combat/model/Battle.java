@@ -1,18 +1,20 @@
 package norman.gurps.combat.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Battle {
-    private List<Combatant> combatants = new ArrayList<>();
+    private Map<String, Combatant> combatants = new HashMap<>();
     private NextStep nextStep;
-    private List<String> logs = new ArrayList<>();
+    private List<BattleLog> logs = new ArrayList<>();
 
-    public List<Combatant> getCombatants() {
+    public Map<String, Combatant> getCombatants() {
         return combatants;
     }
 
-    public void setCombatants(List<Combatant> combatants) {
+    public void setCombatants(Map<String, Combatant> combatants) {
         this.combatants = combatants;
     }
 
@@ -24,11 +26,11 @@ public class Battle {
         this.nextStep = nextStep;
     }
 
-    public List<String> getLogs() {
+    public List<BattleLog> getLogs() {
         return logs;
     }
 
-    public void setLogs(List<String> logs) {
+    public void setLogs(List<BattleLog> logs) {
         this.logs = logs;
     }
 }

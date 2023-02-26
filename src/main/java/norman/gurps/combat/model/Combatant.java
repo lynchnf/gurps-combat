@@ -1,5 +1,7 @@
 package norman.gurps.combat.model;
 
+import java.util.Set;
+
 public class Combatant {
     private String label;
     private String name;
@@ -7,6 +9,23 @@ public class Combatant {
     private Integer dexterity;
     private Integer intelligence;
     private Integer health;
+
+    public Combatant() {
+    }
+
+    public Combatant(GameChar gameChar, Set<String> existingLabels) {
+        String label = gameChar.getName();
+        int i = 2;
+        while (existingLabels.contains(label)) {
+            label = gameChar.getName() + " " + i++;
+        }
+        this.label = label;
+        name = gameChar.getName();
+        strength = gameChar.getStrength();
+        dexterity = gameChar.getDexterity();
+        intelligence = gameChar.getIntelligence();
+        health = gameChar.getHealth();
+    }
 
     public String getLabel() {
         return label;

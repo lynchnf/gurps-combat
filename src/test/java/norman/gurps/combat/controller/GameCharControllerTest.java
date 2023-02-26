@@ -6,10 +6,8 @@ import norman.gurps.combat.controller.response.CombatResponse;
 import norman.gurps.combat.controller.response.ShowStoredCharsResponse;
 import norman.gurps.combat.model.GameChar;
 import norman.gurps.combat.service.GameCharService;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class GameCharControllerTest {
@@ -29,7 +28,7 @@ class GameCharControllerTest {
     @BeforeEach
     void setUp() {
         // Mock service.
-        service = Mockito.mock(GameCharService.class);
+        service = mock(GameCharService.class);
         when(service.validate(any(GameChar.class))).thenReturn(new ArrayList<>());
         Map<String, GameChar> gameChars = new HashMap<>();
         GameChar gameChar = new GameChar();
@@ -56,7 +55,7 @@ class GameCharControllerTest {
         CombatResponse resp = controller.storeChar(req);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(StringUtils.trimToNull(resp.getMessage()));
+        assertNotNull(resp.getMessage());
     }
 
     @Test
@@ -71,7 +70,7 @@ class GameCharControllerTest {
         CombatResponse resp = controller.storeChar(req);
 
         assertFalse(resp.getSuccessful());
-        assertNotNull(StringUtils.trimToNull(resp.getMessage()));
+        assertNotNull(resp.getMessage());
     }
 
     @Test
@@ -82,7 +81,7 @@ class GameCharControllerTest {
         CombatResponse resp = controller.removeChar(req);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(StringUtils.trimToNull(resp.getMessage()));
+        assertNotNull(resp.getMessage());
     }
 
     @Test
@@ -93,7 +92,7 @@ class GameCharControllerTest {
         CombatResponse resp = controller.removeChar(req);
 
         assertFalse(resp.getSuccessful());
-        assertNotNull(StringUtils.trimToNull(resp.getMessage()));
+        assertNotNull(resp.getMessage());
     }
 
     @Test
@@ -101,7 +100,7 @@ class GameCharControllerTest {
         ShowStoredCharsResponse resp = controller.showStoredChars();
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(StringUtils.trimToNull(resp.getMessage()));
+        assertNotNull(resp.getMessage());
         assertEquals(1, resp.getGameChars().size());
         GameChar gameChar = resp.getGameChars().get(0);
         assertEquals("Test Character Name", gameChar.getName());

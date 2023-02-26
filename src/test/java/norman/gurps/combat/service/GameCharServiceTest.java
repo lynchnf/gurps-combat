@@ -24,8 +24,7 @@ class GameCharServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        service = new GameCharService(mapper);
+        service = new GameCharService(new ObjectMapper());
 
         // Override storage directory for testing.
         tempDir = Files.createTempDirectory("gurps-combat-temp-").toFile();
