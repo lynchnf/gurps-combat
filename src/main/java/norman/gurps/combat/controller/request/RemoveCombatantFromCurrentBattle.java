@@ -1,5 +1,6 @@
 package norman.gurps.combat.controller.request;
 
+@Deprecated
 public class RemoveCombatantFromCurrentBattle {
     private String label;
 

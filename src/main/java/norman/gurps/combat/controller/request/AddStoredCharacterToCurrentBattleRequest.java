@@ -1,5 +1,6 @@
 package norman.gurps.combat.controller.request;
 
+@Deprecated
 public class AddStoredCharacterToCurrentBattleRequest {
     private String name;
 

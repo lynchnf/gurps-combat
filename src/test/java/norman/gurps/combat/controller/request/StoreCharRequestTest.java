@@ -16,7 +16,7 @@ class StoreCharRequestTest {
         req.setHealth(11);
 
         GameChar gameChar = req.toGameChar();
-        
+
         assertEquals(gameChar.getName(), "Test Character Name");
         assertEquals(gameChar.getStrength(), 14);
         assertEquals(gameChar.getDexterity(), 13);

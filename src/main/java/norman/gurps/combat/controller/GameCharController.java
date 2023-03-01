@@ -1,12 +1,10 @@
 package norman.gurps.combat.controller;
 
-import norman.gurps.combat.controller.request.RemoveCharRequest;
-import norman.gurps.combat.controller.request.StoreCharRequest;
 import norman.gurps.combat.controller.response.CombatResponse;
 import norman.gurps.combat.controller.response.ShowStoredCharsResponse;
+import norman.gurps.combat.exception.LoggingException;
 import norman.gurps.combat.model.GameChar;
 import norman.gurps.combat.service.GameCharService;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class GameCharController {
@@ -27,60 +24,44 @@ public class GameCharController {
     }
 
     @PostMapping("/char/store")
-    public CombatResponse storeChar(@RequestBody StoreCharRequest req) {
-        LOGGER.debug("Storing game character: {}", req);
+    public CombatResponse storeChar(@RequestBody GameChar gameChar) {
+        LOGGER.debug("Storing game character: {}", gameChar.getName());
         CombatResponse resp = new CombatResponse();
 
         // Validate new Game Character.
-        GameChar newGameChar = req.toGameChar();
-        List<String> errors = service.validate(newGameChar);
+        List<String> errors = service.validate(gameChar);
         if (!errors.isEmpty()) {
             resp.setSuccessful(false);
             resp.setMessage(errors.get(0));
             return resp;
         }
 
-        // Verify new Game Character does not already exist.
-        Map<String, GameChar> gameChars = service.getStoredGameChars();
-        if (gameChars.containsKey(newGameChar.getName())) {
+        // Add new Game Character.
+        try {
+            service.storeChar(gameChar);
+        } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(
-                    "A character with name " + newGameChar.getName() + " already exists in the stored characters.");
+            resp.setMessage(e.getMessage());
             return resp;
         }
-
-        // Save new Game Character.
-        gameChars.put(newGameChar.getName(), newGameChar);
-        service.saveStoredGameChars(gameChars);
         resp.setSuccessful(true);
-        resp.setMessage("Successfully saved character " + newGameChar.getName() + " to local storage.");
+        resp.setMessage("Successfully saved Game Character " + gameChar.getName() + " to local storage.");
         return resp;
     }
 
     @PostMapping("/char/remove")
-    public CombatResponse removeChar(@RequestBody RemoveCharRequest req) {
-        LOGGER.debug("Removing stored game character: {}", req);
+    public CombatResponse removeChar(@RequestBody String name) {
+        LOGGER.debug("Removing stored game character: {}", name);
         CombatResponse resp = new CombatResponse();
 
-        // Get name to remove.
-        String name = StringUtils.trimToNull(req.getName());
-        if (name == null) {
+        // Delete Game Character.
+        try {
+            service.removeChar(name);
+        } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage("Name to remove may not be blank.");
+            resp.setMessage(e.getMessage());
             return resp;
         }
-
-        // Verify character to remove does exist.
-        Map<String, GameChar> gameChars = service.getStoredGameChars();
-        if (!gameChars.containsKey(name)) {
-            resp.setSuccessful(false);
-            resp.setMessage("Character " + name + " not found in local storage.");
-            return resp;
-        }
-
-        // Remove character.
-        gameChars.remove(name);
-        service.saveStoredGameChars(gameChars);
         resp.setSuccessful(true);
         resp.setMessage("Successfully removed character " + name + " from local storage.");
         return resp;
@@ -90,13 +71,21 @@ public class GameCharController {
     public ShowStoredCharsResponse showStoredChars() {
         LOGGER.debug("Showing all stored game characters");
         ShowStoredCharsResponse resp = new ShowStoredCharsResponse();
+
+        List<GameChar> gameChars = null;
+        try {
+            gameChars = service.getStoredGameChars();
+        } catch (LoggingException e) {
+            resp.setSuccessful(false);
+            resp.setMessage(e.getMessage());
+            return resp;
+        }
         resp.setSuccessful(true);
-        Map<String, GameChar> gameChars = service.getStoredGameChars();
-        if (gameChars.isEmpty()) {
-            resp.setMessage("No characters found in local storage.");
+        if (gameChars == null) {
+            resp.setMessage("No Game Characters found in local storage.");
         } else {
-            resp.setMessage("Found " + gameChars.size() + " characters in local storage.");
-            resp.getGameChars().addAll(gameChars.values());
+            resp.setMessage("Found " + gameChars.size() + " Game Characters in local storage.");
+            resp.getGameChars().addAll(gameChars);
         }
         return resp;
     }

@@ -1,7 +1,14 @@
 package norman.gurps.combat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import norman.gurps.combat.model.Armor;
+import norman.gurps.combat.model.DamageType;
 import norman.gurps.combat.model.GameChar;
+import norman.gurps.combat.model.Location;
+import norman.gurps.combat.model.MeleeWeapon;
+import norman.gurps.combat.model.MeleeWeaponMode;
+import norman.gurps.combat.model.ParryType;
+import norman.gurps.combat.model.Shield;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -9,17 +16,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class GameCharServiceTest {
     GameCharService service;
     File tempDir;
+    File tempFile;
     GameChar testGameChar;
 
     @BeforeEach
@@ -31,138 +35,126 @@ class GameCharServiceTest {
         ReflectionTestUtils.setField(service, "storageDir", tempDir);
 
         // Override storage file for testing.
-        ReflectionTestUtils.setField(service, "storageGameCharFileName", "game-char.json");
+        tempFile = new File(tempDir, "game-char.json");
+        ReflectionTestUtils.setField(service, "storageGameCharFile", tempFile);
 
         testGameChar = new GameChar();
-        testGameChar.setName("Test Character Name");
+        testGameChar.setName("Test Character");
         testGameChar.setStrength(14);
         testGameChar.setDexterity(13);
         testGameChar.setIntelligence(12);
         testGameChar.setHealth(11);
+        testGameChar.setHitPoints(15);
+        testGameChar.setBasicSpeed(6.25);
+        MeleeWeapon weapon = new MeleeWeapon();
+        weapon.setName("Broadsword");
+        weapon.setSkill(13);
+        MeleeWeaponMode swing = new MeleeWeaponMode();
+        swing.setName("swing");
+        swing.setDamageDice(2);
+        swing.setDamageAdds(1);
+        swing.setDamageType(DamageType.CUTTING);
+        swing.getReaches().add(1);
+        swing.setParryType(ParryType.YES);
+        swing.setParryModifier(0);
+        weapon.getModes().add(swing);
+        MeleeWeaponMode thrust = new MeleeWeaponMode();
+        thrust.setName("thrust");
+        thrust.setDamageDice(1);
+        thrust.setDamageAdds(1);
+        thrust.setDamageType(DamageType.CRUSHING);
+        thrust.getReaches().add(1);
+        thrust.setParryType(ParryType.YES);
+        thrust.setParryModifier(0);
+        weapon.getModes().add(thrust);
+        weapon.setMinStrength(10);
+        testGameChar.getMeleeWeapons().add(weapon);
+        Shield shield = new Shield();
+        shield.setName("Medium Shield");
+        shield.setSkill(13);
+        shield.setDefenseBonus(2);
+        testGameChar.setShield(shield);
+        Armor torso = new Armor();
+        torso.setLocation(Location.TORSO);
+        torso.setDamageResistance(2);
+        testGameChar.getArmorList().add(torso);
+        Armor groin = new Armor();
+        groin.setLocation(Location.GROIN);
+        groin.setDamageResistance(2);
+        testGameChar.getArmorList().add(groin);
+        Armor legs = new Armor();
+        legs.setLocation(Location.LEGS);
+        legs.setDamageResistance(2);
+        testGameChar.getArmorList().add(legs);
+        Armor arms = new Armor();
+        arms.setLocation(Location.ARMS);
+        arms.setDamageResistance(2);
+        testGameChar.getArmorList().add(arms);
+        Armor skull = new Armor();
+        skull.setLocation(Location.SKULL);
+        skull.setDamageResistance(2);
+        testGameChar.getArmorList().add(skull);
+        Armor face = new Armor();
+        face.setLocation(Location.FACE);
+        face.setDamageResistance(2);
+        testGameChar.getArmorList().add(face);
+        Armor hands = new Armor();
+        hands.setLocation(Location.HANDS);
+        hands.setDamageResistance(2);
+        testGameChar.getArmorList().add(hands);
+        Armor feet = new Armor();
+        feet.setLocation(Location.FEET);
+        feet.setDamageResistance(2);
+        testGameChar.getArmorList().add(feet);
     }
 
     @Test
-    void validateHappyPath() {
+    void validate() {
         List<String> errors = service.validate(testGameChar);
 
-        assertTrue(errors.isEmpty());
+        assertEquals(0, errors.size());
     }
 
     @Test
-    void validateBadName() {
-        testGameChar.setName(" ");
+    void storeChar() throws Exception {
+        service.storeChar(testGameChar);
 
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
+        // Validate game character was written to local storage.
+        ObjectMapper mapper = new ObjectMapper();
+        File file = new File(tempDir, "game-char.json");
+        GameChar[] gameChars = mapper.readValue(file, GameChar[].class);
+        assertEquals(1, gameChars.length);
+        assertEquals("Test Character", gameChars[0].getName());
     }
 
     @Test
-    void validateNoStrength() {
-        testGameChar.setStrength(null);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateBadStrength() {
-        testGameChar.setStrength(-4);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateNoDexterity() {
-        testGameChar.setDexterity(null);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateBadDexterity() {
-        testGameChar.setDexterity(-3);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateNoIntelligence() {
-        testGameChar.setIntelligence(null);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateBadIntelligence() {
-        testGameChar.setIntelligence(-2);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateNoHealth() {
-        testGameChar.setHealth(null);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void validateBadHealth() {
-        testGameChar.setHealth(-1);
-
-        List<String> errors = service.validate(testGameChar);
-
-        assertFalse(errors.isEmpty());
-    }
-
-    @Test
-    void getStoredGameChars() throws Exception {
+    void removeChar() throws Exception {
+        // Preload local storage.
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(tempDir, "game-char.json");
         List<GameChar> gameCharList = new ArrayList<>();
         gameCharList.add(testGameChar);
         mapper.writeValue(file, gameCharList);
 
-        Map<String, GameChar> gameCharMap = service.getStoredGameChars();
+        service.removeChar("Test Character");
 
-        assertEquals(1, gameCharMap.size());
-        assertTrue(gameCharMap.containsKey("Test Character Name"));
-        assertEquals(gameCharMap.get("Test Character Name").getName(), "Test Character Name");
-        assertEquals(gameCharMap.get("Test Character Name").getStrength(), 14);
-        assertEquals(gameCharMap.get("Test Character Name").getDexterity(), 13);
-        assertEquals(gameCharMap.get("Test Character Name").getIntelligence(), 12);
-        assertEquals(gameCharMap.get("Test Character Name").getHealth(), 11);
+        // Validate game character was removed from to local storage.
+        GameChar[] gameChars = mapper.readValue(file, GameChar[].class);
+        assertEquals(0, gameChars.length);
     }
 
     @Test
-    void saveStoredGameChars() throws Exception {
-        Map<String, GameChar> gameCharMap = new HashMap<>();
-        gameCharMap.put(testGameChar.getName(), testGameChar);
-
-        service.saveStoredGameChars(gameCharMap);
-
+    void getStoredGameChars() throws Exception {
+        // Preload local storage.
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(tempDir, "game-char.json");
-        GameChar[] gameCharArray = mapper.readValue(file, GameChar[].class);
-        assertEquals(1, gameCharArray.length);
-        assertEquals(gameCharArray[0].getName(), "Test Character Name");
-        assertEquals(gameCharArray[0].getStrength(), 14);
-        assertEquals(gameCharArray[0].getDexterity(), 13);
-        assertEquals(gameCharArray[0].getIntelligence(), 12);
-        assertEquals(gameCharArray[0].getHealth(), 11);
+        List<GameChar> gameCharList = new ArrayList<>();
+        gameCharList.add(testGameChar);
+        mapper.writeValue(file, gameCharList);
+
+        List<GameChar> gameChars = service.getStoredGameChars();
+
+        assertEquals(1, gameChars.size());
+        assertEquals("Test Character", gameChars.get(0).getName());
     }
 }

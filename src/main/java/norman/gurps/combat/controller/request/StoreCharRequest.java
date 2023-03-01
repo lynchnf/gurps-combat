@@ -3,6 +3,7 @@ package norman.gurps.combat.controller.request;
 import norman.gurps.combat.model.GameChar;
 import org.apache.commons.lang3.StringUtils;
 
+@Deprecated
 public class StoreCharRequest {
     private String name;
     private Integer strength;
