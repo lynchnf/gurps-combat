@@ -1,7 +1,7 @@
 package norman.gurps.combat.controller;
 
-import norman.gurps.combat.controller.response.CombatResponse;
-import norman.gurps.combat.controller.response.ShowBattleResponse;
+import norman.gurps.combat.controller.response.BasicResponse;
+import norman.gurps.combat.controller.response.BattleResponse;
 import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.model.BattleLog;
 import norman.gurps.combat.service.BattleService;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -27,38 +26,38 @@ class BattleControllerTest {
 
     @Test
     void createEmptyBattle() {
-        CombatResponse resp = controller.createEmptyBattle();
+        BasicResponse resp = controller.createEmptyBattle();
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
     void deleteCurrentBattle() {
-        CombatResponse resp = controller.deleteCurrentBattle();
+        BasicResponse resp = controller.deleteCurrentBattle();
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
     void addStoredCharacterToCurrentBattle() {
         String name = "Test Character";
 
-        CombatResponse resp = controller.addStoredCharacterToCurrentBattle(name);
+        BasicResponse resp = controller.addStoredCharacterToCurrentBattle(name);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
     void removeCombatantFromCurrentBattle() {
         String label = "Test Character";
 
-        CombatResponse resp = controller.removeCombatantFromCurrentBattle(label);
+        BasicResponse resp = controller.removeCombatantFromCurrentBattle(label);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
@@ -68,10 +67,10 @@ class BattleControllerTest {
         battle.getLogs().add(new BattleLog("Test Log"));
         when(service.getBattle()).thenReturn(battle);
 
-        ShowBattleResponse resp = controller.showBattle();
+        BattleResponse resp = controller.showBattle();
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
         assertEquals(0, resp.getBattle().getCombatants().size());
         assertNull(resp.getBattle().getNextStep());
         assertEquals(1, resp.getBattle().getLogs().size());

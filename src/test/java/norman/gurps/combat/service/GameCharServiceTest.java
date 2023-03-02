@@ -46,6 +46,8 @@ class GameCharServiceTest {
         testGameChar.setHealth(11);
         testGameChar.setHitPoints(15);
         testGameChar.setBasicSpeed(6.25);
+        testGameChar.setBasicMove(7);
+        testGameChar.setEncumbranceLevel(2);
         MeleeWeapon weapon = new MeleeWeapon();
         weapon.setName("Broadsword");
         weapon.setSkill(13);

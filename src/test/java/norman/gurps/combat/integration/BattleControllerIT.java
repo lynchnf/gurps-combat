@@ -19,9 +19,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -43,11 +47,14 @@ class BattleControllerIT {
     String storageGameCharFileName;
     File storageBattleFile;
     File storageGameCharFile;
+    ClassLoader loader;
     @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
+        loader = Thread.currentThread().getContextClassLoader();
+
         File storageDir = new File(SystemUtils.USER_HOME, storageDirName);
         if (!storageDir.exists()) {
             if (!storageDir.mkdirs()) {
@@ -95,7 +102,9 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
@@ -108,13 +117,9 @@ class BattleControllerIT {
 
     @Test
     void deleteCurrentBattle() throws Exception {
-        // Preload storage with a battle.
-        //@formatter:off
-        String battleJson = "{\"combatants\":[]," +
-                "\"nextStep\":null," +
-                "\"logs\":[{\"timeMillis\":1677627401631," +
-                "\"message\":\"Battle created.\"}]}";
-        //@formatter:on
+        // Preload file with data.
+        String resourceName = "integration/battle-controller/battle-delete/battle.json";
+        String battleJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
         writer.write(battleJson);
         writer.close();
@@ -130,7 +135,9 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertFalse(storageBattleFile.exists());
     }
@@ -138,62 +145,15 @@ class BattleControllerIT {
     @Test
     void addStoredCharacterToCurrentBattle_empty_battle() throws Exception {
         // Create game character in storage
-        //@formatter:off
-        String gameCharJson = "[{\"name\":\"Test Character\"," +
-                "\"strength\":14," +
-                "\"dexterity\":13," +
-                "\"intelligence\":12," +
-                "\"health\":11," +
-                "\"hitPoints\":15," +
-                "\"basicSpeed\":6.25," +
-                "\"meleeWeapons\":[{\"name\":\"Broadsword\"," +
-                "\"skill\":13," +
-                "\"modes\":[{\"name\":\"swing\"," +
-                "\"damageDice\":2," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CUTTING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}," +
-                "{\"name\":\"thrust\"," +
-                "\"damageDice\":1," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CRUSHING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}]," +
-                "\"minStrength\":10}]," +
-                "\"shield\":{\"name\":\"Medium Shield\"," +
-                "\"skill\":13," +
-                "\"defenseBonus\":2}," +
-                "\"armorList\":[{\"location\":\"TORSO\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"GROIN\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"LEGS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"ARMS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"SKULL\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FACE\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"HANDS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FEET\"," +
-                "\"damageResistance\":2}]}]";
-        //@formatter:on
+        String resourceName = "integration/battle-controller/battle-add-char/game-char.json";
+        String gameCharJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
 
         // Create empty battle in storage.
-        //@formatter:off
-        String battleJson = "{\"combatants\":[]," +
-                "\"nextStep\":null," +
-                "\"logs\":[{\"timeMillis\":1677627401631," +
-                "\"message\":\"Battle created.\"}]}";
-        //@formatter:on
+        String resourceName2 = "integration/battle-controller/battle-add-char/battle_empty_battle.json";
+        String battleJson = readResource(resourceName2);
         BufferedWriter writer2 = new BufferedWriter(new FileWriter(storageBattleFile));
         writer2.write(battleJson);
         writer2.close();
@@ -212,7 +172,9 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
@@ -228,108 +190,15 @@ class BattleControllerIT {
     @Test
     void addStoredCharacterToCurrentBattle_char_already_in_battle() throws Exception {
         // Create game character in storage
-        //@formatter:off
-        String gameCharJson = "[{\"name\":\"Test Character\"," +
-                "\"strength\":14," +
-                "\"dexterity\":13," +
-                "\"intelligence\":12," +
-                "\"health\":11," +
-                "\"hitPoints\":15," +
-                "\"basicSpeed\":6.25," +
-                "\"meleeWeapons\":[{\"name\":\"Broadsword\"," +
-                "\"skill\":13," +
-                "\"modes\":[{\"name\":\"swing\"," +
-                "\"damageDice\":2," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CUTTING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}," +
-                "{\"name\":\"thrust\"," +
-                "\"damageDice\":1," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CRUSHING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}]," +
-                "\"minStrength\":10}]," +
-                "\"shield\":{\"name\":\"Medium Shield\"," +
-                "\"skill\":13," +
-                "\"defenseBonus\":2}," +
-                "\"armorList\":[{\"location\":\"TORSO\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"GROIN\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"LEGS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"ARMS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"SKULL\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FACE\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"HANDS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FEET\"," +
-                "\"damageResistance\":2}]}]";
-        //@formatter:on
+        String resourceName = "integration/battle-controller/battle-add-char/game-char.json";
+        String gameCharJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
 
-        // Create battle with combatant in storage.
-        //@formatter:off
-        String battleJson = "{\"combatants\":[{\"label\":\"Test Character\"," +
-                "\"gameChar\":{\"name\":\"Test Character\"," +
-                "\"strength\":14," +
-                "\"dexterity\":13," +
-                "\"intelligence\":12," +
-                "\"health\":11," +
-                "\"hitPoints\":15," +
-                "\"basicSpeed\":6.25," +
-                "\"meleeWeapons\":[{\"name\":\"Broadsword\"," +
-                "\"skill\":13," +
-                "\"modes\":[{\"name\":\"swing\"," +
-                "\"damageDice\":2," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CUTTING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}," +
-                "{\"name\":\"thrust\"," +
-                "\"damageDice\":1," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CRUSHING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}]," +
-                "\"minStrength\":10}]," +
-                "\"shield\":{\"name\":\"Medium Shield\"," +
-                "\"skill\":13," +
-                "\"defenseBonus\":2}," +
-                "\"armorList\":[{\"location\":\"TORSO\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"GROIN\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"LEGS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"ARMS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"SKULL\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FACE\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"HANDS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FEET\"," +
-                "\"damageResistance\":2}]}," +
-                "\"damageTaken\":0}]," +
-                "\"nextStep\":null," +
-                "\"logs\":[{\"timeMillis\":1677627401631," +
-                "\"message\":\"Battle created.\"}," +
-                "{\"timeMillis\":1677629888408," +
-                "\"message\":\"Combatant Test Character added to Battle.\"}]}";
-        //@formatter:on
+        // Create empty battle in storage.
+        String resourceName2 = "integration/battle-controller/battle-add-char/battle_char_already_in_battle.json";
+        String battleJson = readResource(resourceName2);
         BufferedWriter writer2 = new BufferedWriter(new FileWriter(storageBattleFile));
         writer2.write(battleJson);
         writer2.close();
@@ -348,7 +217,9 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
         assertTrue(battleJsonNode.get("combatants").isArray());
@@ -363,58 +234,8 @@ class BattleControllerIT {
     @Test
     void removeCombatantFromCurrentBattle() throws Exception {
         // Create battle with combatant in storage.
-        //@formatter:off
-        String battleJson = "{\"combatants\":[{\"label\":\"Test Character\"," +
-                "\"gameChar\":{\"name\":\"Test Character\"," +
-                "\"strength\":14," +
-                "\"dexterity\":13," +
-                "\"intelligence\":12," +
-                "\"health\":11," +
-                "\"hitPoints\":15," +
-                "\"basicSpeed\":6.25," +
-                "\"meleeWeapons\":[{\"name\":\"Broadsword\"," +
-                "\"skill\":13," +
-                "\"modes\":[{\"name\":\"swing\"," +
-                "\"damageDice\":2," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CUTTING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}," +
-                "{\"name\":\"thrust\"," +
-                "\"damageDice\":1," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CRUSHING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}]," +
-                "\"minStrength\":10}]," +
-                "\"shield\":{\"name\":\"Medium Shield\"," +
-                "\"skill\":13," +
-                "\"defenseBonus\":2}," +
-                "\"armorList\":[{\"location\":\"TORSO\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"GROIN\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"LEGS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"ARMS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"SKULL\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FACE\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"HANDS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FEET\"," +
-                "\"damageResistance\":2}]}," +
-                "\"damageTaken\":0}]," +
-                "\"nextStep\":null," +
-                "\"logs\":[{\"timeMillis\":1677627401631," +
-                "\"message\":\"Battle created.\"}," +
-                "{\"timeMillis\":1677629888408," +
-                "\"message\":\"Combatant Test Character added to Battle.\"}]}";
-        //@formatter:on
+        String resourceName = "integration/battle-controller/battle-remove-char/battle.json";
+        String battleJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
         writer.write(battleJson);
         writer.close();
@@ -433,7 +254,9 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
         assertTrue(battleJsonNode.get("combatants").isArray());
@@ -446,12 +269,8 @@ class BattleControllerIT {
     @Test
     void showBattle() throws Exception {
         // Preload storage with a battle.
-        //@formatter:off
-        String battleJson = "{\"combatants\":[]," +
-                "\"nextStep\":null," +
-                "\"logs\":[{\"timeMillis\":1677627401631," +
-                "\"message\":\"Battle created.\"}]}";
-        //@formatter:on
+        String resourceName = "integration/battle-controller/battle-show/battle.json";
+        String battleJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
         writer.write(battleJson);
         writer.close();
@@ -471,8 +290,26 @@ class BattleControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
         assertTrue(jsonNode.get("battle").get("combatants").isArray());
         assertTrue(jsonNode.get("battle").get("logs").isArray());
+    }
+
+    private String readResource(String resourceName) throws IOException {
+        InputStream stream = loader.getResourceAsStream(resourceName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder sb = null;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (sb == null) {
+                sb = new StringBuilder(line);
+            } else {
+                sb.append(System.lineSeparator()).append(line);
+            }
+        }
+        reader.close();
+        return sb.toString();
     }
 }

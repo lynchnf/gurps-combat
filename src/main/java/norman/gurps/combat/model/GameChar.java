@@ -11,6 +11,8 @@ public class GameChar {
     private Integer health;
     private Integer hitPoints;
     private Double basicSpeed;
+    private Integer basicMove;
+    private Integer encumbranceLevel;
     private List<MeleeWeapon> meleeWeapons = new ArrayList<>();
     private Shield shield;
     private List<Armor> armorList = new ArrayList<>();
@@ -69,6 +71,22 @@ public class GameChar {
 
     public void setBasicSpeed(Double basicSpeed) {
         this.basicSpeed = basicSpeed;
+    }
+
+    public Integer getBasicMove() {
+        return basicMove;
+    }
+
+    public void setBasicMove(Integer basicMove) {
+        this.basicMove = basicMove;
+    }
+
+    public Integer getEncumbranceLevel() {
+        return encumbranceLevel;
+    }
+
+    public void setEncumbranceLevel(Integer encumbranceLevel) {
+        this.encumbranceLevel = encumbranceLevel;
     }
 
     public List<MeleeWeapon> getMeleeWeapons() {

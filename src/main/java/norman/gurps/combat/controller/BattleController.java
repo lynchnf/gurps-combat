@@ -1,7 +1,7 @@
 package norman.gurps.combat.controller;
 
-import norman.gurps.combat.controller.response.CombatResponse;
-import norman.gurps.combat.controller.response.ShowBattleResponse;
+import norman.gurps.combat.controller.response.BasicResponse;
+import norman.gurps.combat.controller.response.BattleResponse;
 import norman.gurps.combat.exception.LoggingException;
 import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.service.BattleService;
@@ -22,90 +22,90 @@ public class BattleController {
     }
 
     @PostMapping("/battle/create")
-    public CombatResponse createEmptyBattle() {
+    public BasicResponse createEmptyBattle() {
         LOGGER.debug("Creating empty battle");
-        CombatResponse resp = new CombatResponse();
+        BasicResponse resp = new BasicResponse();
 
         try {
             service.createBattle();
+            resp.setSuccessful(true);
+            resp.getMessages().add("Successfully created a new empty battle.");
+            return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(e.getMessage());
+            resp.getMessages().add(e.getMessage());
             return resp;
         }
-        resp.setSuccessful(true);
-        resp.setMessage("Successfully created a new empty battle.");
-        return resp;
     }
 
     @PostMapping("/battle/delete")
-    public CombatResponse deleteCurrentBattle() {
+    public BasicResponse deleteCurrentBattle() {
         LOGGER.debug("Deleting current battle");
-        CombatResponse resp = new CombatResponse();
+        BasicResponse resp = new BasicResponse();
 
         try {
             service.deleteBattle();
+            resp.setSuccessful(true);
+            resp.getMessages().add("Successfully deleted the current battle.");
+            return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(e.getMessage());
+            resp.getMessages().add(e.getMessage());
             return resp;
         }
-        resp.setSuccessful(true);
-        resp.setMessage("Successfully deleted the current battle.");
-        return resp;
     }
 
     @PostMapping("/battle/add/char")
-    public CombatResponse addStoredCharacterToCurrentBattle(@RequestBody String name) {
+    public BasicResponse addStoredCharacterToCurrentBattle(@RequestBody String name) {
         LOGGER.debug("Add game char to current battle: {}", name);
-        CombatResponse resp = new CombatResponse();
+        BasicResponse resp = new BasicResponse();
 
-        String label;
         try {
-            label = service.addCharToBattle(name);
+            String label = service.addCharToBattle(name);
+            resp.setSuccessful(true);
+            resp.getMessages()
+                    .add("Successfully added character " + name + " to current battle with label " + label + ".");
+            return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(e.getMessage());
+            resp.getMessages().add(e.getMessage());
             return resp;
         }
-        resp.setSuccessful(true);
-        resp.setMessage("Successfully added character " + name + " to current battle with label " + label + ".");
-        return resp;
     }
 
     @PostMapping("/battle/remove/char")
-    public CombatResponse removeCombatantFromCurrentBattle(@RequestBody String label) {
+    public BasicResponse removeCombatantFromCurrentBattle(@RequestBody String label) {
         LOGGER.debug("Removing combatant from current battle: {}", label);
-        CombatResponse resp = new CombatResponse();
+        BasicResponse resp = new BasicResponse();
 
         try {
             service.removeCharFromBattle(label);
+            resp.setSuccessful(true);
+            resp.getMessages().add("Successfully removed combatant " + label + " from current battle.");
+            return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(e.getMessage());
+            resp.getMessages().add(e.getMessage());
             return resp;
         }
-        resp.setSuccessful(true);
-        resp.setMessage("Successfully removed combatant " + label + " from current battle.");
-        return resp;
     }
 
     @GetMapping("/battle/show")
-    public ShowBattleResponse showBattle() {
+    public BattleResponse showBattle() {
         LOGGER.debug("Showing everything from current battle");
-        ShowBattleResponse resp = new ShowBattleResponse();
+        BattleResponse resp = new BattleResponse();
 
-        Battle battle = null;
         try {
-            battle = service.getBattle();
+            Battle battle = service.getBattle();
+            resp.setSuccessful(true);
+            resp.getMessages()
+                    .add("Found a battle with " + battle.getCombatants().size() + " combatants in local storage.");
+            resp.setBattle(battle);
+            return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
-            resp.setMessage(e.getMessage());
+            resp.getMessages().add(e.getMessage());
             return resp;
         }
-        resp.setSuccessful(true);
-        resp.setMessage("Found a battle with " + battle.getCombatants().size() + " combatants in local storage.");
-        resp.setBattle(battle);
-        return resp;
     }
 }

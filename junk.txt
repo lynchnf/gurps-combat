@@ -8,11 +8,11 @@ START_CURRENT_BATTLE
   notes
     There must be a current battle.
     Current battle must have one or more combatants.
-    Current battle must be unstarted.
-    Combatants are storted and next step starts with first combatant.
-    Message should include informaton about who goes first.
-    Future development: For now, all weapons start ready. Later, allow gamemaster to set which weapons are ready.
-    Future development: For now, all combatants start with full hit points. Later, allow gamemaster to set hits already taken.
+    Current battle must be un-started.
+    Combatants are sorted and next step starts with first combatant.
+    Message should include information about who goes first.
+    Future development: For now, all weapons start ready. Later, allow game-master to set which weapons are ready.
+    Future development: For now, all combatants start with full hit points. Later, allow game-master to set hits already taken.
 --------------------------------------------------------------------------------
 CHOSE_ACTION
   input

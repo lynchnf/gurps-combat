@@ -1,7 +1,7 @@
 package norman.gurps.combat.controller;
 
-import norman.gurps.combat.controller.response.CombatResponse;
-import norman.gurps.combat.controller.response.ShowStoredCharsResponse;
+import norman.gurps.combat.controller.response.BasicResponse;
+import norman.gurps.combat.controller.response.GameCharsResponse;
 import norman.gurps.combat.model.GameChar;
 import norman.gurps.combat.service.GameCharService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -32,20 +31,20 @@ class GameCharControllerTest {
         GameChar gameChar = new GameChar();
         gameChar.setName("Test Character");
 
-        CombatResponse resp = controller.storeChar(gameChar);
+        BasicResponse resp = controller.storeChar(gameChar);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
     void removeChar() {
         String name = "Test Character";
 
-        CombatResponse resp = controller.removeChar(name);
+        BasicResponse resp = controller.removeChar(name);
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
     }
 
     @Test
@@ -56,10 +55,10 @@ class GameCharControllerTest {
         storedGameChars.add(testGameChar);
         when(service.getStoredGameChars()).thenReturn(storedGameChars);
 
-        ShowStoredCharsResponse resp = controller.showStoredChars();
+        GameCharsResponse resp = controller.showStoredChars();
 
         assertTrue(resp.getSuccessful());
-        assertNotNull(resp.getMessage());
+        assertEquals(1, resp.getMessages().size());
         assertEquals(1, resp.getGameChars().size());
     }
 }

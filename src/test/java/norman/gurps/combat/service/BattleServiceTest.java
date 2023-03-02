@@ -5,7 +5,6 @@ import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.model.BattleLog;
 import norman.gurps.combat.model.Combatant;
 import norman.gurps.combat.model.GameChar;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -42,10 +41,6 @@ class BattleServiceTest {
         // Override storage file for testing.
         tempFile = new File(tempDir, "battle.json");
         ReflectionTestUtils.setField(service, "storageBattleFile", tempFile);
-    }
-
-    @AfterEach
-    void tearDown() {
     }
 
     @Test

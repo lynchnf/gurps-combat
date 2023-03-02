@@ -89,6 +89,18 @@ public class GameCharService {
             errors.add("Basic Speed may not be less than zero.");
         }
 
+        if (gameChar.getBasicMove() == null) {
+            errors.add("Basic Move may not be blank.");
+        } else if (gameChar.getBasicMove() < 0) {
+            errors.add("Basic Move may not be less than zero.");
+        }
+
+        if (gameChar.getEncumbranceLevel() == null) {
+            errors.add("Encumbrance Level may not be blank.");
+        } else if (gameChar.getEncumbranceLevel() < 0 || gameChar.getEncumbranceLevel() > 4) {
+            errors.add("Encumbrance Level must be between 0 and 4.");
+        }
+
         if (gameChar.getMeleeWeapons().isEmpty()) {
             errors.add("Must have at least one weapon.");
         } else {

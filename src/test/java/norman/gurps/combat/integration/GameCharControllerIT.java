@@ -18,9 +18,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,11 +42,14 @@ class GameCharControllerIT {
     @Value("${storage.game.char.file.name}")
     String storageGameCharFileName;
     File storageGameCharFile;
+    ClassLoader loader;
     @Autowired
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
+        loader = Thread.currentThread().getContextClassLoader();
+
         File storageDir = new File(SystemUtils.USER_HOME, storageDirName);
         if (!storageDir.exists()) {
             if (!storageDir.mkdirs()) {
@@ -68,51 +75,10 @@ class GameCharControllerIT {
 
     @Test
     void storeChar() throws Exception {
-        //@formatter:off
-        String requestData = "{\"name\": \"Test Character\"," +
-                "\"strength\": 14," +
-                "\"dexterity\": 13," +
-                "\"intelligence\": 12," +
-                "\"health\": 11," +
-                "\"hitPoints\": 15," +
-                "\"basicSpeed\": 6.25," +
-                "\"meleeWeapons\": [{\"name\": \"Broadsword\"," +
-                "\"skill\": 13," +
-                "\"modes\": [{\"name\": \"swing\"," +
-                "\"damageDice\": 2," +
-                "\"damageAdds\": 1," +
-                "\"damageType\": \"CUTTING\"," +
-                "\"reaches\": [1]," +
-                "\"parryType\": \"YES\"," +
-                "\"parryModifier\": 0}," +
-                "{\"name\": \"thrust\"," +
-                "\"damageDice\": 1," +
-                "\"damageAdds\": 1," +
-                "\"damageType\": \"CRUSHING\"," +
-                "\"reaches\": [1]," +
-                "\"parryType\": \"YES\"," +
-                "\"parryModifier\": 0}]," +
-                "\"minStrength\": 10}]," +
-                "\"shield\": {\"name\": \"Medium Shield\"," +
-                "\"skill\": 13," +
-                "\"defenseBonus\": 2}," +
-                "\"armorList\": [{\"location\": \"TORSO\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"GROIN\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"LEGS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"ARMS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"SKULL\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"FACE\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"HANDS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"FEET\"," +
-                "\"damageResistance\": 2}]}";
+        String resourceName = "integration/game-char-controller/char-store/request.json";
+        String requestData = readResource(resourceName);
 
+        //@formatter:off
         MvcResult result = mockMvc.perform(post("/char/store")
                         .content(requestData)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +91,9 @@ class GameCharControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         // Do it again.
         //@formatter:off
@@ -141,65 +109,23 @@ class GameCharControllerIT {
         assertTrue(jsonNode2.get("successful").isBoolean());
         // This time, it should fail.
         assertFalse(jsonNode2.get("successful").asBoolean());
-        assertTrue(jsonNode2.get("message").isTextual());
+        assertTrue(jsonNode2.get("messages").isArray());
+        assertEquals(1, jsonNode2.get("messages").size());
+        assertTrue(jsonNode2.get("messages").get(0).isTextual());
     }
 
     @Test
     void removeChar() throws Exception {
         // Preload file with data.
-        //@formatter:off
-        String gameCharJson = "[{\"name\": \"Test Character\"," +
-                "\"strength\": 14," +
-                "\"dexterity\": 13," +
-                "\"intelligence\": 12," +
-                "\"health\": 11," +
-                "\"hitPoints\": 15," +
-                "\"basicSpeed\": 6.25," +
-                "\"meleeWeapons\": [{\"name\": \"Broadsword\"," +
-                "\"skill\": 13," +
-                "\"modes\": [{\"name\": \"swing\"," +
-                "\"damageDice\": 2," +
-                "\"damageAdds\": 1," +
-                "\"damageType\": \"CUTTING\"," +
-                "\"reaches\": [1]," +
-                "\"parryType\": \"YES\"," +
-                "\"parryModifier\": 0}," +
-                "{\"name\": \"thrust\"," +
-                "\"damageDice\": 1," +
-                "\"damageAdds\": 1," +
-                "\"damageType\": \"CRUSHING\"," +
-                "\"reaches\": [1]," +
-                "\"parryType\": \"YES\"," +
-                "\"parryModifier\": 0}]," +
-                "\"minStrength\": 10}]," +
-                "\"shield\": {\"name\": \"Medium Shield\"," +
-                "\"skill\": 13," +
-                "\"defenseBonus\": 2}," +
-                "\"armorList\": [{\"location\": \"TORSO\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"GROIN\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"LEGS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"ARMS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"SKULL\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"FACE\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"HANDS\"," +
-                "\"damageResistance\": 2}," +
-                "{\"location\": \"FEET\"," +
-                "\"damageResistance\": 2}]}]";
-        //@formatter:on
-
+        String resourceName = "integration/game-char-controller/char-remove/game-char.json";
+        String gameCharJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
 
-        //@formatter:off
         String requestData = "Test Character";
 
+        //@formatter:off
         MvcResult result = mockMvc.perform(post("/char/remove")
                         .content(requestData)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -212,7 +138,9 @@ class GameCharControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         // Do it again.
         //@formatter:off
@@ -228,57 +156,16 @@ class GameCharControllerIT {
         assertTrue(jsonNode2.get("successful").isBoolean());
         // This time, it should fail.
         assertFalse(jsonNode2.get("successful").asBoolean());
-        assertTrue(jsonNode2.get("message").isTextual());
+        assertTrue(jsonNode2.get("messages").isArray());
+        assertEquals(1, jsonNode2.get("messages").size());
+        assertTrue(jsonNode2.get("messages").get(0).isTextual());
     }
 
     @Test
     void showStoredChars() throws Exception {
         // Preload file with data.
-        //@formatter:off
-        String gameCharJson = "[{\"name\":\"Test Character\"," +
-                "\"strength\":14," +
-                "\"dexterity\":13," +
-                "\"intelligence\":12," +
-                "\"health\":11," +
-                "\"hitPoints\":15," +
-                "\"basicSpeed\":6.25," +
-                "\"meleeWeapons\":[{\"name\":\"Broadsword\"," +
-                "\"skill\":13," +
-                "\"modes\":[{\"name\":\"swing\"," +
-                "\"damageDice\":2," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CUTTING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}," +
-                "{\"name\":\"thrust\"," +
-                "\"damageDice\":1," +
-                "\"damageAdds\":1," +
-                "\"damageType\":\"CRUSHING\"," +
-                "\"reaches\":[1]," +
-                "\"parryType\":\"YES\"," +
-                "\"parryModifier\":0}]," +
-                "\"minStrength\":10}]," +
-                "\"shield\":{\"name\":\"Medium Shield\"," +
-                "\"skill\":13," +
-                "\"defenseBonus\":2}," +
-                "\"armorList\":[{\"location\":\"TORSO\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"GROIN\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"LEGS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"ARMS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"SKULL\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FACE\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"HANDS\"," +
-                "\"damageResistance\":2}," +
-                "{\"location\":\"FEET\"," +
-                "\"damageResistance\":2}]}]";
-        //@formatter:on
+        String resourceName = "integration/game-char-controller/char-show/game-char.json";
+        String gameCharJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
@@ -294,9 +181,27 @@ class GameCharControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("message").isTextual());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(1, jsonNode.get("messages").size());
+        assertTrue(jsonNode.get("messages").get(0).isTextual());
         assertTrue(jsonNode.get("gameChars").isArray());
         assertEquals(1, jsonNode.get("gameChars").size());
         assertEquals("Test Character", jsonNode.get("gameChars").get(0).get("name").textValue());
+    }
+
+    private String readResource(String resourceName) throws IOException {
+        InputStream stream = loader.getResourceAsStream(resourceName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder sb = null;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (sb == null) {
+                sb = new StringBuilder(line);
+            } else {
+                sb.append(System.lineSeparator()).append(line);
+            }
+        }
+        reader.close();
+        return sb.toString();
     }
 }

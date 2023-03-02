@@ -5,7 +5,8 @@ import java.util.Set;
 public class Combatant {
     private String label;
     private GameChar gameChar;
-    private Integer damageTaken;
+    private Integer currentDamage;
+    private Integer previousDamage;
 
     public Combatant() {
     }
@@ -18,7 +19,8 @@ public class Combatant {
         }
         this.label = label;
         this.gameChar = gameChar;
-        damageTaken = 0;
+        currentDamage = 0;
+        previousDamage = 0;
     }
 
     public String getLabel() {
@@ -37,11 +39,19 @@ public class Combatant {
         this.gameChar = gameChar;
     }
 
-    public Integer getDamageTaken() {
-        return damageTaken;
+    public Integer getCurrentDamage() {
+        return currentDamage;
     }
 
-    public void setDamageTaken(Integer damageTaken) {
-        this.damageTaken = damageTaken;
+    public void setCurrentDamage(Integer currentDamage) {
+        this.currentDamage = currentDamage;
+    }
+
+    public Integer getPreviousDamage() {
+        return previousDamage;
+    }
+
+    public void setPreviousDamage(Integer previousDamage) {
+        this.previousDamage = previousDamage;
     }
 }

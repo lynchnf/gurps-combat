@@ -2,9 +2,12 @@ package norman.gurps.combat.controller.response;
 
 import norman.gurps.combat.model.Battle;
 
-public class ShowBattleResponse {
+import java.util.ArrayList;
+import java.util.List;
+
+public class BattleResponse {
     private Boolean successful;
-    private String message;
+    private List<String> messages = new ArrayList<>();
     private Battle battle;
 
     public Boolean getSuccessful() {
@@ -15,12 +18,12 @@ public class ShowBattleResponse {
         this.successful = successful;
     }
 
-    public String getMessage() {
-        return message;
+    public List<String> getMessages() {
+        return messages;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessages(List<String> messages) {
+        this.messages = messages;
     }
 
     public Battle getBattle() {

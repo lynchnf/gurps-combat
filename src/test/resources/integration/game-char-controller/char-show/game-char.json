@@ -1,0 +1,83 @@
+[
+  {
+    "name": "Test Character",
+    "strength": 14,
+    "dexterity": 13,
+    "intelligence": 12,
+    "health": 11,
+    "hitPoints": 15,
+    "basicSpeed": 6.25,
+    "basicMove": 7,
+    "encumbranceLevel": 2,
+    "meleeWeapons": [
+      {
+        "name": "Broadsword",
+        "skill": 13,
+        "modes": [
+          {
+            "name": "swing",
+            "damageDice": 2,
+            "damageAdds": 1,
+            "damageType": "CUTTING",
+            "reaches": [
+              1
+            ],
+            "parryType": "YES",
+            "parryModifier": 0
+          },
+          {
+            "name": "thrust",
+            "damageDice": 1,
+            "damageAdds": 1,
+            "damageType": "CRUSHING",
+            "reaches": [
+              1
+            ],
+            "parryType": "YES",
+            "parryModifier": 0
+          }
+        ],
+        "minStrength": 10
+      }
+    ],
+    "shield": {
+      "name": "Medium Shield",
+      "skill": 13,
+      "defenseBonus": 2
+    },
+    "armorList": [
+      {
+        "location": "TORSO",
+        "damageResistance": 2
+      },
+      {
+        "location": "GROIN",
+        "damageResistance": 2
+      },
+      {
+        "location": "LEGS",
+        "damageResistance": 2
+      },
+      {
+        "location": "ARMS",
+        "damageResistance": 2
+      },
+      {
+        "location": "SKULL",
+        "damageResistance": 2
+      },
+      {
+        "location": "FACE",
+        "damageResistance": 2
+      },
+      {
+        "location": "HANDS",
+        "damageResistance": 2
+      },
+      {
+        "location": "FEET",
+        "damageResistance": 2
+      }
+    ]
+  }
+]

@@ -5,9 +5,9 @@ import norman.gurps.combat.model.GameChar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowStoredCharsResponse {
+public class GameCharsResponse {
     private Boolean successful;
-    private String message;
+    private List<String> messages = new ArrayList<>();
     private List<GameChar> gameChars = new ArrayList<>();
 
     public Boolean getSuccessful() {
@@ -18,12 +18,12 @@ public class ShowStoredCharsResponse {
         this.successful = successful;
     }
 
-    public String getMessage() {
-        return message;
+    public List<String> getMessages() {
+        return messages;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessages(List<String> messages) {
+        this.messages = messages;
     }
 
     public List<GameChar> getGameChars() {

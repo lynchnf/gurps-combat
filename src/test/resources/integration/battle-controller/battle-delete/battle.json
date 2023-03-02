@@ -1,0 +1,10 @@
+{
+  "combatants": [],
+  "nextStep": null,
+  "logs": [
+    {
+      "timeMillis": 1677825315210,
+      "message": "Battle created."
+    }
+  ]
+}
