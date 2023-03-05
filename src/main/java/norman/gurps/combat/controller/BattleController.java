@@ -23,7 +23,7 @@ public class BattleController {
 
     @PostMapping("/battle/create")
     public BasicResponse createEmptyBattle() {
-        LOGGER.debug("Creating empty battle");
+        LOGGER.debug("Creating empty battle.");
         BasicResponse resp = new BasicResponse();
 
         try {
@@ -40,7 +40,7 @@ public class BattleController {
 
     @PostMapping("/battle/delete")
     public BasicResponse deleteCurrentBattle() {
-        LOGGER.debug("Deleting current battle");
+        LOGGER.debug("Deleting current battle.");
         BasicResponse resp = new BasicResponse();
 
         try {
@@ -57,7 +57,7 @@ public class BattleController {
 
     @PostMapping("/battle/add/char")
     public BasicResponse addStoredCharacterToCurrentBattle(@RequestBody String name) {
-        LOGGER.debug("Add game char to current battle: {}", name);
+        LOGGER.debug("Add game char {} to current battle.", name);
         BasicResponse resp = new BasicResponse();
 
         try {
@@ -75,7 +75,7 @@ public class BattleController {
 
     @PostMapping("/battle/remove/char")
     public BasicResponse removeCombatantFromCurrentBattle(@RequestBody String label) {
-        LOGGER.debug("Removing combatant from current battle: {}", label);
+        LOGGER.debug("Removing combatant {} from current battle.", label);
         BasicResponse resp = new BasicResponse();
 
         try {
@@ -92,7 +92,7 @@ public class BattleController {
 
     @GetMapping("/battle/show")
     public BattleResponse showBattle() {
-        LOGGER.debug("Showing everything from current battle");
+        LOGGER.debug("Showing everything from current battle.");
         BattleResponse resp = new BattleResponse();
 
         try {

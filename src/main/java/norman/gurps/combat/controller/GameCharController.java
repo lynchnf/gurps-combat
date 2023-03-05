@@ -25,7 +25,7 @@ public class GameCharController {
 
     @PostMapping("/char/store")
     public BasicResponse storeChar(@RequestBody GameChar gameChar) {
-        LOGGER.debug("Storing game character: {}", gameChar.getName());
+        LOGGER.debug("Storing game character {}.", gameChar.getName());
         BasicResponse resp = new BasicResponse();
 
         // Validate new Game Character.
@@ -51,7 +51,7 @@ public class GameCharController {
 
     @PostMapping("/char/remove")
     public BasicResponse removeChar(@RequestBody String name) {
-        LOGGER.debug("Removing stored game character: {}", name);
+        LOGGER.debug("Removing stored game character {}.", name);
         BasicResponse resp = new BasicResponse();
 
         // Delete Game Character.
@@ -69,7 +69,7 @@ public class GameCharController {
 
     @GetMapping("/char/show")
     public GameCharsResponse showStoredChars() {
-        LOGGER.debug("Showing all stored game characters");
+        LOGGER.debug("Showing all stored game characters.");
         GameCharsResponse resp = new GameCharsResponse();
 
         try {
