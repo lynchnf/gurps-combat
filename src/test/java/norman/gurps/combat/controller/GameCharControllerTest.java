@@ -1,5 +1,6 @@
 package norman.gurps.combat.controller;
 
+import norman.gurps.combat.controller.request.NameRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.controller.response.GameCharsResponse;
 import norman.gurps.combat.model.GameChar;
@@ -39,9 +40,10 @@ class GameCharControllerTest {
 
     @Test
     void removeChar() {
-        String name = "Test Character";
+        NameRequest req = new NameRequest();
+        req.setName("Test Character");
 
-        BasicResponse resp = controller.removeChar(name);
+        BasicResponse resp = controller.removeChar(req);
 
         assertTrue(resp.getSuccessful());
         assertEquals(1, resp.getMessages().size());

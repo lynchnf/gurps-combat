@@ -1,5 +1,5 @@
 package norman.gurps.combat.model;
 
 public enum Action {
-    ATTACK
+    DO_NOTHING, ATTACK
 }

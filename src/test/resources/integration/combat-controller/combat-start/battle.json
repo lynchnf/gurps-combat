@@ -1,0 +1,299 @@
+{
+  "combatants": [
+    {
+      "label": "Test Character",
+      "gameChar": {
+        "name": "Test Character",
+        "strength": 14,
+        "dexterity": 13,
+        "intelligence": 12,
+        "health": 11,
+        "hitPoints": 15,
+        "basicSpeed": 6.25,
+        "basicMove": 7,
+        "encumbranceLevel": 1,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 13,
+            "modes": [
+              {
+                "name": "swing",
+                "damageDice": 2,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              }
+            ],
+            "minStrength": 10
+          }
+        ],
+        "shield": {
+          "name": "Medium Shield",
+          "skill": 13,
+          "defenseBonus": 2
+        },
+        "armorList": [
+          {
+            "location": "TORSO",
+            "damageResistance": 2
+          },
+          {
+            "location": "GROIN",
+            "damageResistance": 2
+          },
+          {
+            "location": "LEGS",
+            "damageResistance": 2
+          },
+          {
+            "location": "ARMS",
+            "damageResistance": 2
+          },
+          {
+            "location": "SKULL",
+            "damageResistance": 2
+          },
+          {
+            "location": "FACE",
+            "damageResistance": 2
+          },
+          {
+            "location": "HANDS",
+            "damageResistance": 2
+          },
+          {
+            "location": "FEET",
+            "damageResistance": 2
+          }
+        ]
+      },
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "healthStatus": "ALIVE",
+      "currentMove": 6,
+      "action": null,
+      "targetedCombatant": null,
+      "weaponUsed": null,
+      "modeUsed": null
+    },
+    {
+      "label": "Another Test Character",
+      "gameChar": {
+        "name": "Another Test Character",
+        "strength": 10,
+        "dexterity": 10,
+        "intelligence": 10,
+        "health": 10,
+        "hitPoints": 10,
+        "basicSpeed": 5.0,
+        "basicMove": 5,
+        "encumbranceLevel": 2,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 10,
+            "modes": [
+              {
+                "name": "swing",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": -1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              }
+            ],
+            "minStrength": 10
+          }
+        ],
+        "shield": {
+          "name": "Medium Shield",
+          "skill": 10,
+          "defenseBonus": 2
+        },
+        "armorList": [
+          {
+            "location": "TORSO",
+            "damageResistance": 2
+          },
+          {
+            "location": "GROIN",
+            "damageResistance": 2
+          },
+          {
+            "location": "LEGS",
+            "damageResistance": 2
+          },
+          {
+            "location": "ARMS",
+            "damageResistance": 2
+          },
+          {
+            "location": "SKULL",
+            "damageResistance": 2
+          },
+          {
+            "location": "FACE",
+            "damageResistance": 2
+          },
+          {
+            "location": "HANDS",
+            "damageResistance": 2
+          },
+          {
+            "location": "FEET",
+            "damageResistance": 2
+          }
+        ]
+      },
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "healthStatus": "ALIVE",
+      "currentMove": 3,
+      "action": null,
+      "targetedCombatant": null,
+      "weaponUsed": null,
+      "modeUsed": null
+    },
+    {
+      "label": "Another Test Character 2",
+      "gameChar": {
+        "name": "Another Test Character",
+        "strength": 10,
+        "dexterity": 10,
+        "intelligence": 10,
+        "health": 10,
+        "hitPoints": 10,
+        "basicSpeed": 5.0,
+        "basicMove": 5,
+        "encumbranceLevel": 2,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 10,
+            "modes": [
+              {
+                "name": "swing",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": -1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ],
+                "parryType": "YES",
+                "parryModifier": 0
+              }
+            ],
+            "minStrength": 10
+          }
+        ],
+        "shield": {
+          "name": "Medium Shield",
+          "skill": 10,
+          "defenseBonus": 2
+        },
+        "armorList": [
+          {
+            "location": "TORSO",
+            "damageResistance": 2
+          },
+          {
+            "location": "GROIN",
+            "damageResistance": 2
+          },
+          {
+            "location": "LEGS",
+            "damageResistance": 2
+          },
+          {
+            "location": "ARMS",
+            "damageResistance": 2
+          },
+          {
+            "location": "SKULL",
+            "damageResistance": 2
+          },
+          {
+            "location": "FACE",
+            "damageResistance": 2
+          },
+          {
+            "location": "HANDS",
+            "damageResistance": 2
+          },
+          {
+            "location": "FEET",
+            "damageResistance": 2
+          }
+        ]
+      },
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "healthStatus": "ALIVE",
+      "currentMove": 3,
+      "action": null,
+      "targetedCombatant": null,
+      "weaponUsed": null,
+      "modeUsed": null
+    }
+  ],
+  "nextStep": null,
+  "logs": [
+    {
+      "timeMillis": 1678045536177,
+      "message": "Battle created."
+    },
+    {
+      "timeMillis": 1678048972689,
+      "message": "Combatant Test Character added to Battle."
+    },
+    {
+      "timeMillis": 1678049065724,
+      "message": "Combatant Another Test Character added to Battle."
+    },
+    {
+      "timeMillis": 1678049070518,
+      "message": "Combatant Another Test Character 2 added to Battle."
+    }
+  ]
+}

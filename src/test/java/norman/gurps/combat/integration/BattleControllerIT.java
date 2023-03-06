@@ -144,9 +144,12 @@ class BattleControllerIT {
 
     @Test
     void addStoredCharacterToCurrentBattle_empty_battle() throws Exception {
+        String resourceName = "integration/battle-controller/battle-add-char/request.json";
+        String requestData = readResource(resourceName);
+
         // Create game character in storage
-        String resourceName = "integration/battle-controller/battle-add-char/game-char.json";
-        String gameCharJson = readResource(resourceName);
+        String resourceName1 = "integration/battle-controller/battle-add-char/game-char.json";
+        String gameCharJson = readResource(resourceName1);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
@@ -159,7 +162,6 @@ class BattleControllerIT {
         writer2.close();
 
         //@formatter:off
-        String requestData = "Test Character";
         MvcResult result = mockMvc.perform(post("/battle/add/char")
                         .content(requestData)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -189,9 +191,12 @@ class BattleControllerIT {
 
     @Test
     void addStoredCharacterToCurrentBattle_char_already_in_battle() throws Exception {
+        String resourceName = "integration/battle-controller/battle-add-char/request.json";
+        String requestData = readResource(resourceName);
+
         // Create game character in storage
-        String resourceName = "integration/battle-controller/battle-add-char/game-char.json";
-        String gameCharJson = readResource(resourceName);
+        String resourceName1 = "integration/battle-controller/battle-add-char/game-char.json";
+        String gameCharJson = readResource(resourceName1);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
@@ -204,7 +209,6 @@ class BattleControllerIT {
         writer2.close();
 
         //@formatter:off
-        String requestData = "Test Character";
         MvcResult result = mockMvc.perform(post("/battle/add/char")
                         .content(requestData)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -233,15 +237,17 @@ class BattleControllerIT {
 
     @Test
     void removeCombatantFromCurrentBattle() throws Exception {
+        String resourceName = "integration/battle-controller/battle-remove-char/request.json";
+        String requestData = readResource(resourceName);
+
         // Create battle with combatant in storage.
-        String resourceName = "integration/battle-controller/battle-remove-char/battle.json";
-        String battleJson = readResource(resourceName);
+        String resourceName1 = "integration/battle-controller/battle-remove-char/battle.json";
+        String battleJson = readResource(resourceName1);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
         writer.write(battleJson);
         writer.close();
 
         //@formatter:off
-        String requestData = "Test Character";
         MvcResult result = mockMvc.perform(post("/battle/remove/char")
                         .content(requestData)
                         .contentType(MediaType.APPLICATION_JSON)

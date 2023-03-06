@@ -7,6 +7,15 @@ public class Combatant {
     private GameChar gameChar;
     private Integer currentDamage;
     private Integer previousDamage;
+    private HealthStatus healthStatus;
+    private Integer currentMove;
+    private Action action;
+    private String targetLabel;
+    private String weaponName;
+    private String modeName;
+    private Integer effectiveSkillToHit;
+    private Integer rollToHit;
+    private SkillRollResult toHitResult;
 
     public Combatant() {
     }
@@ -19,8 +28,6 @@ public class Combatant {
         }
         this.label = label;
         this.gameChar = gameChar;
-        currentDamage = 0;
-        previousDamage = 0;
     }
 
     public String getLabel() {
@@ -53,5 +60,77 @@ public class Combatant {
 
     public void setPreviousDamage(Integer previousDamage) {
         this.previousDamage = previousDamage;
+    }
+
+    public HealthStatus getHealthStatus() {
+        return healthStatus;
+    }
+
+    public void setHealthStatus(HealthStatus healthStatus) {
+        this.healthStatus = healthStatus;
+    }
+
+    public Integer getCurrentMove() {
+        return currentMove;
+    }
+
+    public void setCurrentMove(Integer currentMove) {
+        this.currentMove = currentMove;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public String getTargetLabel() {
+        return targetLabel;
+    }
+
+    public void setTargetLabel(String targetLabel) {
+        this.targetLabel = targetLabel;
+    }
+
+    public String getWeaponName() {
+        return weaponName;
+    }
+
+    public void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
+    }
+
+    public String getModeName() {
+        return modeName;
+    }
+
+    public void setModeName(String modeName) {
+        this.modeName = modeName;
+    }
+
+    public Integer getEffectiveSkillToHit() {
+        return effectiveSkillToHit;
+    }
+
+    public void setEffectiveSkillToHit(Integer effectiveSkillToHit) {
+        this.effectiveSkillToHit = effectiveSkillToHit;
+    }
+
+    public Integer getRollToHit() {
+        return rollToHit;
+    }
+
+    public void setRollToHit(Integer rollToHit) {
+        this.rollToHit = rollToHit;
+    }
+
+    public SkillRollResult getToHitResult() {
+        return toHitResult;
+    }
+
+    public void setToHitResult(SkillRollResult toHitResult) {
+        this.toHitResult = toHitResult;
     }
 }

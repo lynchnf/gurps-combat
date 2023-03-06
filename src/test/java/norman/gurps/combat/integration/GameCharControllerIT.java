@@ -116,14 +116,15 @@ class GameCharControllerIT {
 
     @Test
     void removeChar() throws Exception {
+        String resourceName = "integration/game-char-controller/char-remove/request.json";
+        String requestData = readResource(resourceName);
+
         // Preload file with data.
-        String resourceName = "integration/game-char-controller/char-remove/game-char.json";
-        String gameCharJson = readResource(resourceName);
+        String resourceName2 = "integration/game-char-controller/char-remove/game-char.json";
+        String gameCharJson = readResource(resourceName2);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageGameCharFile));
         writer.write(gameCharJson);
         writer.close();
-
-        String requestData = "Test Character";
 
         //@formatter:off
         MvcResult result = mockMvc.perform(post("/char/remove")

@@ -1,5 +1,7 @@
 package norman.gurps.combat.controller;
 
+import norman.gurps.combat.controller.request.LabelRequest;
+import norman.gurps.combat.controller.request.NameRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.controller.response.BattleResponse;
 import norman.gurps.combat.model.Battle;
@@ -42,9 +44,10 @@ class BattleControllerTest {
 
     @Test
     void addStoredCharacterToCurrentBattle() {
-        String name = "Test Character";
+        NameRequest req = new NameRequest();
+        req.setName("Test Character");
 
-        BasicResponse resp = controller.addStoredCharacterToCurrentBattle(name);
+        BasicResponse resp = controller.addStoredCharacterToCurrentBattle(req);
 
         assertTrue(resp.getSuccessful());
         assertEquals(1, resp.getMessages().size());
@@ -52,9 +55,10 @@ class BattleControllerTest {
 
     @Test
     void removeCombatantFromCurrentBattle() {
-        String label = "Test Character";
+        LabelRequest req = new LabelRequest();
+        req.setLabel("Test Character");
 
-        BasicResponse resp = controller.removeCombatantFromCurrentBattle(label);
+        BasicResponse resp = controller.removeCombatantFromCurrentBattle(req);
 
         assertTrue(resp.getSuccessful());
         assertEquals(1, resp.getMessages().size());

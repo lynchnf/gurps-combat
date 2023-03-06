@@ -1,5 +1,6 @@
 package norman.gurps.combat.controller;
 
+import norman.gurps.combat.controller.request.NameRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.controller.response.GameCharsResponse;
 import norman.gurps.combat.exception.LoggingException;
@@ -50,15 +51,15 @@ public class GameCharController {
     }
 
     @PostMapping("/char/remove")
-    public BasicResponse removeChar(@RequestBody String name) {
-        LOGGER.debug("Removing stored game character {}.", name);
+    public BasicResponse removeChar(@RequestBody NameRequest req) {
+        LOGGER.debug("Removing stored game character {}.", req.getName());
         BasicResponse resp = new BasicResponse();
 
         // Delete Game Character.
         try {
-            service.removeChar(name);
+            service.removeChar(req.getName());
             resp.setSuccessful(true);
-            resp.getMessages().add("Successfully removed character " + name + " from local storage.");
+            resp.getMessages().add("Successfully removed character " + req.getName() + " from local storage.");
             return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);

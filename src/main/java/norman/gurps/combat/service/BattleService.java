@@ -161,4 +161,21 @@ public class BattleService {
             }
         }
     }
+
+    public void updateBattle(Battle battle, String message) {
+        // Create home directory if it does not exist.
+        verifyStorageDir();
+
+        // Verify battle file is not missing.
+        if (!storageBattleFile.exists()) {
+            throw new LoggingException(LOGGER, "Battle could not be updated. It does not exist.");
+        }
+
+        battle.getLogs().add(new BattleLog(message));
+        try {
+            mapper.writeValue(storageBattleFile, battle);
+        } catch (IOException e) {
+            throw new LoggingException(LOGGER, "Error updating battle in file " + storageBattleFile + ".", e);
+        }
+    }
 }

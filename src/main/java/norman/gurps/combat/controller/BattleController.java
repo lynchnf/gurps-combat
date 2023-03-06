@@ -1,5 +1,7 @@
 package norman.gurps.combat.controller;
 
+import norman.gurps.combat.controller.request.LabelRequest;
+import norman.gurps.combat.controller.request.NameRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.controller.response.BattleResponse;
 import norman.gurps.combat.exception.LoggingException;
@@ -56,15 +58,16 @@ public class BattleController {
     }
 
     @PostMapping("/battle/add/char")
-    public BasicResponse addStoredCharacterToCurrentBattle(@RequestBody String name) {
-        LOGGER.debug("Add game char {} to current battle.", name);
+    public BasicResponse addStoredCharacterToCurrentBattle(@RequestBody NameRequest req) {
+        LOGGER.debug("Add game char {} to current battle.", req.getName());
         BasicResponse resp = new BasicResponse();
 
         try {
-            String label = service.addCharToBattle(name);
+            String label = service.addCharToBattle(req.getName());
             resp.setSuccessful(true);
             resp.getMessages()
-                    .add("Successfully added character " + name + " to current battle with label " + label + ".");
+                    .add("Successfully added character " + req.getName() + " to current battle with label " + label +
+                            ".");
             return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
@@ -74,14 +77,14 @@ public class BattleController {
     }
 
     @PostMapping("/battle/remove/char")
-    public BasicResponse removeCombatantFromCurrentBattle(@RequestBody String label) {
-        LOGGER.debug("Removing combatant {} from current battle.", label);
+    public BasicResponse removeCombatantFromCurrentBattle(@RequestBody LabelRequest req) {
+        LOGGER.debug("Removing combatant {} from current battle.", req.getLabel());
         BasicResponse resp = new BasicResponse();
 
         try {
-            service.removeCharFromBattle(label);
+            service.removeCharFromBattle(req.getLabel());
             resp.setSuccessful(true);
-            resp.getMessages().add("Successfully removed combatant " + label + " from current battle.");
+            resp.getMessages().add("Successfully removed combatant " + req.getLabel() + " from current battle.");
             return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
