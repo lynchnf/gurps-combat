@@ -53,7 +53,7 @@ class BattleServiceTest {
         ReflectionTestUtils.setField(service, "storageBattleFile", tempFile);
 
         testGameChar = new GameChar();
-        testGameChar.setName("Test Character");
+        testGameChar.setName("Bob the Example");
         testGameChar.setStrength(14);
         testGameChar.setDexterity(13);
         testGameChar.setIntelligence(12);
@@ -61,18 +61,16 @@ class BattleServiceTest {
         testGameChar.setHitPoints(15);
         testGameChar.setBasicSpeed(6.25);
         testGameChar.setBasicMove(7);
-        testGameChar.setEncumbranceLevel(2);
+        testGameChar.setEncumbranceLevel(1);
         MeleeWeapon weapon = new MeleeWeapon();
         weapon.setName("Broadsword");
-        weapon.setSkill(13);
+        weapon.setSkill(14);
         MeleeWeaponMode swing = new MeleeWeaponMode();
         swing.setName("swing");
         swing.setDamageDice(2);
         swing.setDamageAdds(1);
         swing.setDamageType(DamageType.CUTTING);
         swing.getReaches().add(1);
-        swing.setParryType(ParryType.YES);
-        swing.setParryModifier(0);
         weapon.getModes().add(swing);
         MeleeWeaponMode thrust = new MeleeWeaponMode();
         thrust.setName("thrust");
@@ -80,47 +78,48 @@ class BattleServiceTest {
         thrust.setDamageAdds(1);
         thrust.setDamageType(DamageType.CRUSHING);
         thrust.getReaches().add(1);
-        thrust.setParryType(ParryType.YES);
-        thrust.setParryModifier(0);
         weapon.getModes().add(thrust);
+        weapon.setParryType(ParryType.YES);
+        weapon.setParryModifier(0);
         weapon.setMinStrength(10);
+        weapon.setTwoHanded(false);
         testGameChar.getMeleeWeapons().add(weapon);
         Shield shield = new Shield();
         shield.setName("Medium Shield");
         shield.setSkill(13);
         shield.setDefenseBonus(2);
-        testGameChar.setShield(shield);
+        testGameChar.getShields().add(shield);
         Armor torso = new Armor();
         torso.setLocation(Location.TORSO);
-        torso.setDamageResistance(2);
+        torso.setDamageResistance(1);
         testGameChar.getArmorList().add(torso);
         Armor groin = new Armor();
         groin.setLocation(Location.GROIN);
-        groin.setDamageResistance(2);
+        groin.setDamageResistance(1);
         testGameChar.getArmorList().add(groin);
         Armor legs = new Armor();
         legs.setLocation(Location.LEGS);
-        legs.setDamageResistance(2);
+        legs.setDamageResistance(1);
         testGameChar.getArmorList().add(legs);
         Armor arms = new Armor();
         arms.setLocation(Location.ARMS);
-        arms.setDamageResistance(2);
+        arms.setDamageResistance(1);
         testGameChar.getArmorList().add(arms);
         Armor skull = new Armor();
         skull.setLocation(Location.SKULL);
-        skull.setDamageResistance(2);
+        skull.setDamageResistance(1);
         testGameChar.getArmorList().add(skull);
         Armor face = new Armor();
         face.setLocation(Location.FACE);
-        face.setDamageResistance(2);
+        face.setDamageResistance(1);
         testGameChar.getArmorList().add(face);
         Armor hands = new Armor();
         hands.setLocation(Location.HANDS);
-        hands.setDamageResistance(2);
+        hands.setDamageResistance(1);
         testGameChar.getArmorList().add(hands);
         Armor feet = new Armor();
         feet.setLocation(Location.FEET);
-        feet.setDamageResistance(2);
+        feet.setDamageResistance(1);
         testGameChar.getArmorList().add(feet);
     }
 
@@ -160,13 +159,13 @@ class BattleServiceTest {
         battle.getLogs().add(new BattleLog("Battle created."));
         mapper.writeValue(tempFile, battle);
 
-        String label = service.addCharToBattle("Test Character");
+        String label = service.addCharToBattle("Bob the Example");
 
-        assertEquals("Test Character", label);
+        assertEquals("Bob the Example", label);
         Battle battle1 = mapper.readValue(tempFile, Battle.class);
         assertEquals(1, battle1.getCombatants().size());
-        assertEquals("Test Character", battle1.getCombatants().get(0).getLabel());
-        assertEquals("Test Character", battle1.getCombatants().get(0).getGameChar().getName());
+        assertEquals("Bob the Example", battle1.getCombatants().get(0).getLabel());
+        assertEquals("Bob the Example", battle1.getCombatants().get(0).getGameChar().getName());
         assertNull(battle1.getNextStep());
         assertEquals(2, battle1.getLogs().size());
     }
@@ -188,13 +187,13 @@ class BattleServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
-        String label = service.addCharToBattle("Test Character");
+        String label = service.addCharToBattle("Bob the Example");
 
-        assertEquals("Test Character 2", label);
+        assertEquals("Bob the Example 2", label);
         Battle battle1 = mapper.readValue(tempFile, Battle.class);
         assertEquals(2, battle1.getCombatants().size());
-        assertEquals("Test Character 2", battle1.getCombatants().get(1).getLabel());
-        assertEquals("Test Character", battle1.getCombatants().get(1).getGameChar().getName());
+        assertEquals("Bob the Example 2", battle1.getCombatants().get(1).getLabel());
+        assertEquals("Bob the Example", battle1.getCombatants().get(1).getGameChar().getName());
         assertNull(battle1.getNextStep());
         assertEquals(3, battle1.getLogs().size());
     }
@@ -211,7 +210,7 @@ class BattleServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
-        service.removeCharFromBattle("Test Character");
+        service.removeCharFromBattle("Bob the Example");
 
         // Verify combatant no longer exists in battle.
         Battle battle1 = mapper.readValue(tempFile, Battle.class);

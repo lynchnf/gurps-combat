@@ -7,7 +7,6 @@ import norman.gurps.combat.controller.BattleController;
 import norman.gurps.combat.service.BattleService;
 import norman.gurps.combat.service.GameCharService;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,19 +74,19 @@ class BattleControllerIT {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-        if (storageBattleFile.exists()) {
-            if (!storageBattleFile.delete()) {
-                throw new RuntimeException("SETUP: Unable to delete file " + storageBattleFile + ".");
-            }
-        }
-        if (storageGameCharFile.exists()) {
-            if (!storageGameCharFile.delete()) {
-                throw new RuntimeException("SETUP: Unable to delete file " + storageGameCharFile + ".");
-            }
-        }
-    }
+    //@AfterEach
+    //void tearDown() {
+    //    if (storageBattleFile.exists()) {
+    //        if (!storageBattleFile.delete()) {
+    //            throw new RuntimeException("SETUP: Unable to delete file " + storageBattleFile + ".");
+    //        }
+    //    }
+    //    if (storageGameCharFile.exists()) {
+    //        if (!storageGameCharFile.delete()) {
+    //            throw new RuntimeException("SETUP: Unable to delete file " + storageGameCharFile + ".");
+    //        }
+    //    }
+    //}
 
     @Test
     void createEmptyBattle() throws Exception {
@@ -182,8 +181,9 @@ class BattleControllerIT {
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
         assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(1, battleJsonNode.get("combatants").size());
-        assertEquals("Test Character", battleJsonNode.get("combatants").get(0).get("label").textValue());
-        assertEquals("Test Character", battleJsonNode.get("combatants").get(0).get("gameChar").get("name").textValue());
+        assertEquals("Bob the Example", battleJsonNode.get("combatants").get(0).get("label").textValue());
+        assertEquals("Bob the Example",
+                battleJsonNode.get("combatants").get(0).get("gameChar").get("name").textValue());
         assertTrue(battleJsonNode.get("nextStep").isNull());
         assertTrue(battleJsonNode.get("logs").isArray());
         assertEquals(2, battleJsonNode.get("logs").size());
@@ -228,8 +228,9 @@ class BattleControllerIT {
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
         assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals("Test Character 2", battleJsonNode.get("combatants").get(1).get("label").textValue());
-        assertEquals("Test Character", battleJsonNode.get("combatants").get(1).get("gameChar").get("name").textValue());
+        assertEquals("Bob the Example 2", battleJsonNode.get("combatants").get(1).get("label").textValue());
+        assertEquals("Bob the Example",
+                battleJsonNode.get("combatants").get(1).get("gameChar").get("name").textValue());
         assertTrue(battleJsonNode.get("nextStep").isNull());
         assertTrue(battleJsonNode.get("logs").isArray());
         assertEquals(3, battleJsonNode.get("logs").size());

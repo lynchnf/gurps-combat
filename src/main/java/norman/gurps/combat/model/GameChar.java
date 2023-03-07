@@ -14,7 +14,7 @@ public class GameChar {
     private Integer basicMove;
     private Integer encumbranceLevel;
     private List<MeleeWeapon> meleeWeapons = new ArrayList<>();
-    private Shield shield;
+    private List<Shield> shields = new ArrayList<>();
     private List<Armor> armorList = new ArrayList<>();
 
     public String getName() {
@@ -97,12 +97,12 @@ public class GameChar {
         this.meleeWeapons = meleeWeapons;
     }
 
-    public Shield getShield() {
-        return shield;
+    public List<Shield> getShields() {
+        return shields;
     }
 
-    public void setShield(Shield shield) {
-        this.shield = shield;
+    public void setShields(List<Shield> shields) {
+        this.shields = shields;
     }
 
     public List<Armor> getArmorList() {

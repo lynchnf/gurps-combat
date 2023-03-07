@@ -4,12 +4,14 @@ import norman.gurps.combat.exception.LoggingException;
 import norman.gurps.combat.model.Action;
 import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.model.Combatant;
+import norman.gurps.combat.model.DamageType;
 import norman.gurps.combat.model.Defense;
 import norman.gurps.combat.model.HealthStatus;
 import norman.gurps.combat.model.MeleeWeapon;
 import norman.gurps.combat.model.MeleeWeaponMode;
 import norman.gurps.combat.model.NextStep;
 import norman.gurps.combat.model.Phase;
+import norman.gurps.combat.model.Shield;
 import norman.gurps.combat.model.SkillRollResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,12 +113,12 @@ public class CombatService {
                 nextStep = doPromptForToHit(round, index, combatant);
                 battle.setNextStep(nextStep);
                 battleService.updateBattle(battle,
-                        "Combatant " + combatant.getLabel() + " must chose a target, weapon / mode, and roll to hit.");
+                        "Combatant " + combatant.getLabel() + " must chose a target, weapon & mode, and roll to hit.");
                 break;
             case RESOLVE_TO_HIT:
                 // Validate target.
                 if (targetLabel == null) {
-                    throw new LoggingException(LOGGER, "Target name may not be blank.");
+                    throw new LoggingException(LOGGER, "Target may not be blank.");
                 } else if (targetLabel.equals(combatant.getLabel())) {
                     throw new LoggingException(LOGGER,
                             "Combatant " + combatant.getLabel() + " may not target him/herself.");
@@ -127,21 +129,21 @@ public class CombatService {
                     }
                 }
 
-                // Validate weapon / mode.
+                // Validate weapon & mode.
                 if (weaponName == null) {
-                    throw new LoggingException(LOGGER, "Weapon name may not be blank.");
+                    throw new LoggingException(LOGGER, "Weapon may not be blank.");
                 } else {
                     MeleeWeapon weapon = findWeaponByName(weaponName, combatant.getGameChar().getMeleeWeapons());
                     if (weapon == null) {
                         throw new LoggingException(LOGGER,
-                                "Weapon " + weaponName + " is not ready weapon for combatant " + combatant.getLabel() +
-                                        ".");
+                                "Weapon " + weaponName + " is not a ready weapon for combatant " +
+                                        combatant.getLabel() + ".");
                     } else if (modeName == null) {
-                        throw new LoggingException(LOGGER, "Weapon mode name may not be blank.");
+                        throw new LoggingException(LOGGER, "Weapon mode may not be blank.");
                     } else {
                         if (findModeByName(modeName, weapon.getModes()) == null) {
                             throw new LoggingException(LOGGER,
-                                    "Mode " + modeName + " is not a mode of weapon " + weapon.getName() +
+                                    "Mode " + modeName + " is not a valid mode of weapon " + weapon.getName() +
                                             " for combatant " + combatant.getLabel() + ".");
                         }
                     }
@@ -149,35 +151,72 @@ public class CombatService {
 
                 // Validate roll.
                 if (rollToHit == null) {
-                    throw new LoggingException(LOGGER, "Value rolled may not be blank.");
+                    throw new LoggingException(LOGGER, "Value rolled to hit may not be blank.");
                 }
 
                 nextStep = doResolveToHit(round, index, combatant, targetLabel, weaponName, modeName, rollToHit);
                 battle.setNextStep(nextStep);
                 battleService.updateBattle(battle,
                         "Combatant " + combatant.getLabel() + " has chosen to attack " + targetLabel + " with " +
-                                weaponName + " / " + modeName + ", and rolled " + rollToHit + " to hit.");
+                                weaponName + " & " + modeName + ", and rolled " + rollToHit + " to hit.");
                 break;
             case PROMPT_FOR_TO_DEFEND:
-                nextStep = doPromptForToDefend(round, index, combatant);
+                nextStep = doPromptForToDefend(round, index, target);
                 battle.setNextStep(nextStep);
-                battleService.updateBattle(battle, "Target " + combatant.getTargetLabel() +
-                        " must chose a defense, item (if needed for defense), and roll to defend");
+                battleService.updateBattle(battle, "Target " + target.getLabel() +
+                        " must chose a defense, item (if needed for defense), and roll to defend.");
                 break;
             case RESOLVE_TO_DEFEND:
+                // Validate defense.
+                if (defense == null) {
+                    throw new LoggingException(LOGGER, "Defense may not be blank.");
+                }
+
+                // Validate defending item name.
+                if ((defense == Defense.PARRY || defense == Defense.BLOCK) && defendingItemName == null) {
+                    throw new LoggingException(LOGGER,
+                            "If Defense is PARRY or BLOCK, defending item name may not be blank.");
+                }
+
+                // Validate weapon for parry.
+                if (defense == Defense.PARRY) {
+                    if (findWeaponByName(defendingItemName, target.getGameChar().getMeleeWeapons()) == null) {
+                        throw new LoggingException(LOGGER,
+                                "Weapon " + defendingItemName + " is not a ready parrying weapon for combatant " +
+                                        target.getLabel() + ".");
+                    }
+                }
+
+                // Validate shield for block.
+                if (defense == Defense.BLOCK) {
+                    if (findShieldByName(defendingItemName, target.getGameChar().getShields()) == null) {
+                        throw new LoggingException(LOGGER,
+                                "Shield " + defendingItemName + " is not a ready shield for combatant " +
+                                        target.getLabel() + ".");
+                    }
+                }
+
+                // Validate roll.
+                if (rollToDefend == null) {
+                    throw new LoggingException(LOGGER, "Value rolled to defend may not be blank.");
+                }
+
                 nextStep = doResolveToDefend(round, index, combatant, target, defense, defendingItemName, rollToDefend);
                 battle.setNextStep(nextStep);
-                String defendingItem;
+                String item;
                 if (defense == Defense.DODGE || defense == Defense.NO_DEFENSE) {
-                    defendingItem = "";
+                    item = "";
                 } else {
-                    defendingItem = " (" + defendingItemName + ")";
+                    item = " (" + defendingItemName + ")";
                 }
                 battleService.updateBattle(battle,
-                        "Target " + targetLabel + " has chosen a defense of " + defense + defendingItem +
-                                ", and rolled " + rollToDefend + " to defend");
+                        "Target " + target.getLabel() + " has chosen a defense of " + defense + item + ", and rolled " +
+                                rollToDefend + " to defend.");
                 break;
             case PROMPT_FOR_DAMAGE:
+                nextStep = doPromptForDamage(round, index, combatant);
+                battle.setNextStep(nextStep);
+                battleService.updateBattle(battle, "Combatant " + combatant.getLabel() + " must roll for damage.");
                 break;
             case RESOLVE_DAMAGE:
                 break;
@@ -193,26 +232,7 @@ public class CombatService {
         int currentDamage = combatant.getCurrentDamage();
         int previousDamage = combatant.getPreviousDamage();
         int remainingHitPoints = hitPoints - currentDamage - previousDamage;
-        HealthStatus status;
-        if ((double) remainingHitPoints >= (double) hitPoints / 3.0) {
-            status = HealthStatus.ALIVE;
-        } else if (remainingHitPoints > 0) {
-            status = HealthStatus.REELING;
-        } else if (remainingHitPoints > -1 * hitPoints) {
-            status = HealthStatus.BARELY;
-        } else if (remainingHitPoints > -2 * hitPoints) {
-            status = HealthStatus.ALMOST;
-        } else if (remainingHitPoints > -3 * hitPoints) {
-            status = HealthStatus.ALMOST2;
-        } else if (remainingHitPoints > -4 * hitPoints) {
-            status = HealthStatus.ALMOST3;
-        } else if (remainingHitPoints > -5 * hitPoints) {
-            status = HealthStatus.ALMOST3;
-        } else if (remainingHitPoints > -10 * hitPoints) {
-            status = HealthStatus.DEAD;
-        } else {
-            status = HealthStatus.DESTROYED;
-        }
+        HealthStatus status = calculateHealthStatus(hitPoints, remainingHitPoints);
 
         // Calculate current move.
         int basicMove = combatant.getGameChar().getBasicMove();
@@ -224,25 +244,30 @@ public class CombatService {
             currentMove = (int) Math.ceil(((double) basicMove - (double) encumbranceLevel) / 2.0);
         }
 
-        // Calculate next phase.
-        Phase phase = Phase.END;
-        if (status == HealthStatus.ALIVE || status == HealthStatus.REELING || status == HealthStatus.BARELY) {
-            phase = Phase.PROMPT_FOR_ACTION;
-        }
-
         combatant.setCurrentDamage(0);
         combatant.setPreviousDamage(currentDamage + previousDamage);
         combatant.setHealthStatus(status);
         combatant.setCurrentMove(currentMove);
+        combatant.setAction(null);
+        combatant.setTargetLabel(null);
+        combatant.setWeaponName(null);
+        combatant.setModeName(null);
+        combatant.setEffectiveSkillToHit(null);
+        combatant.setRollToHit(null);
+        combatant.setToHitResult(null);
+
+        Phase phase = Phase.END;
+        if (status == HealthStatus.ALIVE || status == HealthStatus.REELING || status == HealthStatus.BARELY) {
+            phase = Phase.PROMPT_FOR_ACTION;
+        }
 
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
         nextStep.setPhase(phase);
         nextStep.setInputNeeded(false);
-        nextStep.setMessage(
-                "" + nextStep.getRound() + " / " + nextStep.getIndex() + " : " + combatant.getLabel() + " is " +
-                        status + ".");
+        String message = combatant.getLabel() + " is " + status + ".";
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
@@ -252,8 +277,8 @@ public class CombatService {
         nextStep.setIndex(index);
         nextStep.setPhase(Phase.RESOLVE_ACTION);
         nextStep.setInputNeeded(true);
-        nextStep.setMessage("" + nextStep.getRound() + " / " + nextStep.getIndex() + " : " + combatant.getLabel() +
-                ", please chose an action.");
+        String message = combatant.getLabel() + ", please chose an action.";
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
@@ -280,45 +305,25 @@ public class CombatService {
         nextStep.setIndex(index);
         nextStep.setPhase(Phase.RESOLVE_TO_HIT);
         nextStep.setInputNeeded(true);
-        nextStep.setMessage("" + nextStep.getRound() + " / " + nextStep.getIndex() + " : " + combatant.getLabel() +
-                ", please chose a target, a weapon / mode, and roll to hit.");
+        String message = combatant.getLabel() + ", please chose a target, a weapon & mode, and roll to hit.";
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
     private NextStep doResolveToHit(int round, int index, Combatant combatant, String targetLabel, String weaponName,
             String modeName, int rollToHit) {
         MeleeWeapon weapon = findWeaponByName(weaponName, combatant.getGameChar().getMeleeWeapons());
-        int skill = weapon.getSkill();
+        int weaponSkill = weapon.getSkill();
         if (weapon.getMinStrength() > combatant.getGameChar().getStrength()) {
-            skill -= (weapon.getMinStrength() - combatant.getGameChar().getStrength());
+            weaponSkill -= (weapon.getMinStrength() - combatant.getGameChar().getStrength());
         }
 
-        int margin = skill - rollToHit;
-        SkillRollResult result;
-        if (rollToHit == 3) {
-            result = SkillRollResult.CRITICAL_SUCCESS;
-        } else if (rollToHit == 4) {
-            result = SkillRollResult.CRITICAL_SUCCESS;
-        } else if (rollToHit == 5 && skill >= 15) {
-            result = SkillRollResult.CRITICAL_SUCCESS;
-        } else if (rollToHit == 6 && skill >= 16) {
-            result = SkillRollResult.CRITICAL_SUCCESS;
-        } else if (rollToHit == 18) {
-            result = SkillRollResult.CRITICAL_FAILURE;
-        } else if (rollToHit == 17 && skill <= 15) {
-            result = SkillRollResult.CRITICAL_FAILURE;
-        } else if (margin <= -10) {
-            result = SkillRollResult.CRITICAL_FAILURE;
-        } else if (margin >= 0) {
-            result = SkillRollResult.SUCCESS;
-        } else {
-            result = SkillRollResult.FAILURE;
-        }
+        SkillRollResult result = calculateSkillRollResult(weaponSkill, rollToHit);
 
         combatant.setTargetLabel(targetLabel);
         combatant.setWeaponName(weaponName);
         combatant.setModeName(modeName);
-        combatant.setEffectiveSkillToHit(skill);
+        combatant.setEffectiveSkillToHit(weaponSkill);
         combatant.setRollToHit(rollToHit);
         combatant.setToHitResult(result);
 
@@ -327,12 +332,12 @@ public class CombatService {
         String message;
         if (result == SkillRollResult.CRITICAL_SUCCESS || result == SkillRollResult.SUCCESS) {
             phase = Phase.PROMPT_FOR_TO_DEFEND;
-            message = combatant.getLabel() + " successfully attacked " + combatant.getTargetLabel() + " with " +
-                    weaponName + " / " + modeName + ". Rolled a " + rollToHit + ", needed a " + skill + ".";
+            message = combatant.getLabel() + " successfully attacked " + targetLabel + " with " + weaponName + " & " +
+                    modeName + ". Rolled a " + rollToHit + ", needed a " + weaponSkill + ".";
         } else {
             phase = Phase.END;
-            message = combatant.getLabel() + " attacked " + combatant.getTargetLabel() + " with " + weaponName + " / " +
-                    modeName + ", but failed to hit. Rolled a " + rollToHit + ", but needed a " + skill + ".";
+            message = combatant.getLabel() + " attacked " + targetLabel + " with " + weaponName + " & " + modeName +
+                    ", but failed to hit. Rolled a " + rollToHit + ", but needed a " + weaponSkill + ".";
         }
 
         NextStep nextStep = new NextStep();
@@ -340,25 +345,167 @@ public class CombatService {
         nextStep.setIndex(index);
         nextStep.setPhase(phase);
         nextStep.setInputNeeded(false);
-        nextStep.setMessage("" + nextStep.getRound() + " / " + nextStep.getIndex() + " : " + message);
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
-    private NextStep doPromptForToDefend(int round, int index, Combatant combatant) {
+    private NextStep doPromptForToDefend(int round, int index, Combatant target) {
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
         nextStep.setPhase(Phase.RESOLVE_TO_HIT);
         nextStep.setInputNeeded(true);
-        nextStep.setMessage(
-                "" + nextStep.getRound() + " / " + nextStep.getIndex() + " : " + combatant.getTargetLabel() +
-                        ", please chose a defense, an item (if needed for defense), and roll to defend");
+        String message =
+                target.getLabel() + ", please chose a defense, an item (if needed for defense), and roll to defend.";
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
     private NextStep doResolveToDefend(int round, int index, Combatant combatant, Combatant target, Defense defense,
             String defendingItemName, Integer rollToDefend) {
-        return null;
+        int defenseSkill = 0;
+        if (defense == Defense.PARRY) {
+            MeleeWeapon weapon = findWeaponByName(defendingItemName, target.getGameChar().getMeleeWeapons());
+            int weaponSkill = weapon.getSkill();
+            if (weapon.getMinStrength() > target.getGameChar().getStrength()) {
+                weaponSkill -= (weapon.getMinStrength() - target.getGameChar().getStrength());
+            }
+            defenseSkill = (weaponSkill / 2) + 3 + weapon.getParryModifier();
+        } else if (defense == Defense.BLOCK) {
+            Shield shield = findShieldByName(defendingItemName, target.getGameChar().getShields());
+            int shieldSkill = shield.getSkill();
+            defenseSkill = (shieldSkill / 2) + 3;
+        } else if (defense == Defense.DODGE) {
+            defenseSkill = target.getCurrentMove() + 3;
+        }
+
+        //todo Defense bonus should be in combatant object.
+        if (!target.getGameChar().getShields().isEmpty()) {
+            defenseSkill += target.getGameChar().getShields().get(0).getDefenseBonus();
+        }
+
+        SkillRollResult result = calculateSkillRollResult(defenseSkill, rollToDefend);
+
+        String item;
+        if (defense == Defense.DODGE || defense == Defense.NO_DEFENSE) {
+            item = "";
+        } else {
+            item = " (" + defendingItemName + ")";
+        }
+        Phase phase;
+        String message;
+        if (result == SkillRollResult.CRITICAL_SUCCESS || result == SkillRollResult.SUCCESS) {
+            phase = Phase.END;
+            message =
+                    target.getLabel() + " successfully defended against " + combatant.getLabel() + " with " + defense +
+                            item + ". Rolled a " + rollToDefend + ", needed a " + defenseSkill + ".";
+        } else {
+            phase = Phase.PROMPT_FOR_DAMAGE;
+            message = target.getLabel() + " failed to defend against " + combatant.getLabel() + " with " + defense +
+                    item + ". Rolled a " + rollToDefend + ", but needed a " + defenseSkill + ".";
+        }
+
+        NextStep nextStep = new NextStep();
+        nextStep.setRound(round);
+        nextStep.setIndex(index);
+        nextStep.setPhase(phase);
+        nextStep.setInputNeeded(false);
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
+        return nextStep;
+    }
+
+    private NextStep doPromptForDamage(int round, int index, Combatant combatant) {
+        MeleeWeapon weapon = findWeaponByName(combatant.getWeaponName(), combatant.getGameChar().getMeleeWeapons());
+        MeleeWeaponMode mode = findModeByName(combatant.getModeName(), weapon.getModes());
+        String damageDescription = calculateDamageDescription(mode.getDamageDice(), mode.getDamageAdds(),
+                mode.getDamageType());
+
+        NextStep nextStep = new NextStep();
+        nextStep.setRound(round);
+        nextStep.setIndex(index);
+        nextStep.setPhase(Phase.RESOLVE_DAMAGE);
+        nextStep.setInputNeeded(true);
+        String message = combatant.getLabel() + ", please roll " + damageDescription + " for damage.";
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
+        return nextStep;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private String calculateDamageDescription(int damageDice, int damageAdds, DamageType damageType) {
+        StringBuilder sb = null;
+        if (damageDice != 0) {
+            sb = new StringBuilder(damageDice);
+            sb.append("d");
+        }
+        if (damageAdds != 0) {
+            if (sb == null) {
+                sb = new StringBuilder(damageAdds);
+            } else {
+                if (damageAdds > 0) {
+                    sb.append("+");
+                }
+                sb.append(damageAdds);
+            }
+        }
+        if (damageType != null) {
+            if (sb == null) {
+                sb = new StringBuilder(damageType.toString());
+            } else {
+                sb.append(" ");
+                sb.append(damageType);
+            }
+        }
+        return sb.toString();
+    }
+
+    private HealthStatus calculateHealthStatus(int hitPoints, int remainingHitPoints) {
+        HealthStatus status;
+        if ((double) remainingHitPoints >= (double) hitPoints / 3.0) {
+            status = HealthStatus.ALIVE;
+        } else if (remainingHitPoints > 0) {
+            status = HealthStatus.REELING;
+        } else if (remainingHitPoints > -1 * hitPoints) {
+            status = HealthStatus.BARELY;
+        } else if (remainingHitPoints > -2 * hitPoints) {
+            status = HealthStatus.ALMOST;
+        } else if (remainingHitPoints > -3 * hitPoints) {
+            status = HealthStatus.ALMOST2;
+        } else if (remainingHitPoints > -4 * hitPoints) {
+            status = HealthStatus.ALMOST3;
+        } else if (remainingHitPoints > -5 * hitPoints) {
+            status = HealthStatus.ALMOST3;
+        } else if (remainingHitPoints > -10 * hitPoints) {
+            status = HealthStatus.DEAD;
+        } else {
+            status = HealthStatus.DESTROYED;
+        }
+        return status;
+    }
+
+    private SkillRollResult calculateSkillRollResult(int skill, int roll) {
+        int margin = skill - roll;
+        SkillRollResult result;
+        if (roll == 3) {
+            result = SkillRollResult.CRITICAL_SUCCESS;
+        } else if (roll == 4) {
+            result = SkillRollResult.CRITICAL_SUCCESS;
+        } else if (roll == 5 && skill >= 15) {
+            result = SkillRollResult.CRITICAL_SUCCESS;
+        } else if (roll == 6 && skill >= 16) {
+            result = SkillRollResult.CRITICAL_SUCCESS;
+        } else if (roll == 18) {
+            result = SkillRollResult.CRITICAL_FAILURE;
+        } else if (roll == 17 && skill <= 15) {
+            result = SkillRollResult.CRITICAL_FAILURE;
+        } else if (margin <= -10) {
+            result = SkillRollResult.CRITICAL_FAILURE;
+        } else if (margin >= 0) {
+            result = SkillRollResult.SUCCESS;
+        } else {
+            result = SkillRollResult.FAILURE;
+        }
+        return result;
     }
 
     private Combatant findCombatantByLabel(String label, List<Combatant> combatants) {
@@ -371,21 +518,31 @@ public class CombatService {
         return found;
     }
 
-    private static MeleeWeapon findWeaponByName(String name, List<MeleeWeapon> weapons) {
-        MeleeWeapon found = null;
-        for (MeleeWeapon weapon : weapons) {
-            if (name.equals(weapon.getName())) {
-                found = weapon;
+    private MeleeWeaponMode findModeByName(String name, List<MeleeWeaponMode> modes) {
+        MeleeWeaponMode found = null;
+        for (MeleeWeaponMode mode : modes) {
+            if (name.equals(mode.getName())) {
+                found = mode;
             }
         }
         return found;
     }
 
-    private static MeleeWeaponMode findModeByName(String name, List<MeleeWeaponMode> modes) {
-        MeleeWeaponMode found = null;
-        for (MeleeWeaponMode mode : modes) {
-            if (name.equals(mode.getName())) {
-                found = mode;
+    private Shield findShieldByName(String name, List<Shield> shields) {
+        Shield found = null;
+        for (Shield shield : shields) {
+            if (name.equals(shield.getName())) {
+                found = shield;
+            }
+        }
+        return found;
+    }
+
+    private static MeleeWeapon findWeaponByName(String name, List<MeleeWeapon> weapons) {
+        MeleeWeapon found = null;
+        for (MeleeWeapon weapon : weapons) {
+            if (name.equals(weapon.getName())) {
+                found = weapon;
             }
         }
         return found;

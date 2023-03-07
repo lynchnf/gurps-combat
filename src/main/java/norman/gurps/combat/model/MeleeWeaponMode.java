@@ -9,8 +9,6 @@ public class MeleeWeaponMode {
     private Integer damageAdds;
     private DamageType damageType;
     private SortedSet<Integer> reaches = new TreeSet<>();
-    private ParryType parryType;
-    private Integer parryModifier;
 
     public String getName() {
         return name;
@@ -50,21 +48,5 @@ public class MeleeWeaponMode {
 
     public void setReaches(SortedSet<Integer> reaches) {
         this.reaches = reaches;
-    }
-
-    public ParryType getParryType() {
-        return parryType;
-    }
-
-    public void setParryType(ParryType parryType) {
-        this.parryType = parryType;
-    }
-
-    public Integer getParryModifier() {
-        return parryModifier;
-    }
-
-    public void setParryModifier(Integer parryModifier) {
-        this.parryModifier = parryModifier;
     }
 }

@@ -80,7 +80,7 @@ public class BattleService {
     public String addCharToBattle(String name) {
         // Verify a good game char name was passed in.
         if (StringUtils.isBlank(name)) {
-            throw new LoggingException(LOGGER, "Invalid Game Character. Name may not be blank.");
+            throw new LoggingException(LOGGER, "Invalid character. Name may not be blank.");
         }
 
         List<GameChar> storedGameChars = gameCharService.getStoredGameChars();
@@ -92,7 +92,7 @@ public class BattleService {
         }
 
         if (foundGameChar == null) {
-            throw new LoggingException(LOGGER, "Game Character " + name + " not found in local storage.");
+            throw new LoggingException(LOGGER, "Character " + name + " not found in local storage.");
         }
 
         Battle battle = getBattle();
@@ -114,7 +114,7 @@ public class BattleService {
     public void removeCharFromBattle(String label) {
         // Verify a good game char name was passed in.
         if (StringUtils.isBlank(label)) {
-            throw new LoggingException(LOGGER, "Invalid Combatant. Label may not be blank.");
+            throw new LoggingException(LOGGER, "Invalid combatant. Label may not be blank.");
         }
 
         Battle battle = getBattle();
@@ -126,7 +126,7 @@ public class BattleService {
         }
 
         if (foundCombatant == null) {
-            throw new LoggingException(LOGGER, "Combatant " + label + " not found in Battle.");
+            throw new LoggingException(LOGGER, "Combatant " + label + " not found in battle.");
         }
         battle.getCombatants().remove(foundCombatant);
         battle.getLogs().add(new BattleLog("Combatant " + foundCombatant.getLabel() + " removed from Battle."));
@@ -149,7 +149,7 @@ public class BattleService {
         try {
             return mapper.readValue(storageBattleFile, Battle.class);
         } catch (IOException e) {
-            throw new LoggingException(LOGGER, "Error loading Battle file from " + storageBattleFile + ".", e);
+            throw new LoggingException(LOGGER, "Error loading battle file from " + storageBattleFile + ".", e);
         }
     }
 

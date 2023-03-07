@@ -78,27 +78,27 @@ public class GameCharService {
         }
 
         if (gameChar.getHitPoints() == null) {
-            errors.add("Hit Points may not be blank.");
+            errors.add("Hit points may not be blank.");
         } else if (gameChar.getHitPoints() < 0) {
-            errors.add("Hit Points may not be less than zero.");
+            errors.add("Hit points may not be less than zero.");
         }
 
         if (gameChar.getBasicSpeed() == null) {
-            errors.add("Basic Speed may not be blank.");
+            errors.add("Basic speed may not be blank.");
         } else if (gameChar.getBasicSpeed() < 0) {
-            errors.add("Basic Speed may not be less than zero.");
+            errors.add("Basic speed may not be less than zero.");
         }
 
         if (gameChar.getBasicMove() == null) {
-            errors.add("Basic Move may not be blank.");
+            errors.add("Basic move may not be blank.");
         } else if (gameChar.getBasicMove() < 0) {
-            errors.add("Basic Move may not be less than zero.");
+            errors.add("Basic move may not be less than zero.");
         }
 
         if (gameChar.getEncumbranceLevel() == null) {
-            errors.add("Encumbrance Level may not be blank.");
+            errors.add("Encumbrance level may not be blank.");
         } else if (gameChar.getEncumbranceLevel() < 0 || gameChar.getEncumbranceLevel() > 4) {
-            errors.add("Encumbrance Level must be between 0 and 4.");
+            errors.add("Encumbrance level must be between 0 and 4.");
         }
 
         if (gameChar.getMeleeWeapons().isEmpty()) {
@@ -110,8 +110,11 @@ public class GameCharService {
             }
         }
 
-        if (gameChar.getShield() != null) {
-            errors.addAll(validateShield(gameChar.getShield()));
+        if (gameChar.getShields().isEmpty()) {
+            Set<String> shieldNames = new HashSet<>();
+            for (Shield shield : gameChar.getShields()) {
+                errors.addAll(validateShield(shield, shieldNames));
+            }
         }
 
         Set<Location> locations = new HashSet<>();
@@ -126,22 +129,22 @@ public class GameCharService {
         List<String> errors = new ArrayList<>();
 
         if (StringUtils.isBlank(weapon.getName())) {
-            errors.add("Weapon Name may not be blank.");
+            errors.add("Weapon name may not be blank.");
         } else {
             if (weaponNames.contains(weapon.getName())) {
-                errors.add("Weapon Name " + weapon.getName() + " is not unique.");
+                errors.add("Weapon name " + weapon.getName() + " is not unique.");
             }
             weaponNames.add(weapon.getName());
         }
 
         if (weapon.getSkill() == null) {
-            errors.add("Skill for Weapon " + weapon.getName() + " may not be blank.");
+            errors.add("Skill for weapon " + weapon.getName() + " may not be blank.");
         } else if (weapon.getSkill() < 0) {
-            errors.add("Skill for Weapon " + weapon.getName() + " may not be less than zero.");
+            errors.add("Skill for weapon " + weapon.getName() + " may not be less than zero.");
         }
 
         if (weapon.getModes().isEmpty()) {
-            errors.add("Must have at least one weapon.");
+            errors.add("Weapon " + weapon.getName() + " must have at least one mode.");
         } else {
             Set<String> modeNames = new HashSet<>();
             for (MeleeWeaponMode mode : weapon.getModes()) {
@@ -150,10 +153,26 @@ public class GameCharService {
             }
         }
 
+        if (weapon.getParryType() == null) {
+            errors.add("Parry type for weapon " + weapon.getName() + " may not be blank.");
+        } else if (weapon.getParryType() != ParryType.NO) {
+            if (weapon.getParryModifier() == null) {
+                errors.add("Parry modifier for weapon " + weapon.getName() + " may not be blank.");
+            }
+        } else {
+            if (weapon.getParryModifier() != null) {
+                errors.add("Parry modifier for weapon " + weapon.getName() + " must be blank.");
+            }
+        }
+
         if (weapon.getMinStrength() == null) {
-            errors.add("Minimum Strength for Weapon " + weapon.getName() + " may not be blank.");
+            errors.add("Minimum strength for weapon " + weapon.getName() + " may not be blank.");
         } else if (weapon.getMinStrength() < 0) {
-            errors.add("Minimum Strength for Weapon " + weapon.getName() + " may not be less than zero.");
+            errors.add("Minimum strength for weapon " + weapon.getName() + " may not be less than zero.");
+        }
+
+        if (weapon.getTwoHanded() == null) {
+            errors.add("Two-handed indicator for weapon " + weapon.getName() + " may not be blank.");
         }
 
         return errors;
@@ -163,74 +182,66 @@ public class GameCharService {
         List<String> errors = new ArrayList<>();
 
         if (StringUtils.isBlank(mode.getName())) {
-            errors.add("Mode Name for Weapon " + weaponName + " may not be blank.");
+            errors.add("Mode name for weapon " + weaponName + " may not be blank.");
         } else {
             if (modeNames.contains(mode.getName())) {
-                errors.add("Mode Name " + mode.getName() + " for Weapon " + weaponName + " is not unique.");
+                errors.add("Mode name " + mode.getName() + " for weapon " + weaponName + " is not unique.");
             }
             modeNames.add(mode.getName());
         }
 
         if (mode.getDamageDice() == null) {
-            errors.add("Damage Dice for Weapon & Mode " + weaponName + "/" + mode.getName() + " may not be blank.");
+            errors.add("Damage dice for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
         } else if (mode.getDamageDice() < 0) {
-            errors.add("Damage Dice for Weapon & Mode " + weaponName + "/" + mode.getName() +
+            errors.add("Damage dice for weapon & mode " + weaponName + "/" + mode.getName() +
                     " may not be less than zero.");
         }
 
         if (mode.getDamageAdds() == null) {
-            errors.add("Damage Adds for Weapon & Mode " + weaponName + "/" + mode.getName() + " may not be blank.");
+            errors.add("Damage adds for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
         }
 
         if (mode.getDamageType() == null) {
-            errors.add("Damage Type for Weapon & Mode " + weaponName + "/" + mode.getName() + " may not be blank.");
+            errors.add("Damage type for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
         }
 
         if (mode.getReaches().isEmpty()) {
-            errors.add("Weapon & Mode " + weaponName + "/" + mode.getName() + " must have at least one reach.");
+            errors.add("Weapon & mode " + weaponName + "/" + mode.getName() + " must have at least one reach.");
         } else {
             for (Integer reach : mode.getReaches()) {
                 if (reach < 0) {
-                    errors.add("All reaches for Weapon & Mode " + weaponName + "/" + mode.getName() +
+                    errors.add("All reaches for weapon & mode " + weaponName + "/" + mode.getName() +
                             " must be zero or greater.");
                     break;
                 }
             }
         }
 
-        if (mode.getParryType() == null) {
-            errors.add("Parry Type for Weapon & Mode " + weaponName + "/" + mode.getName() + " may not be blank.");
-        } else if (mode.getParryType() != ParryType.NO) {
-            if (mode.getParryModifier() == null) {
-                errors.add(
-                        "Parry Modifier for Weapon & Mode " + weaponName + "/" + mode.getName() + " may not be blank.");
-            }
-        } else {
-            if (mode.getParryModifier() != null) {
-                errors.add("Parry Modifier for Weapon & Mode " + weaponName + "/" + mode.getName() + " must be blank.");
-            }
-        }
-
         return errors;
     }
 
-    private List<String> validateShield(Shield shield) {
+    private List<String> validateShield(Shield shield, Set<String> shieldNames) {
         List<String> errors = new ArrayList<>();
 
         if (StringUtils.isBlank(shield.getName())) {
-            errors.add("Shield Name may not be blank.");
+            errors.add("Shield name may not be blank.");
+        } else {
+            if (shieldNames.contains(shield.getName())) {
+                errors.add("Shield name " + shield.getName() + " is not unique.");
+            }
+            shieldNames.add(shield.getName());
         }
 
         if (shield.getSkill() == null) {
-            errors.add("Shield Skill may not be blank.");
+            errors.add("Shield skill may not be blank.");
         } else if (shield.getSkill() < 0) {
-            errors.add("Shield Skill may not be less than zero.");
+            errors.add("Shield skill may not be less than zero.");
         }
 
         if (shield.getDefenseBonus() == null) {
-            errors.add("Shield Defense Bonus may not be blank.");
+            errors.add("Shield defense bonus may not be blank.");
         } else if (shield.getDefenseBonus() < 0) {
-            errors.add("Shield Defense Bonus may not be less than zero.");
+            errors.add("Shield defense bonus may not be less than zero.");
         }
 
         return errors;
@@ -240,18 +251,18 @@ public class GameCharService {
         List<String> errors = new ArrayList<>();
 
         if (armor.getLocation() == null) {
-            errors.add("Armor Location may not be blank.");
+            errors.add("Armor location may not be blank.");
         } else {
             if (armorLocations.contains(armor.getLocation())) {
-                errors.add("Armor Location " + armor.getLocation() + " is not unique.");
+                errors.add("Armor location " + armor.getLocation() + " is not unique.");
             }
             armorLocations.add(armor.getLocation());
         }
 
         if (armor.getDamageResistance() == null) {
-            errors.add("Damage Resistance for Location " + armor.getLocation() + " may not be blank.");
+            errors.add("Damage resistance for armor location " + armor.getLocation() + " may not be blank.");
         } else if (armor.getDamageResistance() < 0) {
-            errors.add("Damage Resistance for Location " + armor.getLocation() + " may not be less than zero.");
+            errors.add("Damage resistance for armor location " + armor.getLocation() + " may not be less than zero.");
         }
 
         return errors;
@@ -260,7 +271,7 @@ public class GameCharService {
     public void storeChar(GameChar newGameChar) {
         // Verify game char has a good name.
         if (StringUtils.isBlank(newGameChar.getName())) {
-            throw new LoggingException(LOGGER, "Invalid Game Character. Name may not be blank.");
+            throw new LoggingException(LOGGER, "Invalid character. Name may not be blank.");
         }
 
         List<GameChar> gameChars = getStoredGameChars();
@@ -272,7 +283,7 @@ public class GameCharService {
         }
         if (gameCharNames.contains(newGameChar.getName())) {
             throw new LoggingException(LOGGER,
-                    "Unable to save Game Character. Name " + newGameChar.getName() + " already exists.");
+                    "Unable to save character. Name " + newGameChar.getName() + " already exists.");
         }
 
         gameChars.add(newGameChar);
@@ -282,7 +293,7 @@ public class GameCharService {
     public void removeChar(String name) {
         // Verify a good game char name was passed in.
         if (StringUtils.isBlank(name)) {
-            throw new LoggingException(LOGGER, "Invalid Game Character. Name may not be blank.");
+            throw new LoggingException(LOGGER, "Invalid character. Name may not be blank.");
         }
 
         // Find game char to remove.
@@ -295,7 +306,7 @@ public class GameCharService {
         }
 
         if (foundGameChar == null) {
-            throw new LoggingException(LOGGER, "Unable to delete Game Character. Name " + name + " does not exist.");
+            throw new LoggingException(LOGGER, "Unable to delete character. Name " + name + " does not exist.");
         }
 
         gameChars.remove(foundGameChar);
@@ -314,16 +325,16 @@ public class GameCharService {
         // Load stored chars file. Create it if it does not already exist.
         List<GameChar> gameChars = new ArrayList<>();
         if (storageGameCharFile.exists()) {
-            LOGGER.debug("Loading stored game chars.");
+            LOGGER.debug("Loading stored characters.");
             try {
                 GameChar[] gameCharArray = mapper.readValue(storageGameCharFile, GameChar[].class);
                 gameChars.addAll(Arrays.asList(gameCharArray));
             } catch (IOException e) {
                 throw new LoggingException(LOGGER,
-                        "Error loading stored Game Characters file from " + storageGameCharFile + ".", e);
+                        "Error loading stored characters file from " + storageGameCharFile + ".", e);
             }
         } else {
-            LOGGER.debug("Saving new stored game chars file.");
+            LOGGER.debug("Saving new stored characters file.");
             saveStoredGameChars(gameChars);
         }
 
@@ -331,11 +342,11 @@ public class GameCharService {
     }
 
     private void saveStoredGameChars(List<GameChar> gameChars) {
-        LOGGER.debug("Storing game chars to local storage.");
+        LOGGER.debug("Storing characters to local storage.");
         try {
             mapper.writeValue(storageGameCharFile, gameChars);
         } catch (IOException e) {
-            throw new LoggingException(LOGGER, "Error storing Game Characters to file " + storageGameCharFile + ".", e);
+            throw new LoggingException(LOGGER, "Error storing characters to file " + storageGameCharFile + ".", e);
         }
     }
 }

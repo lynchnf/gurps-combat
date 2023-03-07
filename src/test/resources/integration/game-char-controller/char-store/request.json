@@ -1,5 +1,5 @@
 {
-  "name": "Test Character",
+  "name": "Bob the Example",
   "strength": 14,
   "dexterity": 13,
   "intelligence": 12,
@@ -7,11 +7,11 @@
   "hitPoints": 15,
   "basicSpeed": 6.25,
   "basicMove": 7,
-  "encumbranceLevel": 2,
+  "encumbranceLevel": 1,
   "meleeWeapons": [
     {
       "name": "Broadsword",
-      "skill": 13,
+      "skill": 14,
       "modes": [
         {
           "name": "swing",
@@ -20,9 +20,7 @@
           "damageType": "CUTTING",
           "reaches": [
             1
-          ],
-          "parryType": "YES",
-          "parryModifier": 0
+          ]
         },
         {
           "name": "thrust",
@@ -31,51 +29,54 @@
           "damageType": "CRUSHING",
           "reaches": [
             1
-          ],
-          "parryType": "YES",
-          "parryModifier": 0
+          ]
         }
       ],
-      "minStrength": 10
+      "parryType": "YES",
+      "parryModifier": 0,
+      "minStrength": 10,
+      "twoHanded": false
     }
   ],
-  "shield": {
-    "name": "Medium Shield",
-    "skill": 13,
-    "defenseBonus": 2
-  },
+  "shields": [
+    {
+      "name": "Medium Shield",
+      "skill": 13,
+      "defenseBonus": 2
+    }
+  ],
   "armorList": [
     {
       "location": "TORSO",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "GROIN",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "LEGS",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "ARMS",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "SKULL",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "FACE",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "HANDS",
-      "damageResistance": 2
+      "damageResistance": 1
     },
     {
       "location": "FEET",
-      "damageResistance": 2
+      "damageResistance": 1
     }
   ]
 }

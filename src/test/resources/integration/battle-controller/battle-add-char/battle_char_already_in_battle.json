@@ -1,9 +1,9 @@
 {
   "combatants": [
     {
-      "label": "Test Character",
+      "label": "Bob the Example",
       "gameChar": {
-        "name": "Test Character",
+        "name": "Bob the Example",
         "strength": 14,
         "dexterity": 13,
         "intelligence": 12,
@@ -11,11 +11,11 @@
         "hitPoints": 15,
         "basicSpeed": 6.25,
         "basicMove": 7,
-        "encumbranceLevel": 2,
+        "encumbranceLevel": 1,
         "meleeWeapons": [
           {
             "name": "Broadsword",
-            "skill": 13,
+            "skill": 14,
             "modes": [
               {
                 "name": "swing",
@@ -24,9 +24,7 @@
                 "damageType": "CUTTING",
                 "reaches": [
                   1
-                ],
-                "parryType": "YES",
-                "parryModifier": 0
+                ]
               },
               {
                 "name": "thrust",
@@ -35,67 +33,79 @@
                 "damageType": "CRUSHING",
                 "reaches": [
                   1
-                ],
-                "parryType": "YES",
-                "parryModifier": 0
+                ]
               }
             ],
-            "minStrength": 10
+            "parryType": "YES",
+            "parryModifier": 0,
+            "minStrength": 10,
+            "twoHanded": false
           }
         ],
-        "shield": {
-          "name": "Medium Shield",
-          "skill": 13,
-          "defenseBonus": 2
-        },
+        "shields": [
+          {
+            "name": "Medium Shield",
+            "skill": 13,
+            "defenseBonus": 2
+          }
+        ],
         "armorList": [
           {
             "location": "TORSO",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "GROIN",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "LEGS",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "ARMS",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "SKULL",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "FACE",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "HANDS",
-            "damageResistance": 2
+            "damageResistance": 1
           },
           {
             "location": "FEET",
-            "damageResistance": 2
+            "damageResistance": 1
           }
         ]
       },
-      "currentDamage": 0,
-      "previousDamage": 0
+      "currentDamage": null,
+      "previousDamage": null,
+      "healthStatus": null,
+      "currentMove": null,
+      "action": null,
+      "targetLabel": null,
+      "weaponName": null,
+      "modeName": null,
+      "effectiveSkillToHit": null,
+      "rollToHit": null,
+      "toHitResult": null
     }
   ],
   "nextStep": null,
   "logs": [
     {
-      "timeMillis": 1677825315210,
+      "timeMillis": 1678159785721,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1677826926460,
-      "message": "Combatant Test Character added to Battle."
+      "timeMillis": 1678161388152,
+      "message": "Combatant Bob the Example added to Battle."
     }
   ]
 }
