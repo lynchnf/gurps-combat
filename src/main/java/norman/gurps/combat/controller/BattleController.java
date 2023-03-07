@@ -59,7 +59,7 @@ public class BattleController {
 
     @PostMapping("/battle/add/char")
     public BasicResponse addStoredCharacterToCurrentBattle(@RequestBody NameRequest req) {
-        LOGGER.debug("Add game char {} to current battle.", req.getName());
+        LOGGER.debug("Add character {} to current battle.", req.getName());
         BasicResponse resp = new BasicResponse();
 
         try {

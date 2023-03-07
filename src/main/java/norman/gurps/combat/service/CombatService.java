@@ -353,7 +353,7 @@ public class CombatService {
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
-        nextStep.setPhase(Phase.RESOLVE_TO_HIT);
+        nextStep.setPhase(Phase.RESOLVE_TO_DEFEND);
         nextStep.setInputNeeded(true);
         String message =
                 target.getLabel() + ", please chose a defense, an item (if needed for defense), and roll to defend.";
@@ -425,7 +425,7 @@ public class CombatService {
         nextStep.setIndex(index);
         nextStep.setPhase(Phase.RESOLVE_DAMAGE);
         nextStep.setInputNeeded(true);
-        String message = combatant.getLabel() + ", please roll " + damageDescription + " for damage.";
+        String message = combatant.getLabel() + ", please roll " + damageDescription + " damage.";
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
@@ -435,12 +435,12 @@ public class CombatService {
     private String calculateDamageDescription(int damageDice, int damageAdds, DamageType damageType) {
         StringBuilder sb = null;
         if (damageDice != 0) {
-            sb = new StringBuilder(damageDice);
+            sb = new StringBuilder(String.valueOf(damageDice));
             sb.append("d");
         }
         if (damageAdds != 0) {
             if (sb == null) {
-                sb = new StringBuilder(damageAdds);
+                sb = new StringBuilder(String.valueOf(damageAdds));
             } else {
                 if (damageAdds > 0) {
                     sb.append("+");

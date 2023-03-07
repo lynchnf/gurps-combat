@@ -26,7 +26,7 @@ public class GameCharController {
 
     @PostMapping("/char/store")
     public BasicResponse storeChar(@RequestBody GameChar gameChar) {
-        LOGGER.debug("Storing game character {}.", gameChar.getName());
+        LOGGER.debug("Storing character {}.", gameChar.getName());
         BasicResponse resp = new BasicResponse();
 
         // Validate new Game Character.
@@ -41,7 +41,7 @@ public class GameCharController {
         try {
             service.storeChar(gameChar);
             resp.setSuccessful(true);
-            resp.getMessages().add("Successfully saved Game Character " + gameChar.getName() + " to local storage.");
+            resp.getMessages().add("Successfully saved character " + gameChar.getName() + " to local storage.");
             return resp;
         } catch (LoggingException e) {
             resp.setSuccessful(false);
@@ -52,7 +52,7 @@ public class GameCharController {
 
     @PostMapping("/char/remove")
     public BasicResponse removeChar(@RequestBody NameRequest req) {
-        LOGGER.debug("Removing stored game character {}.", req.getName());
+        LOGGER.debug("Removing stored character {}.", req.getName());
         BasicResponse resp = new BasicResponse();
 
         // Delete Game Character.
@@ -70,16 +70,16 @@ public class GameCharController {
 
     @GetMapping("/char/show")
     public GameCharsResponse showStoredChars() {
-        LOGGER.debug("Showing all stored game characters.");
+        LOGGER.debug("Showing all stored characters.");
         GameCharsResponse resp = new GameCharsResponse();
 
         try {
             List<GameChar> gameChars = service.getStoredGameChars();
             resp.setSuccessful(true);
             if (gameChars == null) {
-                resp.getMessages().add("No Game Characters found in local storage.");
+                resp.getMessages().add("No characters found in local storage.");
             } else {
-                resp.getMessages().add("Found " + gameChars.size() + " Game Characters in local storage.");
+                resp.getMessages().add("Found " + gameChars.size() + " characters in local storage.");
                 resp.getGameChars().addAll(gameChars);
             }
             return resp;
