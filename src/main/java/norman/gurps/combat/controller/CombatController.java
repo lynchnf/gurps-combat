@@ -54,12 +54,13 @@ public class CombatController {
         Defense defense = req.getDefense();
         String defendingItemName = req.getDefendingItemName();
         Integer rollToDefend = req.getRollToDefend();
+        Integer rollForDamage = req.getRollForDamage();
 
         boolean inputNeeded;
         try {
             do {
                 NextStep nextStep = service.nextStep(phase, action, targetLabel, weaponName, modeName, rollToHit,
-                        defense, defendingItemName, rollToDefend);
+                        defense, defendingItemName, rollToDefend, rollForDamage);
                 if (nextStep.getMessage() != null) {
                     resp.getMessages().add(nextStep.getMessage());
                 }

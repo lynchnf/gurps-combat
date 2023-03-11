@@ -14,6 +14,7 @@ public class NextStepRequest {
     private Defense defense;
     private String defendingItemName;
     private Integer rollToDefend;
+    private Integer rollForDamage;
 
     public Phase getPhase() {
         return phase;
@@ -85,5 +86,13 @@ public class NextStepRequest {
 
     public void setRollToDefend(Integer rollToDefend) {
         this.rollToDefend = rollToDefend;
+    }
+
+    public Integer getRollForDamage() {
+        return rollForDamage;
+    }
+
+    public void setRollForDamage(Integer rollForDamage) {
+        this.rollForDamage = rollForDamage;
     }
 }
