@@ -19,7 +19,7 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
     * All-Out Attack: +4 to hit for melee attack
     * All-Out Attack: +2 to damage for melee attack
     * All-Out Attack: two melee attacks.
-    * All-Out Defense: +2 to a valid defense.
+    * All-Out Defense: +2 to a valid defenseType.
     * All-Out Defense: two valid defenses.
     * Change Posture
     * Concentrate

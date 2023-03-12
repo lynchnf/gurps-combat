@@ -1,5 +1,7 @@
 package norman.gurps.combat.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Combatant {
@@ -16,6 +18,10 @@ public class Combatant {
     private Integer effectiveSkillToHit;
     private Integer rollToHit;
     private SkillRollResult toHitResult;
+    private Integer damageDice;
+    private Integer damageAdds;
+    private Integer rollForDamage;
+    private List<ActiveDefense> activeDefenses = new ArrayList<>();
 
     public Combatant() {
     }
@@ -132,5 +138,37 @@ public class Combatant {
 
     public void setToHitResult(SkillRollResult toHitResult) {
         this.toHitResult = toHitResult;
+    }
+
+    public Integer getDamageDice() {
+        return damageDice;
+    }
+
+    public void setDamageDice(Integer damageDice) {
+        this.damageDice = damageDice;
+    }
+
+    public Integer getDamageAdds() {
+        return damageAdds;
+    }
+
+    public void setDamageAdds(Integer damageAdds) {
+        this.damageAdds = damageAdds;
+    }
+
+    public Integer getRollForDamage() {
+        return rollForDamage;
+    }
+
+    public void setRollForDamage(Integer rollForDamage) {
+        this.rollForDamage = rollForDamage;
+    }
+
+    public List<ActiveDefense> getActiveDefenses() {
+        return activeDefenses;
+    }
+
+    public void setActiveDefenses(List<ActiveDefense> activeDefenses) {
+        this.activeDefenses = activeDefenses;
     }
 }

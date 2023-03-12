@@ -4,7 +4,7 @@ import norman.gurps.combat.controller.request.NextStepRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.exception.LoggingException;
 import norman.gurps.combat.model.Action;
-import norman.gurps.combat.model.Defense;
+import norman.gurps.combat.model.DefenseType;
 import norman.gurps.combat.model.NextStep;
 import norman.gurps.combat.model.Phase;
 import norman.gurps.combat.service.CombatService;
@@ -51,7 +51,7 @@ public class CombatController {
         String weaponName = req.getWeaponName();
         String modeName = req.getModeName();
         Integer rollToHit = req.getRollToHit();
-        Defense defense = req.getDefense();
+        DefenseType defenseType = req.getDefense();
         String defendingItemName = req.getDefendingItemName();
         Integer rollToDefend = req.getRollToDefend();
         Integer rollForDamage = req.getRollForDamage();
@@ -60,7 +60,7 @@ public class CombatController {
         try {
             do {
                 NextStep nextStep = service.nextStep(phase, action, targetLabel, weaponName, modeName, rollToHit,
-                        defense, defendingItemName, rollToDefend, rollForDamage);
+                        defenseType, defendingItemName, rollToDefend, rollForDamage);
                 if (nextStep.getMessage() != null) {
                     resp.getMessages().add(nextStep.getMessage());
                 }

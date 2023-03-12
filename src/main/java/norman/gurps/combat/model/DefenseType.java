@@ -1,5 +1,5 @@
 package norman.gurps.combat.model;
 
-public enum Defense {
+public enum DefenseType {
     PARRY, BLOCK, DODGE, NO_DEFENSE
 }

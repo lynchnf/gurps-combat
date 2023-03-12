@@ -1,7 +1,7 @@
 package norman.gurps.combat.controller.request;
 
 import norman.gurps.combat.model.Action;
-import norman.gurps.combat.model.Defense;
+import norman.gurps.combat.model.DefenseType;
 import norman.gurps.combat.model.Phase;
 
 public class NextStepRequest {
@@ -11,7 +11,7 @@ public class NextStepRequest {
     private String weaponName;
     private String modeName;
     private Integer rollToHit;
-    private Defense defense;
+    private DefenseType defenseType;
     private String defendingItemName;
     private Integer rollToDefend;
     private Integer rollForDamage;
@@ -64,12 +64,12 @@ public class NextStepRequest {
         this.rollToHit = rollToHit;
     }
 
-    public Defense getDefense() {
-        return defense;
+    public DefenseType getDefense() {
+        return defenseType;
     }
 
-    public void setDefense(Defense defense) {
-        this.defense = defense;
+    public void setDefense(DefenseType defenseType) {
+        this.defenseType = defenseType;
     }
 
     public String getDefendingItemName() {
