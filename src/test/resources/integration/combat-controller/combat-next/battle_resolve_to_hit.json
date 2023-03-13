@@ -1,0 +1,253 @@
+{
+  "combatants": [
+    {
+      "label": "Bob the Example",
+      "gameChar": {
+        "name": "Bob the Example",
+        "strength": 14,
+        "dexterity": 13,
+        "intelligence": 12,
+        "health": 11,
+        "hitPoints": 15,
+        "basicSpeed": 6.25,
+        "basicMove": 7,
+        "encumbranceLevel": 1,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 14,
+            "modes": [
+              {
+                "name": "swing",
+                "damageDice": 2,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "YES",
+            "parryModifier": 0,
+            "minStrength": 10,
+            "twoHanded": false
+          }
+        ],
+        "shields": [
+          {
+            "name": "Medium Shield",
+            "skill": 13,
+            "defenseBonus": 2
+          }
+        ],
+        "armorList": [
+          {
+            "location": "TORSO",
+            "damageResistance": 1
+          },
+          {
+            "location": "GROIN",
+            "damageResistance": 1
+          },
+          {
+            "location": "LEGS",
+            "damageResistance": 1
+          },
+          {
+            "location": "ARMS",
+            "damageResistance": 1
+          },
+          {
+            "location": "SKULL",
+            "damageResistance": 1
+          },
+          {
+            "location": "FACE",
+            "damageResistance": 1
+          },
+          {
+            "location": "HANDS",
+            "damageResistance": 1
+          },
+          {
+            "location": "FEET",
+            "damageResistance": 1
+          }
+        ]
+      },
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "healthStatus": "ALIVE",
+      "currentMove": 6,
+      "action": "ATTACK",
+      "targetLabel": "Grunt",
+      "weaponName": "Broadsword",
+      "modeName": "swing",
+      "effectiveSkillToHit": 14,
+      "rollToHit": null,
+      "toHitResult": null,
+      "damageDice": null,
+      "damageAdds": null,
+      "rollForDamage": null,
+      "activeDefenses": []
+    },
+    {
+      "label": "Grunt",
+      "gameChar": {
+        "name": "Grunt",
+        "strength": 10,
+        "dexterity": 10,
+        "intelligence": 10,
+        "health": 10,
+        "hitPoints": 10,
+        "basicSpeed": 5.0,
+        "basicMove": 5,
+        "encumbranceLevel": 2,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 12,
+            "modes": [
+              {
+                "name": "swing",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": -1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "YES",
+            "parryModifier": 0,
+            "minStrength": 10,
+            "twoHanded": false
+          }
+        ],
+        "shields": [
+          {
+            "name": "Medium Shield",
+            "skill": 10,
+            "defenseBonus": 2
+          }
+        ],
+        "armorList": [
+          {
+            "location": "TORSO",
+            "damageResistance": 2
+          },
+          {
+            "location": "GROIN",
+            "damageResistance": 2
+          },
+          {
+            "location": "LEGS",
+            "damageResistance": 2
+          },
+          {
+            "location": "ARMS",
+            "damageResistance": 2
+          },
+          {
+            "location": "SKULL",
+            "damageResistance": 2
+          },
+          {
+            "location": "FACE",
+            "damageResistance": 2
+          },
+          {
+            "location": "HANDS",
+            "damageResistance": 2
+          },
+          {
+            "location": "FEET",
+            "damageResistance": 2
+          }
+        ]
+      },
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "healthStatus": "ALIVE",
+      "currentMove": 3,
+      "action": "DO_NOTHING",
+      "targetLabel": null,
+      "weaponName": null,
+      "modeName": null,
+      "effectiveSkillToHit": null,
+      "rollToHit": null,
+      "toHitResult": null,
+      "damageDice": null,
+      "damageAdds": null,
+      "rollForDamage": null,
+      "activeDefenses": []
+    }
+  ],
+  "nextStep": {
+    "round": 1,
+    "index": 0,
+    "phase": "RESOLVE_TO_HIT",
+    "inputNeeded": true,
+    "message": "1/0 : Bob the Example, please roll 3d (need 14 to hit)."
+  },
+  "logs": [
+    {
+      "timeMillis": 1678694224076,
+      "message": "Battle created."
+    },
+    {
+      "timeMillis": 1678694236178,
+      "message": "Combatant Bob the Example added to Battle."
+    },
+    {
+      "timeMillis": 1678694271765,
+      "message": "Combatant Grunt added to Battle."
+    },
+    {
+      "timeMillis": 1678730094534,
+      "message": "Combat started."
+    },
+    {
+      "timeMillis": 1678730924736,
+      "message": "Begin next turn for Bob the Example."
+    },
+    {
+      "timeMillis": 1678730924828,
+      "message": "Combatant Bob the Example must chose an action."
+    },
+    {
+      "timeMillis": 1678731542423,
+      "message": "Combatant Bob the Example has chosen an action of ATTACK."
+    },
+    {
+      "timeMillis": 1678731542569,
+      "message": "Combatant Bob the Example must chose a target and weapon/mode."
+    },
+    {
+      "timeMillis": 1678733138544,
+      "message": "Combatant Bob the Example has chosen to attack Grunt with Broadsword/swing."
+    },
+    {
+      "timeMillis": 1678733138634,
+      "message": "Combatant Bob the Example must roll to hit."
+    }
+  ]
+}

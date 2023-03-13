@@ -10,11 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class GurpsCombatConfig {
     private static Logger LOGGER = LoggerFactory.getLogger(GurpsCombatConfig.class);
 
-    //@Bean
-    //public ClassLoader classLoader() {
-    //    return Thread.currentThread().getContextClassLoader();
-    //}
-
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();

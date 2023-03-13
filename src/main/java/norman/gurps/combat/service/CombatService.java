@@ -170,6 +170,7 @@ public class CombatService {
                 battleService.updateBattle(battle, "Combatant " + combatant.getLabel() + " must roll for damage.");
                 break;
             case RESOLVE_DAMAGE:
+                validateResolveDamage(rollForDamage);
                 nextStep = doResolveDamage(round, index, combatant, target, rollForDamage);
                 battle.setNextStep(nextStep);
                 battleService.updateBattle(battle,
@@ -427,6 +428,15 @@ public class CombatService {
         // Validate roll.
         if (rollToDefend == null) {
             throw new LoggingException(LOGGER, "Value rolled to defend may not be blank.");
+        }
+    }
+
+    private void validateResolveDamage(Integer rollForDamage) {
+        // Validate roll.
+        if (rollForDamage == null) {
+            throw new LoggingException(LOGGER, "Value rolled for damage may not be blank.");
+        } else if (rollForDamage < 0) {
+            throw new LoggingException(LOGGER, "Value rolled for damage may not be less than zero.");
         }
     }
 

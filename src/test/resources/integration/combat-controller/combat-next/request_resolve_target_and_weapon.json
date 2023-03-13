@@ -1,0 +1,6 @@
+{
+  "phase": "RESOLVE_TARGET_AND_WEAPON",
+  "targetLabel": "Grunt",
+  "weaponName": "Broadsword",
+  "modeName": "swing"
+}

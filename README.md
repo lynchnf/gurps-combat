@@ -6,13 +6,11 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 
 * Handle weapon ready and shield ready.
 * Handle critical results.
-* Add name to armor and change location to a list.
-* Add list of attacks done and list of defenses used to combatant.
-* Do we really need two-handed indicator on weapon?
 * Allow edit of combatants in the middle combatant.
-* Ranged weapons.
-* Allow targeted hit location.
-* Allow randomly chosen hit location.
+* Handle Ranged weapons.
+* Allow attack to target hit location.
+* Allow attack to randomly chosen hit location.
+* Handle health checks for unconsciousness and death.
 * Allow other actions:
     * Aim a Ranged Attack
     * All-Out Attack: +1 to hit for ranged attack
@@ -29,3 +27,15 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
     * Move and Melee Attack
     * Ready a Weapon
     * Wait
+
+## Hardening Ideas
+
+* Rename Action to ActionType.
+* Rename Location to HitLocation.
+* Rename SkillRollResult to ResultType.
+* Rename Phase to CombatPhase.
+* Rename ActiveDefense to CombatantDefense.
+* Create class CombatantAttack and move attack related properties to it.
+* Rename Armor to ArmorPiece.
+* Add name to ArmorPiece and change location to a list.
+* Move all text messages and logs to a message file.

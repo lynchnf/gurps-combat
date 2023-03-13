@@ -187,7 +187,7 @@ class GameCharControllerIT {
         assertTrue(jsonNode.get("messages").get(0).isTextual());
         assertTrue(jsonNode.get("gameChars").isArray());
         assertEquals(1, jsonNode.get("gameChars").size());
-        assertEquals("Bob the Example", jsonNode.get("gameChars").get(0).get("name").textValue());
+        assertEquals("Bob the Example", jsonNode.get("gameChars").get(0).get("name").asText());
     }
 
     private String readResource(String resourceName) throws IOException {
