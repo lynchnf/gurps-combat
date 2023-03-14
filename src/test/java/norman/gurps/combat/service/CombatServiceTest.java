@@ -7,6 +7,7 @@ import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.model.Combatant;
 import norman.gurps.combat.model.DefenseType;
 import norman.gurps.combat.model.GameChar;
+import norman.gurps.combat.model.HealthStatus;
 import norman.gurps.combat.model.NextStep;
 import norman.gurps.combat.model.Phase;
 import org.junit.jupiter.api.BeforeEach;
@@ -464,6 +465,8 @@ class CombatServiceTest {
         verify(battleService).updateBattle(battleCaptor.capture(), anyString());
         assertEquals(8, battleCaptor.getValue().getCombatants().get(0).getRollForDamage());
         assertEquals(9, battleCaptor.getValue().getCombatants().get(1).getCurrentDamage());
+        assertEquals(HealthStatus.REELING, battleCaptor.getValue().getCombatants().get(1).getHealthStatus());
+        assertEquals(2, battleCaptor.getValue().getCombatants().get(1).getCurrentMove());
     }
 
     @Test
