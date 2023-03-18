@@ -15,6 +15,8 @@ public enum Phase {
     RESOLVE_TO_DEFEND,
     PROMPT_FOR_DAMAGE,
     RESOLVE_DAMAGE,
+    PROMPT_FOR_DEATH_CHECK,
+    RESOLVE_DEATH_CHECK,
     END
     //@formatter:on
 }

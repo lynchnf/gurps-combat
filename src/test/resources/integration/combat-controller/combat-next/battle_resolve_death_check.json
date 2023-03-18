@@ -91,16 +91,16 @@
       "deathCheckFailed": false,
       "healthStatus": "ALIVE",
       "currentMove": 6,
-      "action": null,
-      "targetLabel": null,
-      "weaponName": null,
-      "modeName": null,
-      "effectiveSkillToHit": null,
-      "rollToHit": null,
-      "toHitResult": null,
-      "damageDice": null,
-      "damageAdds": null,
-      "rollForDamage": null,
+      "action": "ATTACK",
+      "targetLabel": "Grunt",
+      "weaponName": "Broadsword",
+      "modeName": "swing",
+      "effectiveSkillToHit": 14,
+      "rollToHit": 13,
+      "toHitResult": "SUCCESS",
+      "damageDice": 2,
+      "damageAdds": 1,
+      "rollForDamage": 16,
       "activeDefenses": []
     },
     {
@@ -188,12 +188,12 @@
           }
         ]
       },
-      "currentDamage": 0,
+      "currentDamage": 21,
       "previousDamage": 0,
-      "nbrOfDeathChecksNeeded": 0,
+      "nbrOfDeathChecksNeeded": 1,
       "deathCheckFailed": false,
-      "healthStatus": "ALIVE",
-      "currentMove": 3,
+      "healthStatus": "ALMOST",
+      "currentMove": 2,
       "action": "DO_NOTHING",
       "targetLabel": null,
       "weaponName": null,
@@ -204,15 +204,23 @@
       "damageDice": null,
       "damageAdds": null,
       "rollForDamage": null,
-      "activeDefenses": []
+      "activeDefenses": [
+        {
+          "defenseType": "BLOCK",
+          "defendingItemName": "Medium Shield",
+          "effectiveSkillToDefend": 10,
+          "rollToDefend": 11,
+          "toDefendResult": "FAILURE"
+        }
+      ]
     }
   ],
   "nextStep": {
     "round": 1,
     "index": 0,
-    "phase": "RESOLVE_ACTION",
+    "phase": "RESOLVE_DEATH_CHECK",
     "inputNeeded": true,
-    "message": "1/0 : Bob the Example, please chose an action."
+    "message": "1/0 : Grunt needs to make a roll to avoid death. Please roll 3d (need 10)."
   },
   "logs": [
     {
@@ -238,6 +246,54 @@
     {
       "timeMillis": 1679172988590,
       "message": "Combatant Bob the Example must chose an action."
+    },
+    {
+      "timeMillis": 1679173170493,
+      "message": "Combatant Bob the Example has chosen an action of ATTACK."
+    },
+    {
+      "timeMillis": 1679173170503,
+      "message": "Combatant Bob the Example must chose a target and weapon/mode."
+    },
+    {
+      "timeMillis": 1679173367287,
+      "message": "Combatant Bob the Example has chosen to attack Grunt with Broadsword/swing."
+    },
+    {
+      "timeMillis": 1679173367297,
+      "message": "Combatant Bob the Example must roll to hit."
+    },
+    {
+      "timeMillis": 1679173489064,
+      "message": "Combatant Bob the Example has rolled 13 to hit."
+    },
+    {
+      "timeMillis": 1679173489071,
+      "message": "Target Grunt must chose a defense and (if needed) an item to defend with."
+    },
+    {
+      "timeMillis": 1679173977827,
+      "message": "Target Grunt has chosen a defense of BLOCK (Medium Shield)."
+    },
+    {
+      "timeMillis": 1679173977862,
+      "message": "Target Grunt must roll to defend."
+    },
+    {
+      "timeMillis": 1679174135505,
+      "message": "Target Grunt has rolled 11 to defend."
+    },
+    {
+      "timeMillis": 1679174135519,
+      "message": "Combatant Bob the Example must roll for damage."
+    },
+    {
+      "timeMillis": 1679174422408,
+      "message": "Target Grunt was hit with 16."
+    },
+    {
+      "timeMillis": 1679174422418,
+      "message": "Target Grunt must make a health roll to avoid dying."
     }
   ]
 }

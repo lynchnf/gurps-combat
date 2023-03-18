@@ -8,9 +8,10 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 * Handle critical results.
 * Allow edit of combatants in the middle combatant.
 * Handle Ranged weapons.
-* Allow attack to target hit location.
+* Allow attack to targeted hit location.
 * Allow attack to randomly chosen hit location.
-* Handle health checks for unconsciousness and death.
+* Handle health checks for unconsciousness.
+* Handle natural DR.
 * Allow other actions:
     * Aim a Ranged Attack
     * All-Out Attack: +1 to hit for ranged attack

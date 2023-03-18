@@ -15,6 +15,7 @@ public class NextStepRequest {
     private String defendingItemName;
     private Integer rollToDefend;
     private Integer rollForDamage;
+    private Integer rollForDeathCheck;
 
     public Phase getPhase() {
         return phase;
@@ -64,11 +65,11 @@ public class NextStepRequest {
         this.rollToHit = rollToHit;
     }
 
-    public DefenseType getDefense() {
+    public DefenseType getDefenseType() {
         return defenseType;
     }
 
-    public void setDefense(DefenseType defenseType) {
+    public void setDefenseType(DefenseType defenseType) {
         this.defenseType = defenseType;
     }
 
@@ -94,5 +95,13 @@ public class NextStepRequest {
 
     public void setRollForDamage(Integer rollForDamage) {
         this.rollForDamage = rollForDamage;
+    }
+
+    public Integer getRollForDeathCheck() {
+        return rollForDeathCheck;
+    }
+
+    public void setRollForDeathCheck(Integer rollForDeathCheck) {
+        this.rollForDeathCheck = rollForDeathCheck;
     }
 }

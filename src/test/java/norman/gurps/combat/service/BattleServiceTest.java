@@ -184,7 +184,7 @@ class BattleServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
-        // Get current battle.
+        // Get, then change current battle.
         Battle battle1 = service.getBattle();
         battle1.getCombatants().get(0).setCurrentDamage(4);
         battle1.getNextStep().setRound(2);

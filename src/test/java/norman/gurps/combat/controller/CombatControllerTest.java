@@ -45,7 +45,7 @@ class CombatControllerTest {
         nextStep1.setInputNeeded(false);
         nextStep1.setMessage("Message from RESOLVE_ACTION");
         when(service.nextStep(eq(Phase.RESOLVE_ACTION), eq(Action.ATTACK), isNull(), isNull(), isNull(), isNull(),
-                isNull(), isNull(), isNull(), isNull())).thenReturn(nextStep1);
+                isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(nextStep1);
 
         NextStep nextStep2 = new NextStep();
         nextStep2.setRound(1);
@@ -54,7 +54,7 @@ class CombatControllerTest {
         nextStep2.setInputNeeded(true);
         nextStep2.setMessage("Message from PROMPT_FOR_TARGET_AND_WEAPON");
         when(service.nextStep(eq(Phase.PROMPT_FOR_TARGET_AND_WEAPON), any(Action.class), isNull(), isNull(), isNull(),
-                isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(nextStep2);
+                isNull(), isNull(), isNull(), isNull(), isNull(), isNull())).thenReturn(nextStep2);
 
         NextStepRequest req = new NextStepRequest();
         req.setPhase(Phase.RESOLVE_ACTION);

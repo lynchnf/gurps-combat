@@ -27,6 +27,7 @@ public class TestHelper {
         gameChar.setBasicSpeed(6.25);
         gameChar.setBasicMove(7);
         gameChar.setEncumbranceLevel(1);
+        gameChar.setDeathCheck(12);
         MeleeWeapon weapon = new MeleeWeapon();
         weapon.setName("Broadsword");
         weapon.setSkill(14);
@@ -100,6 +101,7 @@ public class TestHelper {
         gameChar.setBasicSpeed(5.0);
         gameChar.setBasicMove(5);
         gameChar.setEncumbranceLevel(2);
+        gameChar.setDeathCheck(10);
         MeleeWeapon weapon = new MeleeWeapon();
         weapon.setName("Broadsword");
         weapon.setSkill(12);
@@ -171,6 +173,8 @@ public class TestHelper {
         Combatant combatant = new Combatant(gameChar, existingLabels);
         combatant.setCurrentDamage(0);
         combatant.setPreviousDamage(0);
+        combatant.setNbrOfDeathChecksNeeded(0);
+        combatant.setDeathCheckFailed(false);
         combatant.setHealthStatus(HealthStatus.ALIVE);
         int basicMove = combatant.getGameChar().getBasicMove();
         int encumbranceLevel = combatant.getGameChar().getEncumbranceLevel();

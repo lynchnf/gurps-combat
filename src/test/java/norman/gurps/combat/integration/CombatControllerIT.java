@@ -266,7 +266,7 @@ class CombatControllerIT {
         assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
         assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
         assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(10, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
+        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
         assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
     }
 
@@ -310,7 +310,7 @@ class CombatControllerIT {
         assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
         assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
         assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(10, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
+        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
         assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
         assertEquals("BLOCK",
                 battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("defenseType").asText());
@@ -361,7 +361,7 @@ class CombatControllerIT {
         assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
         assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
         assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(10, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
+        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
         assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
         assertEquals(2, battleJsonNode.get("combatants").get(0).get("damageDice").asInt());
         assertEquals(1, battleJsonNode.get("combatants").get(0).get("damageAdds").asInt());
@@ -372,7 +372,7 @@ class CombatControllerIT {
         assertEquals(10,
                 battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("effectiveSkillToDefend")
                         .asInt());
-        assertEquals(12,
+        assertEquals(11,
                 battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("rollToDefend").asInt());
         assertEquals("FAILURE",
                 battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("toDefendResult").asText());
@@ -403,31 +403,33 @@ class CombatControllerIT {
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
         assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(3, jsonNode.get("messages").size());
+        assertEquals(2, jsonNode.get("messages").size());
 
         assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
         assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(2, battleJsonNode.get("combatants").size());
         assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(1, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_ACTION", battleJsonNode.get("nextStep").get("phase").asText());
+        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
+        assertEquals("RESOLVE_DEATH_CHECK", battleJsonNode.get("nextStep").get("phase").asText());
         assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
         assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
         assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
         assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
         assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
         assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(10, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
+        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
         assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
         assertEquals(2, battleJsonNode.get("combatants").get(0).get("damageDice").asInt());
         assertEquals(1, battleJsonNode.get("combatants").get(0).get("damageAdds").asInt());
-        assertEquals(8, battleJsonNode.get("combatants").get(0).get("rollForDamage").asInt());
-        assertEquals(9, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
-        assertEquals("REELING", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
+        assertEquals(16, battleJsonNode.get("combatants").get(0).get("rollForDamage").asInt());
+        assertEquals(21, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
+        assertEquals(1, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
+        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
+        assertEquals("ALMOST", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
         assertEquals(2, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
         assertTrue(battleJsonNode.get("combatants").get(1).get("activeDefenses").isArray());
-        assertTrue(battleJsonNode.get("combatants").get(1).get("activeDefenses").isEmpty());
+        assertFalse(battleJsonNode.get("combatants").get(1).get("activeDefenses").isEmpty());
     }
 
     private String readResource(String resourceName) throws IOException {

@@ -12,6 +12,7 @@
         "basicSpeed": 6.25,
         "basicMove": 7,
         "encumbranceLevel": 1,
+        "deathCheck": 12,
         "meleeWeapons": [
           {
             "name": "Broadsword",
@@ -86,6 +87,8 @@
       },
       "currentDamage": null,
       "previousDamage": null,
+      "nbrOfDeathChecksNeeded": null,
+      "deathCheckFailed": null,
       "healthStatus": null,
       "currentMove": null,
       "action": null,
@@ -94,17 +97,21 @@
       "modeName": null,
       "effectiveSkillToHit": null,
       "rollToHit": null,
-      "toHitResult": null
+      "toHitResult": null,
+      "damageDice": null,
+      "damageAdds": null,
+      "rollForDamage": null,
+      "activeDefenses": []
     }
   ],
   "nextStep": null,
   "logs": [
     {
-      "timeMillis": 1678159785721,
+      "timeMillis": 1679172078169,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1678161388152,
+      "timeMillis": 1679172201478,
       "message": "Combatant Bob the Example added to Battle."
     }
   ]

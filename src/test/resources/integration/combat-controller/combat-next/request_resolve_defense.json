@@ -1,5 +1,5 @@
 {
   "phase": "RESOLVE_DEFENSE",
-  "defense": "BLOCK",
+  "defenseType": "BLOCK",
   "defendingItemName": "Medium Shield"
 }

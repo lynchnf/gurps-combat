@@ -12,6 +12,7 @@
         "basicSpeed": 6.25,
         "basicMove": 7,
         "encumbranceLevel": 1,
+        "deathCheck": 12,
         "meleeWeapons": [
           {
             "name": "Broadsword",
@@ -86,6 +87,8 @@
       },
       "currentDamage": null,
       "previousDamage": null,
+      "nbrOfDeathChecksNeeded": null,
+      "deathCheckFailed": null,
       "healthStatus": null,
       "currentMove": null,
       "action": null,
@@ -112,6 +115,7 @@
         "basicSpeed": 5.0,
         "basicMove": 5,
         "encumbranceLevel": 2,
+        "deathCheck": 10,
         "meleeWeapons": [
           {
             "name": "Broadsword",
@@ -186,6 +190,8 @@
       },
       "currentDamage": null,
       "previousDamage": null,
+      "nbrOfDeathChecksNeeded": null,
+      "deathCheckFailed": null,
       "healthStatus": null,
       "currentMove": null,
       "action": null,
@@ -204,15 +210,15 @@
   "nextStep": null,
   "logs": [
     {
-      "timeMillis": 1678694224076,
+      "timeMillis": 1679172078169,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1678694236178,
+      "timeMillis": 1679172201478,
       "message": "Combatant Bob the Example added to Battle."
     },
     {
-      "timeMillis": 1678694271765,
+      "timeMillis": 1679172718142,
       "message": "Combatant Grunt added to Battle."
     }
   ]

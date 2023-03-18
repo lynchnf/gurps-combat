@@ -12,6 +12,7 @@
         "basicSpeed": 6.25,
         "basicMove": 7,
         "encumbranceLevel": 1,
+        "deathCheck": 12,
         "meleeWeapons": [
           {
             "name": "Broadsword",
@@ -86,6 +87,8 @@
       },
       "currentDamage": 0,
       "previousDamage": 0,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
       "healthStatus": "ALIVE",
       "currentMove": 6,
       "action": "ATTACK",
@@ -112,6 +115,7 @@
         "basicSpeed": 5.0,
         "basicMove": 5,
         "encumbranceLevel": 2,
+        "deathCheck": 10,
         "meleeWeapons": [
           {
             "name": "Broadsword",
@@ -186,6 +190,8 @@
       },
       "currentDamage": 0,
       "previousDamage": 0,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
       "healthStatus": "ALIVE",
       "currentMove": 3,
       "action": "DO_NOTHING",
@@ -210,35 +216,35 @@
   },
   "logs": [
     {
-      "timeMillis": 1678694224076,
+      "timeMillis": 1679172078169,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1678694236178,
+      "timeMillis": 1679172201478,
       "message": "Combatant Bob the Example added to Battle."
     },
     {
-      "timeMillis": 1678694271765,
+      "timeMillis": 1679172718142,
       "message": "Combatant Grunt added to Battle."
     },
     {
-      "timeMillis": 1678730094534,
+      "timeMillis": 1679172882947,
       "message": "Combat started."
     },
     {
-      "timeMillis": 1678730924736,
+      "timeMillis": 1679172988584,
       "message": "Begin next turn for Bob the Example."
     },
     {
-      "timeMillis": 1678730924828,
+      "timeMillis": 1679172988590,
       "message": "Combatant Bob the Example must chose an action."
     },
     {
-      "timeMillis": 1678731542423,
+      "timeMillis": 1679173170493,
       "message": "Combatant Bob the Example has chosen an action of ATTACK."
     },
     {
-      "timeMillis": 1678731542569,
+      "timeMillis": 1679173170503,
       "message": "Combatant Bob the Example must chose a target and weapon/mode."
     }
   ]

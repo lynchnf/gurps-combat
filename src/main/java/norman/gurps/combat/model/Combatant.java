@@ -9,6 +9,8 @@ public class Combatant {
     private GameChar gameChar;
     private Integer currentDamage;
     private Integer previousDamage;
+    private Integer nbrOfDeathChecksNeeded;
+    private Boolean deathCheckFailed;
     private HealthStatus healthStatus;
     private Integer currentMove;
     private Action action;
@@ -66,6 +68,22 @@ public class Combatant {
 
     public void setPreviousDamage(Integer previousDamage) {
         this.previousDamage = previousDamage;
+    }
+
+    public Integer getNbrOfDeathChecksNeeded() {
+        return nbrOfDeathChecksNeeded;
+    }
+
+    public void setNbrOfDeathChecksNeeded(Integer nbrOfDeathChecksNeeded) {
+        this.nbrOfDeathChecksNeeded = nbrOfDeathChecksNeeded;
+    }
+
+    public Boolean getDeathCheckFailed() {
+        return deathCheckFailed;
+    }
+
+    public void setDeathCheckFailed(Boolean deathCheckFailed) {
+        this.deathCheckFailed = deathCheckFailed;
     }
 
     public HealthStatus getHealthStatus() {

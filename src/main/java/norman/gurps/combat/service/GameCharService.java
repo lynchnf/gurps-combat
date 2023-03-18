@@ -101,6 +101,12 @@ public class GameCharService {
             errors.add("Encumbrance level must be between 0 and 4.");
         }
 
+        if (gameChar.getDeathCheck() == null) {
+            errors.add("Death check may not be blank.");
+        } else if (gameChar.getDeathCheck() < 0) {
+            errors.add("Death check may not be less than 0.");
+        }
+
         if (gameChar.getMeleeWeapons().isEmpty()) {
             errors.add("Must have at least one weapon.");
         } else {
