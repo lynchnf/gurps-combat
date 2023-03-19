@@ -101,6 +101,12 @@ public class GameCharService {
             errors.add("Encumbrance level must be between 0 and 4.");
         }
 
+        if (gameChar.getUnconsciousnessCheck() == null) {
+            errors.add("Unconsciousness check may not be blank.");
+        } else if (gameChar.getUnconsciousnessCheck() < 0) {
+            errors.add("Unconsciousness check may not be less than 0.");
+        }
+
         if (gameChar.getDeathCheck() == null) {
             errors.add("Death check may not be blank.");
         } else if (gameChar.getDeathCheck() < 0) {

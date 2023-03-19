@@ -3,6 +3,8 @@ package norman.gurps.combat.model;
 public enum Phase {
     //@formatter:off
     BEGIN,
+    PROMPT_FOR_UNCONSCIOUSNESS_CHECK,
+    RESOLVE_UNCONSCIOUSNESS_CHECK,
     PROMPT_FOR_ACTION,
     RESOLVE_ACTION,
     PROMPT_FOR_TARGET_AND_WEAPON,

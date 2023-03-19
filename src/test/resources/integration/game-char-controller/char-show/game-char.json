@@ -9,6 +9,7 @@
     "basicSpeed": 6.25,
     "basicMove": 7,
     "encumbranceLevel": 1,
+    "unconsciousnessCheck": 13,
     "deathCheck": 12,
     "meleeWeapons": [
       {

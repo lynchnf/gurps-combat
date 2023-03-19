@@ -13,6 +13,7 @@ public class GameChar {
     private Double basicSpeed;
     private Integer basicMove;
     private Integer encumbranceLevel;
+    private Integer unconsciousnessCheck;
     private Integer deathCheck;
     private List<MeleeWeapon> meleeWeapons = new ArrayList<>();
     private List<Shield> shields = new ArrayList<>();
@@ -88,6 +89,14 @@ public class GameChar {
 
     public void setEncumbranceLevel(Integer encumbranceLevel) {
         this.encumbranceLevel = encumbranceLevel;
+    }
+
+    public Integer getUnconsciousnessCheck() {
+        return unconsciousnessCheck;
+    }
+
+    public void setUnconsciousnessCheck(Integer unconsciousnessCheck) {
+        this.unconsciousnessCheck = unconsciousnessCheck;
     }
 
     public Integer getDeathCheck() {

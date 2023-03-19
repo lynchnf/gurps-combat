@@ -432,6 +432,94 @@ class CombatControllerIT {
         assertFalse(battleJsonNode.get("combatants").get(1).get("activeDefenses").isEmpty());
     }
 
+    @Test
+    void nextStepInCombat_resolve_death_check() throws Exception {
+        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_death_check.json";
+        String requestData = readResource(resourceName1);
+
+        // Preload file with data.
+        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_death_check.json";
+        String battleJson = readResource(resourceName2);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
+        writer.write(battleJson);
+        writer.close();
+
+        //@formatter:off
+        MvcResult result = mockMvc.perform(post("/combat/next")
+                        .content(requestData)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        //@formatter:on
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
+        assertTrue(jsonNode.get("successful").isBoolean());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(3, jsonNode.get("messages").size());
+
+        assertTrue(storageBattleFile.exists());
+        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
+        assertTrue(battleJsonNode.get("combatants").isArray());
+        assertEquals(2, battleJsonNode.get("combatants").size());
+        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
+        assertEquals(1, battleJsonNode.get("nextStep").get("index").asInt());
+        assertEquals("RESOLVE_UNCONSCIOUSNESS_CHECK", battleJsonNode.get("nextStep").get("phase").asText());
+        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
+        assertEquals(21, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
+        assertEquals(0, battleJsonNode.get("combatants").get(1).get("previousDamage").asInt());
+        assertFalse(battleJsonNode.get("combatants").get(1).get("unconsciousnessCheckFailed").asBoolean());
+        assertEquals(0, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
+        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
+        assertEquals("ALMOST", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
+        assertEquals(2, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
+    }
+
+    @Test
+    void nextStepInCombat_resolve_unconsciousness_check() throws Exception {
+        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_unconsciousness_check.json";
+        String requestData = readResource(resourceName1);
+
+        // Preload file with data.
+        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_unconsciousness_check.json";
+        String battleJson = readResource(resourceName2);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
+        writer.write(battleJson);
+        writer.close();
+
+        //@formatter:off
+        MvcResult result = mockMvc.perform(post("/combat/next")
+                        .content(requestData)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+        //@formatter:on
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
+        assertTrue(jsonNode.get("successful").isBoolean());
+        assertTrue(jsonNode.get("messages").isArray());
+        assertEquals(3, jsonNode.get("messages").size());
+
+        assertTrue(storageBattleFile.exists());
+        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
+        assertTrue(battleJsonNode.get("combatants").isArray());
+        assertEquals(2, battleJsonNode.get("combatants").size());
+        assertEquals(2, battleJsonNode.get("nextStep").get("round").asInt());
+        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
+        assertEquals("RESOLVE_ACTION", battleJsonNode.get("nextStep").get("phase").asText());
+        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
+        assertEquals(0, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
+        assertEquals(21, battleJsonNode.get("combatants").get(1).get("previousDamage").asInt());
+        assertTrue(battleJsonNode.get("combatants").get(1).get("unconsciousnessCheckFailed").asBoolean());
+        assertEquals(0, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
+        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
+        assertEquals("UNCONSCIOUS", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
+        assertEquals(0, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
+    }
+
     private String readResource(String resourceName) throws IOException {
         InputStream stream = loader.getResourceAsStream(resourceName);
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));

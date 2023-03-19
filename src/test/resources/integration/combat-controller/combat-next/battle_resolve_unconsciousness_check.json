@@ -86,23 +86,23 @@
           }
         ]
       },
-      "currentDamage": null,
-      "previousDamage": null,
+      "currentDamage": 0,
+      "previousDamage": 0,
       "unconsciousnessCheckFailed": null,
-      "nbrOfDeathChecksNeeded": null,
-      "deathCheckFailed": null,
-      "healthStatus": null,
-      "currentMove": null,
-      "action": null,
-      "targetLabel": null,
-      "weaponName": null,
-      "modeName": null,
-      "effectiveSkillToHit": null,
-      "rollToHit": null,
-      "toHitResult": null,
-      "damageDice": null,
-      "damageAdds": null,
-      "rollForDamage": null,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
+      "healthStatus": "ALIVE",
+      "currentMove": 6,
+      "action": "ATTACK",
+      "targetLabel": "Grunt",
+      "weaponName": "Broadsword",
+      "modeName": "swing",
+      "effectiveSkillToHit": 14,
+      "rollToHit": 13,
+      "toHitResult": "SUCCESS",
+      "damageDice": 2,
+      "damageAdds": 1,
+      "rollForDamage": 16,
       "activeDefenses": []
     },
     {
@@ -191,13 +191,13 @@
           }
         ]
       },
-      "currentDamage": null,
-      "previousDamage": null,
+      "currentDamage": 21,
+      "previousDamage": 0,
       "unconsciousnessCheckFailed": null,
-      "nbrOfDeathChecksNeeded": null,
-      "deathCheckFailed": null,
-      "healthStatus": null,
-      "currentMove": null,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
+      "healthStatus": "ALMOST",
+      "currentMove": 2,
       "action": null,
       "targetLabel": null,
       "weaponName": null,
@@ -211,7 +211,13 @@
       "activeDefenses": []
     }
   ],
-  "nextStep": null,
+  "nextStep": {
+    "round": 1,
+    "index": 1,
+    "phase": "RESOLVE_UNCONSCIOUSNESS_CHECK",
+    "inputNeeded": true,
+    "message": "1/1 : Grunt needs to make a roll to stay conscious. Please roll 3d (need 10)."
+  },
   "logs": [
     {
       "timeMillis": 1679190761674,
@@ -224,6 +230,82 @@
     {
       "timeMillis": 1679191298523,
       "message": "Combatant Grunt added to Battle."
+    },
+    {
+      "timeMillis": 1679191484692,
+      "message": "Combat started."
+    },
+    {
+      "timeMillis": 1679191711129,
+      "message": "Begin next turn for Bob the Example."
+    },
+    {
+      "timeMillis": 1679191711148,
+      "message": "Combatant Bob the Example must chose an action."
+    },
+    {
+      "timeMillis": 1679191793095,
+      "message": "Combatant Bob the Example has chosen an action of ATTACK."
+    },
+    {
+      "timeMillis": 1679191793105,
+      "message": "Combatant Bob the Example must chose a target and weapon/mode."
+    },
+    {
+      "timeMillis": 1679191892260,
+      "message": "Combatant Bob the Example has chosen to attack Grunt with Broadsword/swing."
+    },
+    {
+      "timeMillis": 1679191892279,
+      "message": "Combatant Bob the Example must roll to hit."
+    },
+    {
+      "timeMillis": 1679192046587,
+      "message": "Combatant Bob the Example has rolled 13 to hit."
+    },
+    {
+      "timeMillis": 1679192046595,
+      "message": "Target Grunt must chose a defense and (if needed) an item to defend with."
+    },
+    {
+      "timeMillis": 1679192142332,
+      "message": "Target Grunt has chosen a defense of BLOCK (Medium Shield)."
+    },
+    {
+      "timeMillis": 1679192142338,
+      "message": "Target Grunt must roll to defend."
+    },
+    {
+      "timeMillis": 1679192228487,
+      "message": "Target Grunt has rolled 11 to defend."
+    },
+    {
+      "timeMillis": 1679192228500,
+      "message": "Combatant Bob the Example must roll for damage."
+    },
+    {
+      "timeMillis": 1679192426945,
+      "message": "Target Grunt was hit with 16."
+    },
+    {
+      "timeMillis": 1679192426952,
+      "message": "Target Grunt must make a health roll to avoid dying."
+    },
+    {
+      "timeMillis": 1679192562103,
+      "message": "Target Grunt rolled 9 to avoid dying."
+    },
+    {
+      "timeMillis": 1679192562120,
+      "message": "End turn for Bob the Example."
+    },
+    {
+      "timeMillis": 1679192562126,
+      "message": "Begin next turn for Grunt."
+    },
+    {
+      "timeMillis": 1679192562134,
+      "message": "Combatant Grunt must make a health roll to remain conscious."
     }
   ]
 }

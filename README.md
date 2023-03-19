@@ -6,11 +6,10 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 
 * Handle weapon ready and shield ready.
 * Handle critical results.
-* Allow edit of combatants in the middle combatant.
+* Allow edit of combatants in the middle of combatant.
 * Handle Ranged weapons.
 * Allow attack to targeted hit location.
 * Allow attack to randomly chosen hit location.
-* Handle health checks for unconsciousness.
 * Handle natural DR.
 * Allow other actions:
     * Aim a Ranged Attack

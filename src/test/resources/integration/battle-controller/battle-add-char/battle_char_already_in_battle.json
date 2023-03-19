@@ -12,6 +12,7 @@
         "basicSpeed": 6.25,
         "basicMove": 7,
         "encumbranceLevel": 1,
+        "unconsciousnessCheck": 13,
         "deathCheck": 12,
         "meleeWeapons": [
           {
@@ -87,6 +88,7 @@
       },
       "currentDamage": null,
       "previousDamage": null,
+      "unconsciousnessCheckFailed": null,
       "nbrOfDeathChecksNeeded": null,
       "deathCheckFailed": null,
       "healthStatus": null,
@@ -107,11 +109,11 @@
   "nextStep": null,
   "logs": [
     {
-      "timeMillis": 1679172078169,
+      "timeMillis": 1679190761674,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1679172201478,
+      "timeMillis": 1679191016652,
       "message": "Combatant Bob the Example added to Battle."
     }
   ]

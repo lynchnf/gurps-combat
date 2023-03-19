@@ -69,7 +69,8 @@ class CombatServiceTest {
         battle.setNextStep(nextStep1);
         when(battleService.getBattle()).thenReturn(battle);
 
-        NextStep nextStep = service.nextStep(Phase.BEGIN, null, null, null, null, null, null, null, null, null, null);
+        NextStep nextStep = service.nextStep(Phase.BEGIN, null, null, null, null, null, null, null, null, null, null,
+                null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -93,7 +94,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_ACTION, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -117,7 +118,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_ACTION, Action.ATTACK, null, null, null, null, null, null,
-                null, null, null);
+                null, null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -144,7 +145,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_TARGET_AND_WEAPON, null, null, null, null, null, null,
-                null, null, null, null);
+                null, null, null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -170,7 +171,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_TARGET_AND_WEAPON, null, "Grunt", "Broadsword", "swing",
-                null, null, null, null, null, null);
+                null, null, null, null, null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -202,7 +203,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_TO_HIT, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -233,7 +234,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_TO_HIT, null, null, null, null, 15, null, null, null, null,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -264,7 +265,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_TO_HIT, null, null, null, null, 13, null, null, null, null,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -296,7 +297,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_DEFENSE, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -327,7 +328,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DEFENSE, null, null, null, null, null, DefenseType.BLOCK,
-                "Medium Shield", null, null, null);
+                "Medium Shield", null, null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -367,7 +368,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_TO_DEFEND, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -406,7 +407,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_TO_DEFEND, null, null, null, null, null, null, null, 9, null,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -444,7 +445,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_TO_DEFEND, null, null, null, null, null, null, null, 11,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -483,7 +484,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_DAMAGE, null, null, null, null, null, null, null, null,
-                null, null);
+                null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -525,7 +526,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 2,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -570,7 +571,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 4,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -615,7 +616,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 7,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -660,7 +661,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 10,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -705,7 +706,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 16,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -750,7 +751,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DAMAGE, null, null, null, null, null, null, null, null, 23,
-                null);
+                null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -800,7 +801,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_DEATH_CHECK, null, null, null, null, null, null, null,
-                null, null, null);
+                null, null, null, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -847,7 +848,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DEATH_CHECK, null, null, null, null, null, null, null, null,
-                null, 11);
+                null, 11, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -896,7 +897,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DEATH_CHECK, null, null, null, null, null, null, null, null,
-                null, 9);
+                null, 9, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -945,7 +946,7 @@ class CombatServiceTest {
         when(battleService.getBattle()).thenReturn(battle);
 
         NextStep nextStep = service.nextStep(Phase.RESOLVE_DEATH_CHECK, null, null, null, null, null, null, null, null,
-                null, 9);
+                null, 9, null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
@@ -958,6 +959,67 @@ class CombatServiceTest {
         assertFalse(battleCaptor.getValue().getCombatants().get(1).getDeathCheckFailed());
         assertEquals(HealthStatus.ALMOST2, battleCaptor.getValue().getCombatants().get(1).getHealthStatus());
         assertEquals(2, battleCaptor.getValue().getCombatants().get(1).getCurrentMove());
+    }
+
+    @Test
+    void nextStep_prompt_for_unconsciousness_check() {
+        Battle battle = new Battle();
+        Combatant combatant1 = TestHelper.getCombatant(testGameChar1);
+        battle.getCombatants().add(combatant1);
+        Combatant combatant2 = TestHelper.getCombatant(testGameChar2);
+        combatant2.setCurrentDamage(31);
+        combatant2.setHealthStatus(HealthStatus.ALMOST2);
+        combatant2.setCurrentMove(2);
+        battle.getCombatants().add(combatant2);
+        NextStep nextStep1 = new NextStep();
+        nextStep1.setRound(1);
+        nextStep1.setIndex(1);
+        nextStep1.setPhase(Phase.PROMPT_FOR_UNCONSCIOUSNESS_CHECK);
+        battle.setNextStep(nextStep1);
+        when(battleService.getBattle()).thenReturn(battle);
+
+        NextStep nextStep = service.nextStep(Phase.PROMPT_FOR_UNCONSCIOUSNESS_CHECK, null, null, null, null, null, null,
+                null, null, null, null, null);
+
+        assertEquals(1, nextStep.getRound());
+        assertEquals(1, nextStep.getIndex());
+        assertEquals(Phase.RESOLVE_UNCONSCIOUSNESS_CHECK, nextStep.getPhase());
+        assertTrue(nextStep.getInputNeeded());
+        assertNotNull(nextStep.getMessage());
+
+        verify(battleService).updateBattle(battleCaptor.capture(), anyString());
+    }
+
+    @Test
+    void nextStep_resolve_unconsciousness_check() {
+        Battle battle = new Battle();
+        Combatant combatant1 = TestHelper.getCombatant(testGameChar1);
+        battle.getCombatants().add(combatant1);
+        Combatant combatant2 = TestHelper.getCombatant(testGameChar2);
+        combatant2.setCurrentDamage(31);
+        combatant2.setHealthStatus(HealthStatus.ALMOST2);
+        combatant2.setCurrentMove(2);
+        battle.getCombatants().add(combatant2);
+        NextStep nextStep1 = new NextStep();
+        nextStep1.setRound(1);
+        nextStep1.setIndex(1);
+        nextStep1.setPhase(Phase.RESOLVE_UNCONSCIOUSNESS_CHECK);
+        battle.setNextStep(nextStep1);
+        when(battleService.getBattle()).thenReturn(battle);
+
+        NextStep nextStep = service.nextStep(Phase.RESOLVE_UNCONSCIOUSNESS_CHECK, null, null, null, null, null, null,
+                null, null, null, null, 11);
+
+        assertEquals(1, nextStep.getRound());
+        assertEquals(1, nextStep.getIndex());
+        assertEquals(Phase.END, nextStep.getPhase());
+        assertFalse(nextStep.getInputNeeded());
+        assertNotNull(nextStep.getMessage());
+
+        verify(battleService).updateBattle(battleCaptor.capture(), anyString());
+        assertTrue(battleCaptor.getValue().getCombatants().get(1).getUnconsciousnessCheckFailed());
+        assertEquals(HealthStatus.UNCONSCIOUS, battleCaptor.getValue().getCombatants().get(1).getHealthStatus());
+        assertEquals(0, battleCaptor.getValue().getCombatants().get(1).getCurrentMove());
     }
 
     @Test
@@ -993,7 +1055,8 @@ class CombatServiceTest {
         battle.setNextStep(nextStep1);
         when(battleService.getBattle()).thenReturn(battle);
 
-        NextStep nextStep = service.nextStep(Phase.END, null, null, null, null, null, null, null, null, null, null);
+        NextStep nextStep = service.nextStep(Phase.END, null, null, null, null, null, null, null, null, null, null,
+                null);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(1, nextStep.getIndex());

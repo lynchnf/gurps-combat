@@ -56,12 +56,14 @@ public class CombatController {
         Integer rollToDefend = req.getRollToDefend();
         Integer rollForDamage = req.getRollForDamage();
         Integer rollForDeathCheck = req.getRollForDeathCheck();
+        Integer rollForUnconsciousnessCheck = req.getRollForUnconsciousnessCheck();
 
         boolean inputNeeded;
         try {
             do {
                 NextStep nextStep = service.nextStep(phase, action, targetLabel, weaponName, modeName, rollToHit,
-                        defenseType, defendingItemName, rollToDefend, rollForDamage, rollForDeathCheck);
+                        defenseType, defendingItemName, rollToDefend, rollForDamage, rollForDeathCheck,
+                        rollForUnconsciousnessCheck);
                 if (nextStep.getMessage() != null) {
                     resp.getMessages().add(nextStep.getMessage());
                 }

@@ -73,7 +73,7 @@ public class CombatService {
 
     public NextStep nextStep(Phase phase, Action action, String targetLabel, String weaponName, String modeName,
             Integer rollToHit, DefenseType defenseType, String defendingItemName, Integer rollToDefend,
-            Integer rollForDamage, Integer rollForDeathCheck) {
+            Integer rollForDamage, Integer rollForDeathCheck, Integer rollForUnconsciousnessCheck) {
         LOGGER.debug("Next step in combat.");
         Battle battle = battleService.getBattle();
         if (battle.getNextStep() == null) {
@@ -102,6 +102,20 @@ public class CombatService {
                 nextStep = doBegin(round, index, combatant);
                 battle.setNextStep(nextStep);
                 battleService.updateBattle(battle, "Begin next turn for " + combatant.getLabel() + ".");
+                break;
+            case PROMPT_FOR_UNCONSCIOUSNESS_CHECK:
+                nextStep = doPromptForUnconsciousnessCheck(round, index, combatant);
+                battle.setNextStep(nextStep);
+                battleService.updateBattle(battle,
+                        "Combatant " + combatant.getLabel() + " must make a health roll to remain conscious.");
+                break;
+            case RESOLVE_UNCONSCIOUSNESS_CHECK:
+                validateResolveUnconsciousnessCheck(rollForUnconsciousnessCheck);
+                nextStep = doResolveUnconsciousnessCheck(round, index, combatant, rollForUnconsciousnessCheck);
+                battle.setNextStep(nextStep);
+                battleService.updateBattle(battle,
+                        "Combatant " + combatant.getLabel() + " has rolled " + rollForUnconsciousnessCheck +
+                                " to remain conscious.");
                 break;
             case PROMPT_FOR_ACTION:
                 nextStep = doPromptForAction(round, index, combatant);
@@ -208,8 +222,12 @@ public class CombatService {
         HealthStatus status = combatant.getHealthStatus();
         Phase phase;
         String message;
-        if (status == HealthStatus.ALIVE || status == HealthStatus.REELING || status == HealthStatus.BARELY) {
+        if (status == HealthStatus.ALIVE || status == HealthStatus.REELING) {
             phase = Phase.PROMPT_FOR_ACTION;
+            message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + status + ".";
+        } else if (status == HealthStatus.BARELY || status == HealthStatus.ALMOST || status == HealthStatus.ALMOST2 ||
+                status == HealthStatus.ALMOST3 || status == HealthStatus.ALMOST4) {
+            phase = Phase.PROMPT_FOR_UNCONSCIOUSNESS_CHECK;
             message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + status + ".";
         } else {
             phase = Phase.END;
@@ -235,6 +253,21 @@ public class CombatService {
         nextStep.setIndex(index);
         nextStep.setPhase(phase);
         nextStep.setInputNeeded(false);
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
+        return nextStep;
+    }
+
+    private NextStep doPromptForUnconsciousnessCheck(int round, int index, Combatant combatant) {
+        int check = combatant.getGameChar().getUnconsciousnessCheck();
+        String message =
+                combatant.getLabel() + " needs to make a roll to stay conscious. Please roll 3d (need " + check + ").";
+
+        // Create next step.
+        NextStep nextStep = new NextStep();
+        nextStep.setRound(round);
+        nextStep.setIndex(index);
+        nextStep.setPhase(Phase.RESOLVE_UNCONSCIOUSNESS_CHECK);
+        nextStep.setInputNeeded(true);
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
@@ -380,6 +413,13 @@ public class CombatService {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private void validateResolveUnconsciousnessCheck(Integer rollForUnconsciousnessCheck) {
+        // Validate roll.
+        if (rollForUnconsciousnessCheck == null) {
+            throw new LoggingException(LOGGER, "Value rolled to remain conscious may not be blank.");
+        }
+    }
+
     private void validateResolveAction(Action action) {
         // Validate action.
         if (action == null) {
@@ -491,6 +531,44 @@ public class CombatService {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    private NextStep doResolveUnconsciousnessCheck(int round, int index, Combatant combatant,
+            int rollForUnconsciousnessCheck) {
+        int check = combatant.getGameChar().getUnconsciousnessCheck();
+        SkillRollResult result = getSkillRollResult(check, rollForUnconsciousnessCheck);
+        boolean failed = false;
+        HealthStatus status = combatant.getHealthStatus();
+        int move = combatant.getCurrentMove();
+        Phase phase;
+        String message;
+        if (result == SkillRollResult.CRITICAL_SUCCESS || result == SkillRollResult.SUCCESS) {
+            phase = Phase.PROMPT_FOR_ACTION;
+            message =
+                    combatant.getLabel() + " successfully remained conscious! Rolled a " + rollForUnconsciousnessCheck +
+                            ", needed a " + check + ".";
+        } else {
+            failed = true;
+            status = HealthStatus.UNCONSCIOUS;
+            move = 0;
+            phase = Phase.END;
+            message = combatant.getLabel() + " is now unconscious! Rolled a " + rollForUnconsciousnessCheck +
+                    ", needed a " + check + ".";
+        }
+
+        // Update combatant.
+        combatant.setUnconsciousnessCheckFailed(failed);
+        combatant.setHealthStatus(status);
+        combatant.setCurrentMove(move);
+
+        // Create next step.
+        NextStep nextStep = new NextStep();
+        nextStep.setRound(round);
+        nextStep.setIndex(index);
+        nextStep.setPhase(phase);
+        nextStep.setInputNeeded(false);
+        nextStep.setMessage("" + round + "/" + index + " : " + message);
+        return nextStep;
+    }
+
     private NextStep doResolveAction(int round, int index, Combatant combatant, Action action) {
         Phase phase;
         if (action == Action.ATTACK) {
@@ -589,8 +667,7 @@ public class CombatService {
         return nextStep;
     }
 
-    private NextStep doResolveToDefend(int round, int index, Combatant combatant, Combatant target,
-            Integer rollToDefend) {
+    private NextStep doResolveToDefend(int round, int index, Combatant combatant, Combatant target, int rollToDefend) {
         int size = target.getActiveDefenses().size();
         ActiveDefense defense = target.getActiveDefenses().get(size - 1);
         int skill = defense.getEffectiveSkillToDefend();
@@ -627,8 +704,7 @@ public class CombatService {
         return nextStep;
     }
 
-    private NextStep doResolveDamage(int round, int index, Combatant combatant, Combatant target,
-            Integer rollForDamage) {
+    private NextStep doResolveDamage(int round, int index, Combatant combatant, Combatant target, int rollForDamage) {
         Armor armor = getArmor(Location.TORSO, target.getGameChar().getArmorList());
         int dr = armor.getDamageResistance();
         int penetratingDamage = rollForDamage - dr;
@@ -690,19 +766,7 @@ public class CombatService {
         return nextStep;
     }
 
-    private NextStep doResolveDeathCheck(int round, int index, Combatant target, Integer rollForDeathCheck) {
-        //        int nbrOfDeathChecksNeeded = target.getNbrOfDeathChecksNeeded();
-        //        boolean deathCheckFailed;
-        //        HealthStatus status;
-        //        String message;
-        //        if (result == SkillRollResult.FAILURE || result == SkillRollResult.CRITICAL_FAILURE) {
-        //            status = HealthStatus.DEAD;
-        //            succeeded = false;
-        //        } else {
-        //            succeeded = true;
-        //            status = target.getHealthStatus();
-        //        }
-
+    private NextStep doResolveDeathCheck(int round, int index, Combatant target, int rollForDeathCheck) {
         int check = target.getGameChar().getDeathCheck();
         SkillRollResult result = getSkillRollResult(check, rollForDeathCheck);
         int nbr = target.getNbrOfDeathChecksNeeded();
@@ -717,13 +781,13 @@ public class CombatService {
                 phase = Phase.PROMPT_FOR_DEATH_CHECK;
             }
             message = target.getLabel() + " successfully avoided death! Rolled a " + rollForDeathCheck + ", needed a " +
-                    check + ").";
+                    check + ".";
         } else {
             nbr = 0;
             failed = true;
             status = HealthStatus.DEAD;
             move = 0;
-            message = target.getLabel() + " is now dead! Rolled a" + rollForDeathCheck + ", needed a " + check + ").";
+            message = target.getLabel() + " is now dead! Rolled a " + rollForDeathCheck + ", needed a " + check + ".";
         }
 
         // Update target.

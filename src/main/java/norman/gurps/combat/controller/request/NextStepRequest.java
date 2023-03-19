@@ -16,6 +16,7 @@ public class NextStepRequest {
     private Integer rollToDefend;
     private Integer rollForDamage;
     private Integer rollForDeathCheck;
+    private Integer rollForUnconsciousnessCheck;
 
     public Phase getPhase() {
         return phase;
@@ -103,5 +104,13 @@ public class NextStepRequest {
 
     public void setRollForDeathCheck(Integer rollForDeathCheck) {
         this.rollForDeathCheck = rollForDeathCheck;
+    }
+
+    public Integer getRollForUnconsciousnessCheck() {
+        return rollForUnconsciousnessCheck;
+    }
+
+    public void setRollForUnconsciousnessCheck(Integer rollForUnconsciousnessCheck) {
+        this.rollForUnconsciousnessCheck = rollForUnconsciousnessCheck;
     }
 }

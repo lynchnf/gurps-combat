@@ -12,6 +12,7 @@
         "basicSpeed": 6.25,
         "basicMove": 7,
         "encumbranceLevel": 1,
+        "unconsciousnessCheck": 13,
         "deathCheck": 12,
         "meleeWeapons": [
           {
@@ -87,6 +88,7 @@
       },
       "currentDamage": 0,
       "previousDamage": 0,
+      "unconsciousnessCheckFailed": null,
       "nbrOfDeathChecksNeeded": 0,
       "deathCheckFailed": false,
       "healthStatus": "ALIVE",
@@ -115,6 +117,7 @@
         "basicSpeed": 5.0,
         "basicMove": 5,
         "encumbranceLevel": 2,
+        "unconsciousnessCheck": 10,
         "deathCheck": 10,
         "meleeWeapons": [
           {
@@ -190,6 +193,7 @@
       },
       "currentDamage": 0,
       "previousDamage": 0,
+      "unconsciousnessCheckFailed": null,
       "nbrOfDeathChecksNeeded": 0,
       "deathCheckFailed": false,
       "healthStatus": "ALIVE",
@@ -216,19 +220,19 @@
   },
   "logs": [
     {
-      "timeMillis": 1679172078169,
+      "timeMillis": 1679190761674,
       "message": "Battle created."
     },
     {
-      "timeMillis": 1679172201478,
+      "timeMillis": 1679191016652,
       "message": "Combatant Bob the Example added to Battle."
     },
     {
-      "timeMillis": 1679172718142,
+      "timeMillis": 1679191298523,
       "message": "Combatant Grunt added to Battle."
     },
     {
-      "timeMillis": 1679172882947,
+      "timeMillis": 1679191484692,
       "message": "Combat started."
     }
   ]
