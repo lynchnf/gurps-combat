@@ -6,7 +6,7 @@ import java.util.List;
 public class MeleeWeapon {
     private String name;
     private Integer skill;
-    private List<MeleeWeaponMode> modes = new ArrayList<>();
+    private List<MeleeWeaponMode> meleeWeaponModes = new ArrayList<>();
     private ParryType parryType;
     private Integer parryModifier;
     private Integer minStrength;
@@ -28,12 +28,12 @@ public class MeleeWeapon {
         this.skill = skill;
     }
 
-    public List<MeleeWeaponMode> getModes() {
-        return modes;
+    public List<MeleeWeaponMode> getMeleeWeaponModes() {
+        return meleeWeaponModes;
     }
 
-    public void setModes(List<MeleeWeaponMode> modes) {
-        this.modes = modes;
+    public void setMeleeWeaponModes(List<MeleeWeaponMode> meleeWeaponModes) {
+        this.meleeWeaponModes = meleeWeaponModes;
     }
 
     public ParryType getParryType() {

@@ -17,7 +17,7 @@ public class GameChar {
     private Integer deathCheck;
     private List<MeleeWeapon> meleeWeapons = new ArrayList<>();
     private List<Shield> shields = new ArrayList<>();
-    private List<Armor> armorList = new ArrayList<>();
+    private List<ArmorPiece> armorPieces = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -123,11 +123,11 @@ public class GameChar {
         this.shields = shields;
     }
 
-    public List<Armor> getArmorList() {
-        return armorList;
+    public List<ArmorPiece> getArmorPieces() {
+        return armorPieces;
     }
 
-    public void setArmorList(List<Armor> armorList) {
-        this.armorList = armorList;
+    public void setArmorPieces(List<ArmorPiece> armorPieces) {
+        this.armorPieces = armorPieces;
     }
 }

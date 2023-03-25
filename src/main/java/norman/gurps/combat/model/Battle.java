@@ -6,7 +6,7 @@ import java.util.List;
 public class Battle {
     private List<Combatant> combatants = new ArrayList<>();
     private NextStep nextStep;
-    private List<BattleLog> logs = new ArrayList<>();
+    private List<BattleLog> battleLogs = new ArrayList<>();
 
     public List<Combatant> getCombatants() {
         return combatants;
@@ -24,11 +24,11 @@ public class Battle {
         this.nextStep = nextStep;
     }
 
-    public List<BattleLog> getLogs() {
-        return logs;
+    public List<BattleLog> getBattleLogs() {
+        return battleLogs;
     }
 
-    public void setLogs(List<BattleLog> logs) {
-        this.logs = logs;
+    public void setBattleLogs(List<BattleLog> battleLogs) {
+        this.battleLogs = battleLogs;
     }
 }

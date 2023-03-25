@@ -54,7 +54,7 @@ public class BattleService {
 
         // Write new battle file.
         Battle battle = new Battle();
-        battle.getLogs().add(new BattleLog("Battle created."));
+        battle.getBattleLogs().add(new BattleLog("Battle created."));
         try {
             mapper.writeValue(storageBattleFile, battle);
         } catch (IOException e) {
@@ -102,7 +102,7 @@ public class BattleService {
         }
         Combatant newCombatant = new Combatant(foundGameChar, combatantLabels);
         battle.getCombatants().add(newCombatant);
-        battle.getLogs().add(new BattleLog("Combatant " + newCombatant.getLabel() + " added to Battle."));
+        battle.getBattleLogs().add(new BattleLog("Combatant " + newCombatant.getLabel() + " added to Battle."));
         try {
             mapper.writeValue(storageBattleFile, battle);
             return newCombatant.getLabel();
@@ -129,7 +129,7 @@ public class BattleService {
             throw new LoggingException(LOGGER, "Combatant " + label + " not found in battle.");
         }
         battle.getCombatants().remove(foundCombatant);
-        battle.getLogs().add(new BattleLog("Combatant " + foundCombatant.getLabel() + " removed from Battle."));
+        battle.getBattleLogs().add(new BattleLog("Combatant " + foundCombatant.getLabel() + " removed from Battle."));
         try {
             mapper.writeValue(storageBattleFile, battle);
         } catch (IOException e) {
@@ -171,7 +171,7 @@ public class BattleService {
             throw new LoggingException(LOGGER, "Battle could not be updated. It does not exist.");
         }
 
-        battle.getLogs().add(new BattleLog(message));
+        battle.getBattleLogs().add(new BattleLog(message));
         try {
             mapper.writeValue(storageBattleFile, battle);
         } catch (IOException e) {

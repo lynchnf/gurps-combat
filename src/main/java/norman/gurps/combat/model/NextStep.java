@@ -3,7 +3,7 @@ package norman.gurps.combat.model;
 public class NextStep {
     private Integer round;
     private Integer index;
-    private Phase phase;
+    private CombatPhase combatPhase;
     private Boolean inputNeeded;
     private String message;
 
@@ -23,12 +23,12 @@ public class NextStep {
         this.index = index;
     }
 
-    public Phase getPhase() {
-        return phase;
+    public CombatPhase getCombatPhase() {
+        return combatPhase;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public void setCombatPhase(CombatPhase combatPhase) {
+        this.combatPhase = combatPhase;
     }
 
     public Boolean getInputNeeded() {

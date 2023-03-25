@@ -14,17 +14,17 @@ public class Combatant {
     private Boolean deathCheckFailed;
     private HealthStatus healthStatus;
     private Integer currentMove;
-    private Action action;
+    private ActionType actionType;
     private String targetLabel;
     private String weaponName;
     private String modeName;
-    private Integer effectiveSkillToHit;
-    private Integer rollToHit;
-    private SkillRollResult toHitResult;
+    private Integer toHitEffectiveSkill;
+    private Integer toHitRoll;
+    private ResultType toHitResultType;
     private Integer damageDice;
     private Integer damageAdds;
-    private Integer rollForDamage;
-    private List<ActiveDefense> activeDefenses = new ArrayList<>();
+    private Integer forDamageRoll;
+    private List<CombatDefense> combatDefenses = new ArrayList<>();
 
     public Combatant() {
     }
@@ -111,12 +111,12 @@ public class Combatant {
         this.currentMove = currentMove;
     }
 
-    public Action getAction() {
-        return action;
+    public ActionType getActionType() {
+        return actionType;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
     }
 
     public String getTargetLabel() {
@@ -143,28 +143,28 @@ public class Combatant {
         this.modeName = modeName;
     }
 
-    public Integer getEffectiveSkillToHit() {
-        return effectiveSkillToHit;
+    public Integer getToHitEffectiveSkill() {
+        return toHitEffectiveSkill;
     }
 
-    public void setEffectiveSkillToHit(Integer effectiveSkillToHit) {
-        this.effectiveSkillToHit = effectiveSkillToHit;
+    public void setToHitEffectiveSkill(Integer toHitEffectiveSkill) {
+        this.toHitEffectiveSkill = toHitEffectiveSkill;
     }
 
-    public Integer getRollToHit() {
-        return rollToHit;
+    public Integer getToHitRoll() {
+        return toHitRoll;
     }
 
-    public void setRollToHit(Integer rollToHit) {
-        this.rollToHit = rollToHit;
+    public void setToHitRoll(Integer toHitRoll) {
+        this.toHitRoll = toHitRoll;
     }
 
-    public SkillRollResult getToHitResult() {
-        return toHitResult;
+    public ResultType getToHitResultType() {
+        return toHitResultType;
     }
 
-    public void setToHitResult(SkillRollResult toHitResult) {
-        this.toHitResult = toHitResult;
+    public void setToHitResultType(ResultType toHitResultType) {
+        this.toHitResultType = toHitResultType;
     }
 
     public Integer getDamageDice() {
@@ -183,19 +183,19 @@ public class Combatant {
         this.damageAdds = damageAdds;
     }
 
-    public Integer getRollForDamage() {
-        return rollForDamage;
+    public Integer getForDamageRoll() {
+        return forDamageRoll;
     }
 
-    public void setRollForDamage(Integer rollForDamage) {
-        this.rollForDamage = rollForDamage;
+    public void setForDamageRoll(Integer forDamageRoll) {
+        this.forDamageRoll = forDamageRoll;
     }
 
-    public List<ActiveDefense> getActiveDefenses() {
-        return activeDefenses;
+    public List<CombatDefense> getCombatDefenses() {
+        return combatDefenses;
     }
 
-    public void setActiveDefenses(List<ActiveDefense> activeDefenses) {
-        this.activeDefenses = activeDefenses;
+    public void setCombatDefenses(List<CombatDefense> combatDefenses) {
+        this.combatDefenses = combatDefenses;
     }
 }

@@ -2,9 +2,9 @@ package norman.gurps.combat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.combat.exception.LoggingException;
-import norman.gurps.combat.model.Armor;
+import norman.gurps.combat.model.ArmorPiece;
 import norman.gurps.combat.model.GameChar;
-import norman.gurps.combat.model.Location;
+import norman.gurps.combat.model.HitLocation;
 import norman.gurps.combat.model.MeleeWeapon;
 import norman.gurps.combat.model.MeleeWeaponMode;
 import norman.gurps.combat.model.ParryType;
@@ -129,9 +129,9 @@ public class GameCharService {
             }
         }
 
-        Set<Location> locations = new HashSet<>();
-        for (Armor armor : gameChar.getArmorList()) {
-            errors.addAll(validateArmor(armor, locations));
+        Set<HitLocation> hitLocations = new HashSet<>();
+        for (ArmorPiece armorPiece : gameChar.getArmorPieces()) {
+            errors.addAll(validateArmor(armorPiece, hitLocations));
         }
 
         return errors;
@@ -155,11 +155,11 @@ public class GameCharService {
             errors.add("Skill for weapon " + weapon.getName() + " may not be less than zero.");
         }
 
-        if (weapon.getModes().isEmpty()) {
+        if (weapon.getMeleeWeaponModes().isEmpty()) {
             errors.add("Weapon " + weapon.getName() + " must have at least one mode.");
         } else {
             Set<String> modeNames = new HashSet<>();
-            for (MeleeWeaponMode mode : weapon.getModes()) {
+            for (MeleeWeaponMode mode : weapon.getMeleeWeaponModes()) {
                 String weaponName = weapon.getName();
                 errors.addAll(validateMeleeWeaponMode(mode, modeNames, weaponName));
             }
@@ -259,22 +259,22 @@ public class GameCharService {
         return errors;
     }
 
-    private List<String> validateArmor(Armor armor, Set<Location> armorLocations) {
+    private List<String> validateArmor(ArmorPiece armorPiece, Set<HitLocation> armorHitLocations) {
         List<String> errors = new ArrayList<>();
-
-        if (armor.getLocation() == null) {
+        if (armorPiece.getHitLocation() == null) {
             errors.add("Armor location may not be blank.");
         } else {
-            if (armorLocations.contains(armor.getLocation())) {
-                errors.add("Armor location " + armor.getLocation() + " is not unique.");
+            if (armorHitLocations.contains(armorPiece.getHitLocation())) {
+                errors.add("Armor location " + armorPiece.getHitLocation() + " is not unique.");
             }
-            armorLocations.add(armor.getLocation());
+            armorHitLocations.add(armorPiece.getHitLocation());
         }
 
-        if (armor.getDamageResistance() == null) {
-            errors.add("Damage resistance for armor location " + armor.getLocation() + " may not be blank.");
-        } else if (armor.getDamageResistance() < 0) {
-            errors.add("Damage resistance for armor location " + armor.getLocation() + " may not be less than zero.");
+        if (armorPiece.getDamageResistance() == null) {
+            errors.add("Damage resistance for armor location " + armorPiece.getHitLocation() + " may not be blank.");
+        } else if (armorPiece.getDamageResistance() < 0) {
+            errors.add("Damage resistance for armor location " + armorPiece.getHitLocation() +
+                    " may not be less than zero.");
         }
 
         return errors;

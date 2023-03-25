@@ -1,6 +1,6 @@
 package norman.gurps.combat.model;
 
-public enum Location {
+public enum HitLocation {
     //@formatter:off
     SKULL,
     EYES,

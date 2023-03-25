@@ -3,10 +3,10 @@ package norman.gurps.combat.controller;
 import norman.gurps.combat.controller.request.NextStepRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.exception.LoggingException;
-import norman.gurps.combat.model.Action;
+import norman.gurps.combat.model.ActionType;
+import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.DefenseType;
 import norman.gurps.combat.model.NextStep;
-import norman.gurps.combat.model.Phase;
 import norman.gurps.combat.service.CombatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +45,8 @@ public class CombatController {
         LOGGER.debug("Taking the next step in combat.");
         BasicResponse resp = new BasicResponse();
 
-        Phase phase = req.getPhase();
-        Action action = req.getAction();
+        CombatPhase combatPhase = req.getCombatPhase();
+        ActionType actionType = req.getActionType();
         String targetLabel = req.getTargetLabel();
         String weaponName = req.getWeaponName();
         String modeName = req.getModeName();
@@ -61,13 +61,13 @@ public class CombatController {
         boolean inputNeeded;
         try {
             do {
-                NextStep nextStep = service.nextStep(phase, action, targetLabel, weaponName, modeName, rollToHit,
-                        defenseType, defendingItemName, rollToDefend, rollForDamage, rollForDeathCheck,
+                NextStep nextStep = service.nextStep(combatPhase, actionType, targetLabel, weaponName, modeName,
+                        rollToHit, defenseType, defendingItemName, rollToDefend, rollForDamage, rollForDeathCheck,
                         rollForUnconsciousnessCheck);
                 if (nextStep.getMessage() != null) {
                     resp.getMessages().add(nextStep.getMessage());
                 }
-                phase = nextStep.getPhase();
+                combatPhase = nextStep.getCombatPhase();
                 inputNeeded = nextStep.getInputNeeded();
             } while (!inputNeeded);
             resp.setSuccessful(true);

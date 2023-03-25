@@ -1,15 +1,15 @@
 package norman.gurps.combat.model;
 
-public class Armor {
-    private Location location;
+public class ArmorPiece {
+    private HitLocation hitLocation;
     private Integer damageResistance;
 
-    public Location getLocation() {
-        return location;
+    public HitLocation getHitLocation() {
+        return hitLocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setHitLocation(HitLocation hitLocation) {
+        this.hitLocation = hitLocation;
     }
 
     public Integer getDamageResistance() {

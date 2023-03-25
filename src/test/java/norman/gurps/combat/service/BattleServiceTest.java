@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import norman.gurps.combat.TestHelper;
 import norman.gurps.combat.model.Battle;
 import norman.gurps.combat.model.BattleLog;
+import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.Combatant;
 import norman.gurps.combat.model.GameChar;
 import norman.gurps.combat.model.NextStep;
-import norman.gurps.combat.model.Phase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -58,7 +58,7 @@ class BattleServiceTest {
         Battle battle = mapper.readValue(tempFile, Battle.class);
         assertEquals(0, battle.getCombatants().size());
         assertNull(battle.getNextStep());
-        assertEquals(1, battle.getLogs().size());
+        assertEquals(1, battle.getBattleLogs().size());
     }
 
     @Test
@@ -82,7 +82,7 @@ class BattleServiceTest {
         // Create empty battle in storage.
         ObjectMapper mapper = new ObjectMapper();
         Battle battle = new Battle();
-        battle.getLogs().add(new BattleLog("Battle created."));
+        battle.getBattleLogs().add(new BattleLog("Battle created."));
         mapper.writeValue(tempFile, battle);
 
         String label = service.addCharToBattle("Bob the Example");
@@ -93,7 +93,7 @@ class BattleServiceTest {
         assertEquals("Bob the Example", battle1.getCombatants().get(0).getLabel());
         assertEquals("Bob the Example", battle1.getCombatants().get(0).getGameChar().getName());
         assertNull(battle1.getNextStep());
-        assertEquals(2, battle1.getLogs().size());
+        assertEquals(2, battle1.getBattleLogs().size());
     }
 
     @Test
@@ -108,8 +108,8 @@ class BattleServiceTest {
         Set<String> existingLabels = new HashSet<>();
         Combatant combatant = new Combatant(testGameChar, existingLabels);
         battle.getCombatants().add(combatant);
-        battle.getLogs().add(new BattleLog("Battle created."));
-        battle.getLogs().add(new BattleLog("Combatant Test Character added to Battle."));
+        battle.getBattleLogs().add(new BattleLog("Battle created."));
+        battle.getBattleLogs().add(new BattleLog("Combatant Test Character added to Battle."));
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
@@ -121,7 +121,7 @@ class BattleServiceTest {
         assertEquals("Bob the Example 2", battle1.getCombatants().get(1).getLabel());
         assertEquals("Bob the Example", battle1.getCombatants().get(1).getGameChar().getName());
         assertNull(battle1.getNextStep());
-        assertEquals(3, battle1.getLogs().size());
+        assertEquals(3, battle1.getBattleLogs().size());
     }
 
     @Test
@@ -131,8 +131,8 @@ class BattleServiceTest {
         Set<String> existingLabels = new HashSet<>();
         Combatant combatant = new Combatant(testGameChar, existingLabels);
         battle.getCombatants().add(combatant);
-        battle.getLogs().add(new BattleLog("Battle created."));
-        battle.getLogs().add(new BattleLog("Combatant Test Character added to Battle."));
+        battle.getBattleLogs().add(new BattleLog("Battle created."));
+        battle.getBattleLogs().add(new BattleLog("Combatant Test Character added to Battle."));
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
@@ -142,7 +142,7 @@ class BattleServiceTest {
         Battle battle1 = mapper.readValue(tempFile, Battle.class);
         assertEquals(0, battle1.getCombatants().size());
         assertNull(battle1.getNextStep());
-        assertEquals(3, battle1.getLogs().size());
+        assertEquals(3, battle1.getBattleLogs().size());
     }
 
     @Test
@@ -152,8 +152,8 @@ class BattleServiceTest {
         Set<String> existingLabels = new HashSet<>();
         Combatant combatant = new Combatant(testGameChar, existingLabels);
         battle.getCombatants().add(combatant);
-        battle.getLogs().add(new BattleLog("Test Log"));
-        battle.getLogs().add(new BattleLog("Another Test Log"));
+        battle.getBattleLogs().add(new BattleLog("Test Log"));
+        battle.getBattleLogs().add(new BattleLog("Another Test Log"));
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
@@ -161,7 +161,7 @@ class BattleServiceTest {
 
         assertEquals(1, battle1.getCombatants().size());
         assertNull(battle1.getNextStep());
-        assertEquals(2, battle1.getLogs().size());
+        assertEquals(2, battle1.getBattleLogs().size());
     }
 
     @Test
@@ -174,13 +174,13 @@ class BattleServiceTest {
         NextStep nextStep = new NextStep();
         nextStep.setRound(1);
         nextStep.setIndex(2);
-        nextStep.setPhase(Phase.END);
+        nextStep.setCombatPhase(CombatPhase.END);
         nextStep.setInputNeeded(true);
         nextStep.setMessage("Test Message");
         battle.setNextStep(nextStep);
-        battle.getLogs().add(new BattleLog("Test Log 1"));
-        battle.getLogs().add(new BattleLog("Test Log 2"));
-        battle.getLogs().add(new BattleLog("Test Log 3"));
+        battle.getBattleLogs().add(new BattleLog("Test Log 1"));
+        battle.getBattleLogs().add(new BattleLog("Test Log 2"));
+        battle.getBattleLogs().add(new BattleLog("Test Log 3"));
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(tempFile, battle);
 
@@ -189,7 +189,7 @@ class BattleServiceTest {
         battle1.getCombatants().get(0).setCurrentDamage(4);
         battle1.getNextStep().setRound(2);
         battle1.getNextStep().setIndex(3);
-        battle1.getNextStep().setPhase(Phase.BEGIN);
+        battle1.getNextStep().setCombatPhase(CombatPhase.BEGIN);
         battle1.getNextStep().setInputNeeded(false);
         battle1.getNextStep().setMessage("Different Test Message");
 
@@ -200,9 +200,9 @@ class BattleServiceTest {
         assertEquals(4, (int) battle2.getCombatants().get(0).getCurrentDamage());
         assertEquals(2, (int) battle2.getNextStep().getRound());
         assertEquals(3, (int) battle2.getNextStep().getIndex());
-        assertEquals(Phase.BEGIN, battle2.getNextStep().getPhase());
+        assertEquals(CombatPhase.BEGIN, battle2.getNextStep().getCombatPhase());
         assertFalse(battle2.getNextStep().getInputNeeded());
         assertEquals("Different Test Message", battle2.getNextStep().getMessage());
-        assertEquals(4, battle2.getLogs().size());
+        assertEquals(4, battle2.getBattleLogs().size());
     }
 }

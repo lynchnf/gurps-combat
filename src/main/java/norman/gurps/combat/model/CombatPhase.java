@@ -1,6 +1,6 @@
 package norman.gurps.combat.model;
 
-public enum Phase {
+public enum CombatPhase {
     //@formatter:off
     BEGIN,
     PROMPT_FOR_UNCONSCIOUSNESS_CHECK,

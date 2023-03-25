@@ -68,7 +68,7 @@ class BattleControllerTest {
     void showBattle() {
         // Mock service.
         Battle battle = new Battle();
-        battle.getLogs().add(new BattleLog("Test Log"));
+        battle.getBattleLogs().add(new BattleLog("Test Log"));
         when(service.getBattle()).thenReturn(battle);
 
         BattleResponse resp = controller.showBattle();
@@ -77,6 +77,6 @@ class BattleControllerTest {
         assertEquals(1, resp.getMessages().size());
         assertEquals(0, resp.getBattle().getCombatants().size());
         assertNull(resp.getBattle().getNextStep());
-        assertEquals(1, resp.getBattle().getLogs().size());
+        assertEquals(1, resp.getBattle().getBattleLogs().size());
     }
 }

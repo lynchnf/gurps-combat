@@ -1,12 +1,12 @@
 package norman.gurps.combat.controller.request;
 
-import norman.gurps.combat.model.Action;
+import norman.gurps.combat.model.ActionType;
+import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.DefenseType;
-import norman.gurps.combat.model.Phase;
 
 public class NextStepRequest {
-    private Phase phase;
-    private Action action;
+    private CombatPhase combatPhase;
+    private ActionType actionType;
     private String targetLabel;
     private String weaponName;
     private String modeName;
@@ -18,20 +18,20 @@ public class NextStepRequest {
     private Integer rollForDeathCheck;
     private Integer rollForUnconsciousnessCheck;
 
-    public Phase getPhase() {
-        return phase;
+    public CombatPhase getCombatPhase() {
+        return combatPhase;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public void setCombatPhase(CombatPhase combatPhase) {
+        this.combatPhase = combatPhase;
     }
 
-    public Action getAction() {
-        return action;
+    public ActionType getActionType() {
+        return actionType;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
     }
 
     public String getTargetLabel() {

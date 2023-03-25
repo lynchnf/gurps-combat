@@ -8,8 +8,8 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 * Handle critical results.
 * Allow edit of combatants in the middle of combatant.
 * Handle Ranged weapons.
-* Allow attack to targeted hit location.
-* Allow attack to randomly chosen hit location.
+* Allow attack to targeted hit hitLocation.
+* Allow attack to randomly chosen hit hitLocation.
 * Handle natural DR.
 * Allow other actions:
     * Aim a Ranged Attack
@@ -35,7 +35,8 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 * Rename SkillRollResult to ResultType.
 * Rename Phase to CombatPhase.
 * Rename ActiveDefense to CombatantDefense.
-* Create class CombatantAttack and move attack related properties to it.
 * Rename Armor to ArmorPiece.
-* Add name to ArmorPiece and change location to a list.
+*
+* Create class CombatantAttack and move attack related properties to it.
+* Add name to ArmorPiece and change hitLocation to a list.
 * Move all text messages and logs to a message file.
