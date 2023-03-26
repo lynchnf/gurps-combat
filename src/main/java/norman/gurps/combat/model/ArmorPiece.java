@@ -1,15 +1,27 @@
 package norman.gurps.combat.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ArmorPiece {
-    private HitLocation hitLocation;
+    private String name;
+    private List<HitLocation> hitLocations = new ArrayList<>();
     private Integer damageResistance;
 
-    public HitLocation getHitLocation() {
-        return hitLocation;
+    public String getName() {
+        return name;
     }
 
-    public void setHitLocation(HitLocation hitLocation) {
-        this.hitLocation = hitLocation;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<HitLocation> getHitLocations() {
+        return hitLocations;
+    }
+
+    public void setHitLocations(List<HitLocation> hitLocations) {
+        this.hitLocations = hitLocations;
     }
 
     public Integer getDamageResistance() {

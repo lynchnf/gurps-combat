@@ -95,6 +95,12 @@ public class GameCharService {
             errors.add("Basic move may not be less than zero.");
         }
 
+        if (gameChar.getDamageResistance() == null) {
+            errors.add("Natural damage resistance may not be blank.");
+        } else if (gameChar.getDamageResistance() < 0) {
+            errors.add("Natural damage resistance may not be less than zero.");
+        }
+
         if (gameChar.getEncumbranceLevel() == null) {
             errors.add("Encumbrance level may not be blank.");
         } else if (gameChar.getEncumbranceLevel() < 0 || gameChar.getEncumbranceLevel() > 4) {
@@ -129,9 +135,9 @@ public class GameCharService {
             }
         }
 
-        Set<HitLocation> hitLocations = new HashSet<>();
+        Set<String> armorPieceNames = new HashSet<>();
         for (ArmorPiece armorPiece : gameChar.getArmorPieces()) {
-            errors.addAll(validateArmor(armorPiece, hitLocations));
+            errors.addAll(validateArmor(armorPiece, armorPieceNames));
         }
 
         return errors;
@@ -220,12 +226,16 @@ public class GameCharService {
         if (mode.getReaches().isEmpty()) {
             errors.add("Weapon & mode " + weaponName + "/" + mode.getName() + " must have at least one reach.");
         } else {
+            Set<Integer> reachSet = new HashSet<>();
             for (Integer reach : mode.getReaches()) {
                 if (reach < 0) {
-                    errors.add("All reaches for weapon & mode " + weaponName + "/" + mode.getName() +
+                    errors.add("Reach " + reach + " for weapon & mode " + weaponName + "/" + mode.getName() +
                             " must be zero or greater.");
-                    break;
+                } else if (reachSet.contains(reach)) {
+                    errors.add("Reach " + reach + " for weapon & mode " + weaponName + "/" + mode.getName() +
+                            " is not unique.");
                 }
+                reachSet.add(reach);
             }
         }
 
@@ -245,36 +255,49 @@ public class GameCharService {
         }
 
         if (shield.getSkill() == null) {
-            errors.add("Shield skill may not be blank.");
+            errors.add("Skill for shield " + shield.getName() + " may not be blank.");
         } else if (shield.getSkill() < 0) {
-            errors.add("Shield skill may not be less than zero.");
+            errors.add("Skill for shield " + shield.getName() + " may not be less than zero.");
         }
 
         if (shield.getDefenseBonus() == null) {
-            errors.add("Shield defense bonus may not be blank.");
+            errors.add("Defense bonus for shield " + shield.getName() + " may not be blank.");
         } else if (shield.getDefenseBonus() < 0) {
-            errors.add("Shield defense bonus may not be less than zero.");
+            errors.add("Defense bonus for shield " + shield.getName() + " may not be less than zero.");
         }
 
         return errors;
     }
 
-    private List<String> validateArmor(ArmorPiece armorPiece, Set<HitLocation> armorHitLocations) {
+    private List<String> validateArmor(ArmorPiece armorPiece, Set<String> armorPieceNames) {
         List<String> errors = new ArrayList<>();
-        if (armorPiece.getHitLocation() == null) {
-            errors.add("Armor location may not be blank.");
+
+        if (StringUtils.isBlank(armorPiece.getName())) {
+            errors.add("Armor piece name may not be blank.");
         } else {
-            if (armorHitLocations.contains(armorPiece.getHitLocation())) {
-                errors.add("Armor location " + armorPiece.getHitLocation() + " is not unique.");
+            if (armorPieceNames.contains(armorPiece.getName())) {
+                errors.add("Armor piece name " + armorPiece.getName() + " is not unique.");
             }
-            armorHitLocations.add(armorPiece.getHitLocation());
+            armorPieceNames.add(armorPiece.getName());
+        }
+
+        if (armorPiece.getHitLocations().isEmpty()) {
+            errors.add("Armor piece " + armorPiece.getName() + " must have at least one hit location.");
+        } else {
+            Set<HitLocation> hitLocationSet = new HashSet<>();
+            for (HitLocation hitLocation : armorPiece.getHitLocations()) {
+                if (hitLocationSet.contains(hitLocation)) {
+                    errors.add("Hit location " + hitLocation + " for armor piece " + armorPiece.getName() +
+                            " is not unique.");
+                }
+                hitLocationSet.add(hitLocation);
+            }
         }
 
         if (armorPiece.getDamageResistance() == null) {
-            errors.add("Damage resistance for armor location " + armorPiece.getHitLocation() + " may not be blank.");
+            errors.add("Damage resistance for armor piece " + armorPiece.getName() + " may not be blank.");
         } else if (armorPiece.getDamageResistance() < 0) {
-            errors.add("Damage resistance for armor location " + armorPiece.getHitLocation() +
-                    " may not be less than zero.");
+            errors.add("Damage resistance for armor piece " + armorPiece.getName() + " may not be less than zero.");
         }
 
         return errors;

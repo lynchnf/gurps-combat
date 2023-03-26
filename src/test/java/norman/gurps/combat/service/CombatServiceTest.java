@@ -182,7 +182,7 @@ class CombatServiceTest {
         verify(battleService).updateBattle(battleCaptor.capture(), anyString());
         assertEquals("Grunt", battleCaptor.getValue().getCombatants().get(0).getTargetLabel());
         assertEquals("Broadsword", battleCaptor.getValue().getCombatants().get(0).getWeaponName());
-        assertEquals("swing", battleCaptor.getValue().getCombatants().get(0).getModeName());
+        assertEquals("swing", battleCaptor.getValue().getCombatants().get(0).getWeaponModeName());
     }
 
     @Test
@@ -192,7 +192,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         battle.getCombatants().add(combatant1);
         battle.getCombatants().add(TestHelper.getCombatant(testGameChar2));
         NextStep nextStep1 = new NextStep();
@@ -222,7 +222,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         battle.getCombatants().add(combatant1);
         battle.getCombatants().add(TestHelper.getCombatant(testGameChar2));
@@ -253,7 +253,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         battle.getCombatants().add(combatant1);
         battle.getCombatants().add(TestHelper.getCombatant(testGameChar2));
@@ -284,7 +284,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -315,7 +315,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -350,7 +350,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -388,7 +388,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -426,7 +426,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -464,7 +464,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         battle.getCombatants().add(combatant1);
@@ -504,7 +504,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -549,7 +549,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -594,7 +594,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -639,7 +639,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -684,7 +684,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -729,7 +729,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -774,7 +774,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -821,7 +821,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -870,7 +870,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -919,7 +919,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);
@@ -1029,7 +1029,7 @@ class CombatServiceTest {
         combatant1.setActionType(ActionType.ATTACK);
         combatant1.setTargetLabel("Grunt");
         combatant1.setWeaponName("Broadsword");
-        combatant1.setModeName("swing");
+        combatant1.setWeaponModeName("swing");
         combatant1.setToHitEffectiveSkill(14);
         combatant1.setToHitRoll(13);
         combatant1.setDamageDice(2);

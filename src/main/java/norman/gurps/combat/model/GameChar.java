@@ -12,6 +12,7 @@ public class GameChar {
     private Integer hitPoints;
     private Double basicSpeed;
     private Integer basicMove;
+    private Integer damageResistance;
     private Integer encumbranceLevel;
     private Integer unconsciousnessCheck;
     private Integer deathCheck;
@@ -81,6 +82,14 @@ public class GameChar {
 
     public void setBasicMove(Integer basicMove) {
         this.basicMove = basicMove;
+    }
+
+    public Integer getDamageResistance() {
+        return damageResistance;
+    }
+
+    public void setDamageResistance(Integer damageResistance) {
+        this.damageResistance = damageResistance;
     }
 
     public Integer getEncumbranceLevel() {

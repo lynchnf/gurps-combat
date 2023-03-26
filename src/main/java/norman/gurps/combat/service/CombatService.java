@@ -52,6 +52,7 @@ public class CombatService {
         for (Combatant combatant : battle.getCombatants()) {
             combatant.setCurrentDamage(0);
             combatant.setPreviousDamage(0);
+            combatant.setUnconsciousnessCheckFailed(false);
             combatant.setNbrOfDeathChecksNeeded(0);
             combatant.setDeathCheckFailed(false);
             HealthStatus healthStatus = HealthStatus.ALIVE;
@@ -60,6 +61,12 @@ public class CombatService {
             int encumbranceLevel = combatant.getGameChar().getEncumbranceLevel();
             int currentMove = getCurrentMove(healthStatus, basicMove, encumbranceLevel);
             combatant.setCurrentMove(currentMove);
+            int defenseBonus = 0;
+            if (!combatant.getGameChar().getShields().isEmpty()) {
+                defenseBonus = combatant.getGameChar().getShields().get(0).getDefenseBonus();
+            }
+            combatant.setDefenseBonus(defenseBonus);
+            combatant.setShockPenalty(0);
             combatant.setActionType(ActionType.DO_NOTHING);
         }
 
@@ -72,8 +79,9 @@ public class CombatService {
     }
 
     public NextStep nextStep(CombatPhase combatPhase, ActionType actionType, String targetLabel, String weaponName,
-            String modeName, Integer toHitRoll, DefenseType defenseType, String defendingItemName, Integer toDefendRoll,
-            Integer forDamageRoll, Integer forDeathCheckRoll, Integer forUnconsciousnessCheckRoll) {
+            String weaponModeName, Integer toHitRoll, DefenseType defenseType, String defendingItemName,
+            Integer toDefendRoll, Integer forDamageRoll, Integer forDeathCheckRoll,
+            Integer forUnconsciousnessCheckRoll) {
         LOGGER.debug("Next step in combat.");
         Battle battle = battleService.getBattle();
         if (battle.getNextStep() == null) {
@@ -136,12 +144,12 @@ public class CombatService {
                         "Combatant " + combatant.getLabel() + " must chose a target and weapon/mode.");
                 break;
             case RESOLVE_TARGET_AND_WEAPON:
-                validateResolveTargetAndWeapon(battle, combatant, targetLabel, weaponName, modeName);
-                nextStep = doResolveTargetAndWeapon(round, index, combatant, targetLabel, weaponName, modeName);
+                validateResolveTargetAndWeapon(battle, combatant, targetLabel, weaponName, weaponModeName);
+                nextStep = doResolveTargetAndWeapon(round, index, combatant, targetLabel, weaponName, weaponModeName);
                 battle.setNextStep(nextStep);
                 battleService.updateBattle(battle,
                         "Combatant " + combatant.getLabel() + " has chosen to attack " + targetLabel + " with " +
-                                weaponName + "/" + modeName + ".");
+                                weaponName + "/" + weaponModeName + ".");
                 break;
             case PROMPT_FOR_TO_HIT:
                 nextStep = doPromptForToHit(round, index, combatant);
@@ -219,17 +227,56 @@ public class CombatService {
     }
 
     private NextStep doBegin(int round, int index, Combatant combatant) {
-        HealthStatus healthStatus = combatant.getHealthStatus();
+        int hitPoints = combatant.getGameChar().getHitPoints();
+        int basicMove = combatant.getGameChar().getBasicMove();
+        int encumbranceLevel = combatant.getGameChar().getEncumbranceLevel();
+        int currentDamage = combatant.getCurrentDamage();
+        int previousDamage = combatant.getPreviousDamage();
+        int remainingHitPoints = hitPoints - currentDamage - previousDamage;
+        boolean unconsciousnessCheckFailed = combatant.getUnconsciousnessCheckFailed();
+        Boolean deathCheckFailed = combatant.getDeathCheckFailed();
+        int defenseBonus = combatant.getDefenseBonus();
+
+        int hitLevel = getHitLevel(hitPoints, remainingHitPoints);
+        HealthStatus healthStatus = getHealthStatus(hitLevel, unconsciousnessCheckFailed, deathCheckFailed);
+        int currentMove = getCurrentMove(healthStatus, basicMove, encumbranceLevel);
+        int shockPenalty = getShockPenalty(currentDamage);
+
+        combatant.setCurrentDamage(0);
+        combatant.setPreviousDamage(currentDamage + previousDamage);
+        combatant.setHealthStatus(healthStatus);
+        combatant.setCurrentMove(currentMove);
+        combatant.setShockPenalty(shockPenalty);
+
+        int dodge = currentMove + 3 + defenseBonus;
+
         CombatPhase combatPhase;
         String message;
-        if (healthStatus == HealthStatus.ALIVE || healthStatus == HealthStatus.REELING) {
+        if (healthStatus == HealthStatus.ALIVE) {
             combatPhase = CombatPhase.PROMPT_FOR_ACTION;
             message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + healthStatus + ".";
+            if (shockPenalty < 0) {
+                message += " He/she is temporarily at " + shockPenalty +
+                        " to all DX and IQ based skilled because of shock.";
+            }
+        } else if (healthStatus == HealthStatus.REELING) {
+            combatPhase = CombatPhase.PROMPT_FOR_ACTION;
+            message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + healthStatus +
+                    ". His/her current move is reduced to " + currentMove + " and dodge is reduced " + dodge + ".";
+            if (shockPenalty < 0) {
+                message += " He/she is temporarily at " + shockPenalty +
+                        " to all DX and IQ based skilled because of shock.";
+            }
         } else if (healthStatus == HealthStatus.BARELY || healthStatus == HealthStatus.ALMOST ||
                 healthStatus == HealthStatus.ALMOST2 || healthStatus == HealthStatus.ALMOST3 ||
                 healthStatus == HealthStatus.ALMOST4) {
             combatPhase = CombatPhase.PROMPT_FOR_UNCONSCIOUSNESS_CHECK;
-            message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + healthStatus + ".";
+            message = "It is now " + combatant.getLabel() + "'s turn. He/she is " + healthStatus +
+                    ". His/her current move is reduced to " + currentMove + " and dodge is reduced " + dodge + ".";
+            if (shockPenalty < 0) {
+                message += " He/she is temporarily at " + shockPenalty +
+                        " to all DX and IQ based skilled because of shock.";
+            }
         } else {
             combatPhase = CombatPhase.END;
             message = combatant.getLabel() + " is " + healthStatus + ". His/her turn is being skipped.";
@@ -239,7 +286,7 @@ public class CombatService {
         combatant.setActionType(null);
         combatant.setTargetLabel(null);
         combatant.setWeaponName(null);
-        combatant.setModeName(null);
+        combatant.setWeaponModeName(null);
         combatant.setToHitEffectiveSkill(null);
         combatant.setToHitRoll(null);
         combatant.setToHitResultType(null);
@@ -259,9 +306,9 @@ public class CombatService {
     }
 
     private NextStep doPromptForUnconsciousnessCheck(int round, int index, Combatant combatant) {
-        int check = combatant.getGameChar().getUnconsciousnessCheck();
-        String message =
-                combatant.getLabel() + " needs to make a roll to stay conscious. Please roll 3d (need " + check + ").";
+        int unconsciousnessCheck = combatant.getGameChar().getUnconsciousnessCheck();
+        String message = combatant.getLabel() + " needs to make a roll to stay conscious. Please roll 3d (need " +
+                unconsciousnessCheck + ").";
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -301,15 +348,15 @@ public class CombatService {
 
     private NextStep doPromptForToHit(int round, int index, Combatant combatant) {
         String weaponName = combatant.getWeaponName();
-        MeleeWeapon weapon = getMeleeWeapon(weaponName, combatant.getGameChar().getMeleeWeapons());
-        int skill = weapon.getSkill();
+        MeleeWeapon weapon = getWeapon(weaponName, combatant.getGameChar().getMeleeWeapons());
+        int weaponSkill = weapon.getSkill() + combatant.getShockPenalty();
         if (weapon.getMinStrength() > combatant.getGameChar().getStrength()) {
-            skill -= (weapon.getMinStrength() - combatant.getGameChar().getStrength());
+            weaponSkill -= (weapon.getMinStrength() - combatant.getGameChar().getStrength());
         }
-        String message = combatant.getLabel() + ", please roll 3d (need " + skill + " to hit).";
+        String message = combatant.getLabel() + ", please roll 3d (need " + weaponSkill + " to hit).";
 
         // Update combatant.
-        combatant.setToHitEffectiveSkill(skill);
+        combatant.setToHitEffectiveSkill(weaponSkill);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -337,30 +384,27 @@ public class CombatService {
     private NextStep doPromptForToDefend(int round, int index, Combatant target) {
         int size = target.getCombatDefenses().size();
         CombatDefense combatDefense = target.getCombatDefenses().get(size - 1);
-        int skill = 0;
+        int defenseSkill = 0;
         DefenseType defenseType = combatDefense.getDefenseType();
         if (defenseType == DefenseType.PARRY) {
-            MeleeWeapon weapon = getMeleeWeapon(combatDefense.getDefendingItemName(),
+            MeleeWeapon weapon = getWeapon(combatDefense.getDefendingItemName(),
                     target.getGameChar().getMeleeWeapons());
             int weaponSkill = weapon.getSkill();
             if (weapon.getMinStrength() > target.getGameChar().getStrength()) {
                 weaponSkill -= (weapon.getMinStrength() - target.getGameChar().getStrength());
             }
-            skill = (weaponSkill / 2) + 3 + weapon.getParryModifier();
+            defenseSkill = (weaponSkill / 2) + 3 + weapon.getParryModifier() + target.getDefenseBonus();
         } else if (defenseType == DefenseType.BLOCK) {
             Shield shield = getShield(combatDefense.getDefendingItemName(), target.getGameChar().getShields());
             int shieldSkill = shield.getSkill();
-            skill = (shieldSkill / 2) + 3;
+            defenseSkill = (shieldSkill / 2) + 3 + target.getDefenseBonus();
         } else if (defenseType == DefenseType.DODGE) {
-            skill = target.getCurrentMove() + 3;
+            defenseSkill = target.getCurrentMove() + 3 + target.getDefenseBonus();
         }
-        if (!target.getGameChar().getShields().isEmpty()) {
-            skill += target.getGameChar().getShields().get(0).getDefenseBonus();
-        }
-        String message = target.getLabel() + ", please roll 3d (need " + skill + " to defend).";
+        String message = target.getLabel() + ", please roll 3d (need " + defenseSkill + " to defend).";
 
         // Update target.
-        combatDefense.setToDefendEffectiveSkill(skill);
+        combatDefense.setToDefendEffectiveSkill(defenseSkill);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -373,14 +417,15 @@ public class CombatService {
     }
 
     private NextStep doPromptForDamage(int round, int index, Combatant combatant) {
-        MeleeWeapon weapon = getMeleeWeapon(combatant.getWeaponName(), combatant.getGameChar().getMeleeWeapons());
-        MeleeWeaponMode mode = getWeaponMode(combatant.getModeName(), weapon.getMeleeWeaponModes());
-        String dmgDesc = getDamageDescription(mode.getDamageDice(), mode.getDamageAdds(), mode.getDamageType());
-        String message = combatant.getLabel() + ", please roll " + dmgDesc + " damage.";
+        MeleeWeapon weapon = getWeapon(combatant.getWeaponName(), combatant.getGameChar().getMeleeWeapons());
+        MeleeWeaponMode weaponMode = getWeaponMode(combatant.getWeaponModeName(), weapon.getMeleeWeaponModes());
+        String damageDescription = getDamageDescription(weaponMode.getDamageDice(), weaponMode.getDamageAdds(),
+                weaponMode.getDamageType());
+        String message = combatant.getLabel() + ", please roll " + damageDescription + " damage.";
 
         // Update combatant.
-        combatant.setDamageDice(mode.getDamageDice());
-        combatant.setDamageAdds(mode.getDamageAdds());
+        combatant.setDamageDice(weaponMode.getDamageDice());
+        combatant.setDamageAdds(weaponMode.getDamageAdds());
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -393,14 +438,15 @@ public class CombatService {
     }
 
     private NextStep doPromptForDeathCheck(int round, int index, Combatant target) {
-        int check = target.getGameChar().getDeathCheck();
-        int nbr = target.getNbrOfDeathChecksNeeded();
+        int deathCheck = target.getGameChar().getDeathCheck();
+        int nbrOfDeathChecksNeeded = target.getNbrOfDeathChecksNeeded();
         String message;
-        if (nbr > 1) {
-            message = target.getLabel() + " needs to make " + nbr + " rolls to avoid death. Please roll 3d (need " +
-                    check + ").";
+        if (nbrOfDeathChecksNeeded > 1) {
+            message = target.getLabel() + " needs to make " + nbrOfDeathChecksNeeded +
+                    " rolls to avoid death. Please roll 3d (need " + deathCheck + ").";
         } else {
-            message = target.getLabel() + " needs to make a roll to avoid death. Please roll 3d (need " + check + ").";
+            message = target.getLabel() + " needs to make a roll to avoid death. Please roll 3d (need " + deathCheck +
+                    ").";
         }
 
         // Create next step.
@@ -415,22 +461,22 @@ public class CombatService {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void validateResolveUnconsciousnessCheck(Integer rollForUnconsciousnessCheck) {
+    private void validateResolveUnconsciousnessCheck(Integer forUnconsciousnessCheckRoll) {
         // Validate roll.
-        if (rollForUnconsciousnessCheck == null) {
+        if (forUnconsciousnessCheckRoll == null) {
             throw new LoggingException(LOGGER, "Value rolled to remain conscious may not be blank.");
         }
     }
 
-    private void validateResolveActionType(ActionType action) {
+    private void validateResolveActionType(ActionType actionType) {
         // Validate action.
-        if (action == null) {
-            throw new LoggingException(LOGGER, "ActionType may not be blank.");
+        if (actionType == null) {
+            throw new LoggingException(LOGGER, "Action may not be blank.");
         }
     }
 
     private void validateResolveTargetAndWeapon(Battle battle, Combatant combatant, String targetLabel,
-            String weaponName, String modeName) {
+            String weaponName, String weaponModeName) {
         // Validate target.
         if (targetLabel == null) {
             throw new LoggingException(LOGGER, "Target may not be blank.");
@@ -447,25 +493,25 @@ public class CombatService {
         if (weaponName == null) {
             throw new LoggingException(LOGGER, "Weapon may not be blank.");
         } else {
-            MeleeWeapon weapon = getMeleeWeapon(weaponName, combatant.getGameChar().getMeleeWeapons());
+            MeleeWeapon weapon = getWeapon(weaponName, combatant.getGameChar().getMeleeWeapons());
             if (weapon == null) {
                 throw new LoggingException(LOGGER,
                         "Weapon " + weaponName + " is not a ready weapon for combatant " + combatant.getLabel() + ".");
-            } else if (modeName == null) {
+            } else if (weaponModeName == null) {
                 throw new LoggingException(LOGGER, "Weapon mode may not be blank.");
             } else {
-                if (getWeaponMode(modeName, weapon.getMeleeWeaponModes()) == null) {
+                if (getWeaponMode(weaponModeName, weapon.getMeleeWeaponModes()) == null) {
                     throw new LoggingException(LOGGER,
-                            "Mode " + modeName + " is not a valid mode of weapon " + weapon.getName() +
+                            "Mode " + weaponModeName + " is not a valid mode of weapon " + weapon.getName() +
                                     " for combatant " + combatant.getLabel() + ".");
                 }
             }
         }
     }
 
-    private void validateResolveToHit(Integer rollToHit) {
+    private void validateResolveToHit(Integer toHitRoll) {
         // Validate roll.
-        if (rollToHit == null) {
+        if (toHitRoll == null) {
             throw new LoggingException(LOGGER, "Value rolled to hit may not be blank.");
         }
     }
@@ -480,18 +526,18 @@ public class CombatService {
         if (defenseType == DefenseType.PARRY || defenseType == DefenseType.BLOCK) {
             if (defendingItemName == null) {
                 throw new LoggingException(LOGGER,
-                        "If Defense is PARRY or BLOCK, defending item name may not be blank.");
+                        "If Defense is parry or block, defending item name may not be blank.");
             }
         } else {
             if (defendingItemName != null) {
                 throw new LoggingException(LOGGER,
-                        "If Defense is not PARRY and not BLOCK, defending item name must not be blank.");
+                        "If Defense is not parry and not block, defending item name must not be blank.");
             }
         }
 
         // Validate weapon for parry.
         if (defenseType == DefenseType.PARRY) {
-            if (getMeleeWeapon(defendingItemName, target.getGameChar().getMeleeWeapons()) == null) {
+            if (getWeapon(defendingItemName, target.getGameChar().getMeleeWeapons()) == null) {
                 throw new LoggingException(LOGGER,
                         "Weapon " + defendingItemName + " is not a ready parrying weapon for combatant " +
                                 target.getLabel() + ".");
@@ -508,25 +554,25 @@ public class CombatService {
         }
     }
 
-    private void validateResolveToDefend(Integer rollToDefend) {
+    private void validateResolveToDefend(Integer toDefendRoll) {
         // Validate roll.
-        if (rollToDefend == null) {
+        if (toDefendRoll == null) {
             throw new LoggingException(LOGGER, "Value rolled to defend may not be blank.");
         }
     }
 
-    private void validateResolveDamage(Integer rollForDamage) {
+    private void validateResolveDamage(Integer forDamageRoll) {
         // Validate roll.
-        if (rollForDamage == null) {
+        if (forDamageRoll == null) {
             throw new LoggingException(LOGGER, "Value rolled for damage may not be blank.");
-        } else if (rollForDamage < 0) {
+        } else if (forDamageRoll < 0) {
             throw new LoggingException(LOGGER, "Value rolled for damage may not be less than zero.");
         }
     }
 
-    private void validateResolveDeathCheck(Integer rollForDeathCheck) {
+    private void validateResolveDeathCheck(Integer forDeathCheckRoll) {
         // Validate roll.
-        if (rollForDeathCheck == null) {
+        if (forDeathCheckRoll == null) {
             throw new LoggingException(LOGGER, "Value rolled to avoid death may not be blank.");
         }
     }
@@ -534,75 +580,75 @@ public class CombatService {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private NextStep doResolveUnconsciousnessCheck(int round, int index, Combatant combatant,
-            int rollForUnconsciousnessCheck) {
-        int check = combatant.getGameChar().getUnconsciousnessCheck();
-        ResultType result = getResultType(check, rollForUnconsciousnessCheck);
-        boolean failed = false;
-        HealthStatus status = combatant.getHealthStatus();
-        int move = combatant.getCurrentMove();
-        CombatPhase phase;
+            int forUnconsciousnessCheckRoll) {
+        int unconsciousnessCheck = combatant.getGameChar().getUnconsciousnessCheck();
+        ResultType resultType = getResultType(unconsciousnessCheck, forUnconsciousnessCheckRoll);
+
+        boolean unconsciousnessCheckFailed = false;
+        HealthStatus healthStatus = combatant.getHealthStatus();
+        int currentMove = combatant.getCurrentMove();
+        CombatPhase combatPhase;
         String message;
-        if (result == ResultType.CRITICAL_SUCCESS || result == ResultType.SUCCESS) {
-            phase = CombatPhase.PROMPT_FOR_ACTION;
+        if (resultType == ResultType.CRITICAL_SUCCESS || resultType == ResultType.SUCCESS) {
+            combatPhase = CombatPhase.PROMPT_FOR_ACTION;
             message =
-                    combatant.getLabel() + " successfully remained conscious! Rolled a " + rollForUnconsciousnessCheck +
-                            ", needed a " + check + ".";
+                    combatant.getLabel() + " successfully remained conscious! Rolled a " + forUnconsciousnessCheckRoll +
+                            ", needed a " + unconsciousnessCheck + ".";
         } else {
-            failed = true;
-            status = HealthStatus.UNCONSCIOUS;
-            move = 0;
-            phase = CombatPhase.END;
-            message = combatant.getLabel() + " is now unconscious! Rolled a " + rollForUnconsciousnessCheck +
-                    ", needed a " + check + ".";
+            unconsciousnessCheckFailed = true;
+            healthStatus = HealthStatus.UNCONSCIOUS;
+            currentMove = 0;
+            combatPhase = CombatPhase.END;
+            message = combatant.getLabel() + " is now unconscious! Rolled a " + forUnconsciousnessCheckRoll +
+                    ", needed a " + unconsciousnessCheck + ".";
         }
 
         // Update combatant.
-        combatant.setUnconsciousnessCheckFailed(failed);
-        combatant.setHealthStatus(status);
-        combatant.setCurrentMove(move);
+        combatant.setUnconsciousnessCheckFailed(unconsciousnessCheckFailed);
+        combatant.setHealthStatus(healthStatus);
+        combatant.setCurrentMove(currentMove);
 
         // Create next step.
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
-        nextStep.setCombatPhase(phase);
+        nextStep.setCombatPhase(combatPhase);
         nextStep.setInputNeeded(false);
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
-    private NextStep doResolveActionType(int round, int index, Combatant combatant, ActionType action) {
-        CombatPhase phase;
-        if (action == ActionType.ATTACK) {
-            phase = CombatPhase.PROMPT_FOR_TARGET_AND_WEAPON;
+    private NextStep doResolveActionType(int round, int index, Combatant combatant, ActionType actionType) {
+        CombatPhase combatPhase;
+        if (actionType == ActionType.ATTACK) {
+            combatPhase = CombatPhase.PROMPT_FOR_TARGET_AND_WEAPON;
         } else {
-            phase = CombatPhase.END;
+            combatPhase = CombatPhase.END;
         }
-        String message = combatant.getLabel() + " has chosen action " + action + ".";
+        String message = combatant.getLabel() + " has chosen action " + actionType + ".";
 
         // Update combatant.
-        combatant.setActionType(action);
+        combatant.setActionType(actionType);
 
         // Create next step.
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
-        nextStep.setCombatPhase(phase);
+        nextStep.setCombatPhase(combatPhase);
         nextStep.setInputNeeded(false);
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
     private NextStep doResolveTargetAndWeapon(int round, int index, Combatant combatant, String targetLabel,
-            String weaponName, String modeName) {
-        String message =
-                combatant.getLabel() + " has chosen to attack " + targetLabel + " with " + weaponName + "/" + modeName +
-                        ".";
+            String weaponName, String weaponModeName) {
+        String message = combatant.getLabel() + " has chosen to attack " + targetLabel + " with " + weaponName + "/" +
+                weaponModeName + ".";
 
         // Update combatant.
         combatant.setTargetLabel(targetLabel);
         combatant.setWeaponName(weaponName);
-        combatant.setModeName(modeName);
+        combatant.setWeaponModeName(weaponModeName);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -616,25 +662,25 @@ public class CombatService {
 
     private NextStep doResolveToHit(int round, int index, Combatant combatant, Combatant target, int toHitRoll) {
         int skill = combatant.getToHitEffectiveSkill();
-        ResultType result = getResultType(skill, toHitRoll);
+        ResultType resultType = getResultType(skill, toHitRoll);
         String weaponName = combatant.getWeaponName();
-        String modeName = combatant.getModeName();
+        String weaponModeName = combatant.getWeaponModeName();
         CombatPhase combatPhase;
         String message;
-        if (result == ResultType.CRITICAL_SUCCESS || result == ResultType.SUCCESS) {
+        if (resultType == ResultType.CRITICAL_SUCCESS || resultType == ResultType.SUCCESS) {
             combatPhase = CombatPhase.PROMPT_FOR_DEFENSE;
             message =
                     combatant.getLabel() + " successfully attacked " + target.getLabel() + " with " + weaponName + "/" +
-                            modeName + ". Rolled a " + toHitRoll + ", needed a " + skill + ".";
+                            weaponModeName + ". Rolled a " + toHitRoll + ", needed a " + skill + ".";
         } else {
             combatPhase = CombatPhase.END;
-            message = combatant.getLabel() + " attacked " + target.getLabel() + " with " + weaponName + "/" + modeName +
-                    ", but failed to hit. Rolled a " + toHitRoll + ", but needed a " + skill + ".";
+            message = combatant.getLabel() + " attacked " + target.getLabel() + " with " + weaponName + "/" +
+                    weaponModeName + ", but failed to hit. Rolled a " + toHitRoll + ", but needed a " + skill + ".";
         }
 
         // Update combatant.
         combatant.setToHitRoll(toHitRoll);
-        combatant.setToHitResultType(result);
+        combatant.setToHitResultType(resultType);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -646,18 +692,19 @@ public class CombatService {
         return nextStep;
     }
 
-    private NextStep doResolveDefense(int round, int index, Combatant target, DefenseType type, String item) {
+    private NextStep doResolveDefense(int round, int index, Combatant target, DefenseType defenseType,
+            String defendingItemName) {
         String itemParenth = "";
-        if (type != DefenseType.DODGE && type != DefenseType.NO_DEFENSE) {
-            itemParenth = " (" + item + ")";
+        if (defenseType != DefenseType.DODGE && defenseType != DefenseType.NO_DEFENSE) {
+            itemParenth = " (" + defendingItemName + ")";
         }
-        String message = target.getLabel() + " has chosen a defense of " + type + itemParenth + ".";
+        String message = target.getLabel() + " has chosen a defense of " + defenseType + itemParenth + ".";
 
         // Update target.
-        CombatDefense defense = new CombatDefense();
-        defense.setDefenseType(type);
-        defense.setDefendingItemName(item);
-        target.getCombatDefenses().add(defense);
+        CombatDefense combatDefense = new CombatDefense();
+        combatDefense.setDefenseType(defenseType);
+        combatDefense.setDefendingItemName(defendingItemName);
+        target.getCombatDefenses().add(combatDefense);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -669,52 +716,53 @@ public class CombatService {
         return nextStep;
     }
 
-    private NextStep doResolveToDefend(int round, int index, Combatant combatant, Combatant target, int rollToDefend) {
+    private NextStep doResolveToDefend(int round, int index, Combatant combatant, Combatant target, int toDefendRoll) {
         int size = target.getCombatDefenses().size();
-        CombatDefense defense = target.getCombatDefenses().get(size - 1);
-        int skill = defense.getToDefendEffectiveSkill();
-        ResultType result = getResultType(skill, rollToDefend);
-        DefenseType type = defense.getDefenseType();
-        String item = defense.getDefendingItemName();
+        CombatDefense combatDefense = target.getCombatDefenses().get(size - 1);
+        int defenseSkill = combatDefense.getToDefendEffectiveSkill();
+        ResultType resultType = getResultType(defenseSkill, toDefendRoll);
+        DefenseType defenseType = combatDefense.getDefenseType();
+        String defendingItemName = combatDefense.getDefendingItemName();
         String itemParenth = "";
-        if (type != DefenseType.DODGE && type != DefenseType.NO_DEFENSE) {
-            itemParenth = " (" + item + ")";
+        if (defenseType != DefenseType.DODGE && defenseType != DefenseType.NO_DEFENSE) {
+            itemParenth = " (" + defendingItemName + ")";
         }
-        CombatPhase phase;
+        CombatPhase combatPhase;
         String message;
-        if (result == ResultType.CRITICAL_SUCCESS || result == ResultType.SUCCESS) {
-            phase = CombatPhase.END;
-            message = target.getLabel() + " successfully defended against " + combatant.getLabel() + " with " + type +
-                    itemParenth + ". Rolled a " + rollToDefend + ", needed a " + skill + ".";
+        if (resultType == ResultType.CRITICAL_SUCCESS || resultType == ResultType.SUCCESS) {
+            combatPhase = CombatPhase.END;
+            message = target.getLabel() + " successfully defended against " + combatant.getLabel() + " with " +
+                    defenseType + itemParenth + ". Rolled a " + toDefendRoll + ", needed a " + defenseSkill + ".";
         } else {
-            phase = CombatPhase.PROMPT_FOR_DAMAGE;
-            message = target.getLabel() + " failed to defend against " + combatant.getLabel() + " with " + type +
-                    itemParenth + ". Rolled a " + rollToDefend + ", but needed a " + skill + ".";
+            combatPhase = CombatPhase.PROMPT_FOR_DAMAGE;
+            message = target.getLabel() + " failed to defend against " + combatant.getLabel() + " with " + defenseType +
+                    itemParenth + ". Rolled a " + toDefendRoll + ", but needed a " + defenseSkill + ".";
         }
 
         // Update target.
-        defense.setToDefendRoll(rollToDefend);
-        defense.setToDefendResult(result);
+        combatDefense.setToDefendRoll(toDefendRoll);
+        combatDefense.setToDefendResult(resultType);
 
         // Create next step.
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
-        nextStep.setCombatPhase(phase);
+        nextStep.setCombatPhase(combatPhase);
         nextStep.setInputNeeded(false);
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }
 
-    private NextStep doResolveDamage(int round, int index, Combatant combatant, Combatant target, int rollForDamage) {
-        ArmorPiece armorPiece = getArmorPiece(HitLocation.TORSO, target.getGameChar().getArmorPieces());
-        int dr = armorPiece.getDamageResistance();
-        int penetratingDamage = rollForDamage - dr;
-        MeleeWeapon weapon = getMeleeWeapon(combatant.getWeaponName(), combatant.getGameChar().getMeleeWeapons());
-        MeleeWeaponMode mode = getWeaponMode(combatant.getModeName(), weapon.getMeleeWeaponModes());
-        DamageType damageType = mode.getDamageType();
-        double mult = getDamageMultiplier(damageType);
-        int injuryDamage = (int) (penetratingDamage * mult);
+    private NextStep doResolveDamage(int round, int index, Combatant combatant, Combatant target, int forDamageRoll) {
+        int naturalDamageResistance = target.getGameChar().getDamageResistance();
+        int armorDamageResistance = getArmorDamageResistance(HitLocation.TORSO, target.getGameChar().getArmorPieces());
+        int damageResistance = naturalDamageResistance + armorDamageResistance;
+        int penetratingDamage = forDamageRoll - damageResistance;
+        MeleeWeapon weapon = getWeapon(combatant.getWeaponName(), combatant.getGameChar().getMeleeWeapons());
+        MeleeWeaponMode weaponMode = getWeaponMode(combatant.getWeaponModeName(), weapon.getMeleeWeaponModes());
+        DamageType damageType = weaponMode.getDamageType();
+        double damageMultiplier = getDamageMultiplier(damageType);
+        int injuryDamage = (int) (penetratingDamage * damageMultiplier);
         if (penetratingDamage > 0 && injuryDamage == 0) {
             injuryDamage = 1;
         }
@@ -722,40 +770,43 @@ public class CombatService {
         int previousDamage = target.getPreviousDamage();
         int oldCurrentDamage = target.getCurrentDamage();
         int newCurrentDamage = oldCurrentDamage + injuryDamage;
+        int shockPenalty = getShockPenalty(newCurrentDamage);
         int oldRemainingHitPoints = hitPoints - oldCurrentDamage - previousDamage;
         int newRemainingHitPoints = hitPoints - newCurrentDamage - previousDamage;
         int oldHitLevel = getHitLevel(hitPoints, oldRemainingHitPoints);
         int newHitLevel = getHitLevel(hitPoints, newRemainingHitPoints);
+        Boolean unconsciousnessCheckFailed = target.getUnconsciousnessCheckFailed();
         Boolean deathCheckFailed = target.getDeathCheckFailed();
-        HealthStatus newStatus = getHealthStatus(newHitLevel, deathCheckFailed);
+        HealthStatus healthStatus = getHealthStatus(newHitLevel, unconsciousnessCheckFailed, deathCheckFailed);
         int basicMove = target.getGameChar().getBasicMove();
         int encumbranceLevel = target.getGameChar().getEncumbranceLevel();
-        int newCurrentMove = getCurrentMove(newStatus, basicMove, encumbranceLevel);
+        int newCurrentMove = getCurrentMove(healthStatus, basicMove, encumbranceLevel);
 
         // If the target's new status is between ALMOST and ALMOST4 and the target's old status is less and the target
         // has not yet failed a death check, then the target will need to make one or more rolls to avoid death.
-        int needed = 0;
+        int nbrOfDeathChecksNeeded = 0;
         if (newHitLevel >= 4 && newHitLevel <= 7 && newHitLevel > oldHitLevel) {
             if (oldHitLevel <= 3) {
                 oldHitLevel = 3;
             }
-            needed = newHitLevel - oldHitLevel;
+            nbrOfDeathChecksNeeded = newHitLevel - oldHitLevel;
         }
         CombatPhase combatPhase = CombatPhase.END;
-        if (needed > 0) {
+        if (nbrOfDeathChecksNeeded > 0) {
             combatPhase = CombatPhase.PROMPT_FOR_DEATH_CHECK;
         }
-        String message = target.getLabel() + " is hit for " + rollForDamage + " " + damageType + " damage. " +
-                penetratingDamage + " gets through his/her armour (DR " + dr + ") doing " + injuryDamage +
+        String message = target.getLabel() + " is hit for " + forDamageRoll + " " + damageType + " damage. " +
+                penetratingDamage + " gets through his/her armour (DR " + damageResistance + ") doing " + injuryDamage +
                 " hits of damage.";
 
         // Update combatant.
-        combatant.setForDamageRoll(rollForDamage);
+        combatant.setForDamageRoll(forDamageRoll);
 
         // Update target.
         target.setCurrentDamage(newCurrentDamage);
-        target.setNbrOfDeathChecksNeeded(needed);
-        target.setHealthStatus(newStatus);
+        target.setShockPenalty(shockPenalty);
+        target.setNbrOfDeathChecksNeeded(nbrOfDeathChecksNeeded);
+        target.setHealthStatus(healthStatus);
         target.setCurrentMove(newCurrentMove);
 
         // Create next step.
@@ -769,34 +820,35 @@ public class CombatService {
     }
 
     private NextStep doResolveDeathCheck(int round, int index, Combatant target, int rollForDeathCheck) {
-        int check = target.getGameChar().getDeathCheck();
-        ResultType resultType = getResultType(check, rollForDeathCheck);
-        int nbr = target.getNbrOfDeathChecksNeeded();
-        boolean failed = false;
+        int deathCheck = target.getGameChar().getDeathCheck();
+        ResultType resultType = getResultType(deathCheck, rollForDeathCheck);
+        int nbrOfDeathChecksNeeded = target.getNbrOfDeathChecksNeeded();
+        boolean deathCheckFailed = false;
         HealthStatus healthStatus = target.getHealthStatus();
-        int move = target.getCurrentMove();
+        int currentMove = target.getCurrentMove();
         CombatPhase combatPhase = CombatPhase.END;
         String message;
         if (resultType == ResultType.CRITICAL_SUCCESS || resultType == ResultType.SUCCESS) {
-            nbr--;
-            if (nbr > 0) {
+            nbrOfDeathChecksNeeded--;
+            if (nbrOfDeathChecksNeeded > 0) {
                 combatPhase = CombatPhase.PROMPT_FOR_DEATH_CHECK;
             }
             message = target.getLabel() + " successfully avoided death! Rolled a " + rollForDeathCheck + ", needed a " +
-                    check + ".";
+                    deathCheck + ".";
         } else {
-            nbr = 0;
-            failed = true;
+            nbrOfDeathChecksNeeded = 0;
+            deathCheckFailed = true;
             healthStatus = HealthStatus.DEAD;
-            move = 0;
-            message = target.getLabel() + " is now dead! Rolled a " + rollForDeathCheck + ", needed a " + check + ".";
+            currentMove = 0;
+            message = target.getLabel() + " is now dead! Rolled a " + rollForDeathCheck + ", needed a " + deathCheck +
+                    ".";
         }
 
         // Update target.
-        target.setNbrOfDeathChecksNeeded(nbr);
-        target.setDeathCheckFailed(failed);
+        target.setNbrOfDeathChecksNeeded(nbrOfDeathChecksNeeded);
+        target.setDeathCheckFailed(deathCheckFailed);
         target.setHealthStatus(healthStatus);
-        target.setCurrentMove(move);
+        target.setCurrentMove(currentMove);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -809,11 +861,7 @@ public class CombatService {
     }
 
     private NextStep doEnd(int round, int index, Combatant combatant, int nbrOfCombatants) {
-        // Update combatant.
-        int currentDamage = combatant.getCurrentDamage();
-        int previousDamage = combatant.getPreviousDamage();
-        combatant.setCurrentDamage(0);
-        combatant.setPreviousDamage(currentDamage + previousDamage);
+        combatant.setShockPenalty(0);
 
         // Create next step.
         NextStep nextStep = new NextStep();
@@ -832,32 +880,33 @@ public class CombatService {
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private ArmorPiece getArmorPiece(HitLocation location, List<ArmorPiece> armorPieces) {
-        ArmorPiece found = null;
+    private int getArmorDamageResistance(HitLocation hitLocation, List<ArmorPiece> armorPieces) {
+        int dr = 0;
         for (ArmorPiece armorPiece : armorPieces) {
-            if (armorPiece.getHitLocation() == location) {
-                found = armorPiece;
+            if (armorPiece.getHitLocations().contains(hitLocation)) {
+                dr += armorPiece.getDamageResistance();
             }
         }
-        return found;
+        return dr;
     }
 
-    private Combatant getCombatant(String label, List<Combatant> combatants) {
+    private Combatant getCombatant(String combatantLabel, List<Combatant> combatants) {
         Combatant found = null;
         for (Combatant combatant : combatants) {
-            if (label.equals(combatant.getLabel())) {
+            if (combatantLabel.equals(combatant.getLabel())) {
                 found = combatant;
             }
         }
         return found;
     }
 
-    private int getCurrentMove(HealthStatus status, int basicMove, int encumbranceLevel) {
+    private int getCurrentMove(HealthStatus healthStatus, int basicMove, int encumbranceLevel) {
         int currentMove = 0;
-        if (status == HealthStatus.ALIVE) {
+        if (healthStatus == HealthStatus.ALIVE) {
             currentMove = basicMove - encumbranceLevel;
-        } else if (status == HealthStatus.REELING || status == HealthStatus.BARELY || status == HealthStatus.ALMOST ||
-                status == HealthStatus.ALMOST2 || status == HealthStatus.ALMOST3 || status == HealthStatus.ALMOST4) {
+        } else if (healthStatus == HealthStatus.REELING || healthStatus == HealthStatus.BARELY ||
+                healthStatus == HealthStatus.ALMOST || healthStatus == HealthStatus.ALMOST2 ||
+                healthStatus == HealthStatus.ALMOST3 || healthStatus == HealthStatus.ALMOST4) {
             currentMove = (int) Math.ceil(((double) basicMove - (double) encumbranceLevel) / 2.0);
         }
         return currentMove;
@@ -926,38 +975,52 @@ public class CombatService {
         return hitLevel;
     }
 
-    private HealthStatus getHealthStatus(int level, boolean deathCheckFailed) {
+    private HealthStatus getHealthStatus(int hitLevel, boolean unconsciousnessCheckFailed, boolean deathCheckFailed) {
         HealthStatus healthStatus = null;
-        if (level == 1) {
+        if (hitLevel == 1) {
             healthStatus = HealthStatus.ALIVE;
-        } else if (level == 2) {
+        } else if (hitLevel == 2) {
             healthStatus = HealthStatus.REELING;
-        } else if (level == 3) {
-            healthStatus = deathCheckFailed ? HealthStatus.UNCONSCIOUS : HealthStatus.BARELY;
-        } else if (level == 4) {
-            healthStatus = deathCheckFailed ? HealthStatus.DEAD : HealthStatus.ALMOST;
-        } else if (level == 5) {
-            healthStatus = deathCheckFailed ? HealthStatus.DEAD : HealthStatus.ALMOST2;
-        } else if (level == 6) {
-            healthStatus = deathCheckFailed ? HealthStatus.DEAD : HealthStatus.ALMOST3;
-        } else if (level == 7) {
-            healthStatus = deathCheckFailed ? HealthStatus.DEAD : HealthStatus.ALMOST4;
-        } else if (level == 8) {
+        } else if (hitLevel == 3) {
+            healthStatus = unconsciousnessCheckFailed ? HealthStatus.UNCONSCIOUS : HealthStatus.BARELY;
+        } else if (hitLevel == 4) {
+            if (deathCheckFailed) {
+                healthStatus = HealthStatus.DEAD;
+            } else if (unconsciousnessCheckFailed) {
+                healthStatus = HealthStatus.UNCONSCIOUS;
+            } else {
+                healthStatus = HealthStatus.ALMOST;
+            }
+        } else if (hitLevel == 5) {
+            if (deathCheckFailed) {
+                healthStatus = HealthStatus.DEAD;
+            } else if (unconsciousnessCheckFailed) {
+                healthStatus = HealthStatus.UNCONSCIOUS;
+            } else {
+                healthStatus = HealthStatus.ALMOST2;
+            }
+        } else if (hitLevel == 6) {
+            if (deathCheckFailed) {
+                healthStatus = HealthStatus.DEAD;
+            } else if (unconsciousnessCheckFailed) {
+                healthStatus = HealthStatus.UNCONSCIOUS;
+            } else {
+                healthStatus = HealthStatus.ALMOST3;
+            }
+        } else if (hitLevel == 7) {
+            if (deathCheckFailed) {
+                healthStatus = HealthStatus.DEAD;
+            } else if (unconsciousnessCheckFailed) {
+                healthStatus = HealthStatus.UNCONSCIOUS;
+            } else {
+                healthStatus = HealthStatus.ALMOST4;
+            }
+        } else if (hitLevel == 8) {
             healthStatus = HealthStatus.DEAD;
-        } else if (level == 9) {
+        } else if (hitLevel == 9) {
             healthStatus = HealthStatus.DESTROYED;
         }
         return healthStatus;
-    }
-
-    private Shield getShield(String name, List<Shield> shields) {
-        Shield found = null;
-        for (Shield shield : shields) {
-            if (name.equals(shield.getName())) {
-                found = shield;
-            }
-        }
-        return found;
     }
 
     private ResultType getResultType(int skill, int roll) {
@@ -985,21 +1048,39 @@ public class CombatService {
         return result;
     }
 
-    private MeleeWeapon getMeleeWeapon(String name, List<MeleeWeapon> weapons) {
+    private Shield getShield(String shieldName, List<Shield> shields) {
+        Shield found = null;
+        for (Shield shield : shields) {
+            if (shieldName.equals(shield.getName())) {
+                found = shield;
+            }
+        }
+        return found;
+    }
+
+    private int getShockPenalty(int currentDamage) {
+        if (currentDamage >= 4) {
+            return -4;
+        } else {
+            return -currentDamage;
+        }
+    }
+
+    private MeleeWeapon getWeapon(String weaponName, List<MeleeWeapon> weapons) {
         MeleeWeapon found = null;
         for (MeleeWeapon weapon : weapons) {
-            if (name.equals(weapon.getName())) {
+            if (weaponName.equals(weapon.getName())) {
                 found = weapon;
             }
         }
         return found;
     }
 
-    private MeleeWeaponMode getWeaponMode(String name, List<MeleeWeaponMode> modes) {
+    private MeleeWeaponMode getWeaponMode(String weaponModeName, List<MeleeWeaponMode> weaponModes) {
         MeleeWeaponMode found = null;
-        for (MeleeWeaponMode mode : modes) {
-            if (name.equals(mode.getName())) {
-                found = mode;
+        for (MeleeWeaponMode weaponMode : weaponModes) {
+            if (weaponModeName.equals(weaponMode.getName())) {
+                found = weaponMode;
             }
         }
         return found;

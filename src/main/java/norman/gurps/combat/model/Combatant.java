@@ -14,10 +14,12 @@ public class Combatant {
     private Boolean deathCheckFailed;
     private HealthStatus healthStatus;
     private Integer currentMove;
+    private Integer defenseBonus;
+    private Integer shockPenalty;
     private ActionType actionType;
     private String targetLabel;
     private String weaponName;
-    private String modeName;
+    private String weaponModeName;
     private Integer toHitEffectiveSkill;
     private Integer toHitRoll;
     private ResultType toHitResultType;
@@ -111,6 +113,22 @@ public class Combatant {
         this.currentMove = currentMove;
     }
 
+    public Integer getDefenseBonus() {
+        return defenseBonus;
+    }
+
+    public void setDefenseBonus(Integer defenseBonus) {
+        this.defenseBonus = defenseBonus;
+    }
+
+    public Integer getShockPenalty() {
+        return shockPenalty;
+    }
+
+    public void setShockPenalty(Integer shockPenalty) {
+        this.shockPenalty = shockPenalty;
+    }
+
     public ActionType getActionType() {
         return actionType;
     }
@@ -135,12 +153,12 @@ public class Combatant {
         this.weaponName = weaponName;
     }
 
-    public String getModeName() {
-        return modeName;
+    public String getWeaponModeName() {
+        return weaponModeName;
     }
 
-    public void setModeName(String modeName) {
-        this.modeName = modeName;
+    public void setWeaponModeName(String weaponModeName) {
+        this.weaponModeName = weaponModeName;
     }
 
     public Integer getToHitEffectiveSkill() {
