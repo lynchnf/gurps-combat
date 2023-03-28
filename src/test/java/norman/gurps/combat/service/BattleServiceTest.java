@@ -31,7 +31,7 @@ class BattleServiceTest {
     GameCharService gameCharService;
     File tempDir;
     File tempFile;
-    GameChar testGameChar;
+    GameChar gameChar;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -46,7 +46,7 @@ class BattleServiceTest {
         tempFile = new File(tempDir, "battle.json");
         ReflectionTestUtils.setField(service, "storageBattleFile", tempFile);
 
-        testGameChar = TestHelper.getGameChar1();
+        gameChar = TestHelper.getGameChar1();
     }
 
     @Test
@@ -76,7 +76,7 @@ class BattleServiceTest {
     void addCharToBattle_empty_battle() throws Exception {
         // Mock Game Character service.
         List<GameChar> gameChars = new ArrayList<>();
-        gameChars.add(testGameChar);
+        gameChars.add(gameChar);
         when(gameCharService.getStoredGameChars()).thenReturn(gameChars);
 
         // Create empty battle in storage.
@@ -100,13 +100,13 @@ class BattleServiceTest {
     void addCharToBattle_char_already_in_battle() throws Exception {
         // Mock Game Character service.
         List<GameChar> gameChars = new ArrayList<>();
-        gameChars.add(testGameChar);
+        gameChars.add(gameChar);
         when(gameCharService.getStoredGameChars()).thenReturn(gameChars);
 
         // Create battle in storage with this char.
         Battle battle = new Battle();
         Set<String> existingLabels = new HashSet<>();
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
         battle.getCombatants().add(combatant);
         battle.getBattleLogs().add(new BattleLog("Battle created."));
         battle.getBattleLogs().add(new BattleLog("Combatant Test Character added to Battle."));
@@ -129,7 +129,7 @@ class BattleServiceTest {
         // Create battle in storage with a combatant.
         Battle battle = new Battle();
         Set<String> existingLabels = new HashSet<>();
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
         battle.getCombatants().add(combatant);
         battle.getBattleLogs().add(new BattleLog("Battle created."));
         battle.getBattleLogs().add(new BattleLog("Combatant Test Character added to Battle."));
@@ -150,7 +150,7 @@ class BattleServiceTest {
         // Create battle in storage with a combatant.
         Battle battle = new Battle();
         Set<String> existingLabels = new HashSet<>();
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
         battle.getCombatants().add(combatant);
         battle.getBattleLogs().add(new BattleLog("Test Log"));
         battle.getBattleLogs().add(new BattleLog("Another Test Log"));
@@ -169,12 +169,12 @@ class BattleServiceTest {
         // Create battle in storage with a combatant.
         Battle battle = new Battle();
         Set<String> existingLabels = new HashSet<>();
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
         battle.getCombatants().add(combatant);
         NextStep nextStep = new NextStep();
         nextStep.setRound(1);
         nextStep.setIndex(2);
-        nextStep.setCombatPhase(CombatPhase.END);
+        nextStep.setCombatPhase(CombatPhase.END_TURN);
         nextStep.setInputNeeded(true);
         nextStep.setMessage("Test Message");
         battle.setNextStep(nextStep);
@@ -189,7 +189,7 @@ class BattleServiceTest {
         battle1.getCombatants().get(0).setCurrentDamage(4);
         battle1.getNextStep().setRound(2);
         battle1.getNextStep().setIndex(3);
-        battle1.getNextStep().setCombatPhase(CombatPhase.BEGIN);
+        battle1.getNextStep().setCombatPhase(CombatPhase.BEGIN_TURN);
         battle1.getNextStep().setInputNeeded(false);
         battle1.getNextStep().setMessage("Different Test Message");
 
@@ -200,7 +200,7 @@ class BattleServiceTest {
         assertEquals(4, (int) battle2.getCombatants().get(0).getCurrentDamage());
         assertEquals(2, (int) battle2.getNextStep().getRound());
         assertEquals(3, (int) battle2.getNextStep().getIndex());
-        assertEquals(CombatPhase.BEGIN, battle2.getNextStep().getCombatPhase());
+        assertEquals(CombatPhase.BEGIN_TURN, battle2.getNextStep().getCombatPhase());
         assertFalse(battle2.getNextStep().getInputNeeded());
         assertEquals("Different Test Message", battle2.getNextStep().getMessage());
         assertEquals(4, battle2.getBattleLogs().size());

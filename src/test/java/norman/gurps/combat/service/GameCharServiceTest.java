@@ -18,7 +18,7 @@ class GameCharServiceTest {
     GameCharService service;
     File tempDir;
     File tempFile;
-    GameChar testGameChar;
+    GameChar gameChar;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -32,19 +32,28 @@ class GameCharServiceTest {
         tempFile = new File(tempDir, "game-char.json");
         ReflectionTestUtils.setField(service, "storageGameCharFile", tempFile);
 
-        testGameChar = TestHelper.getGameChar1();
+        gameChar = TestHelper.getGameChar1();
     }
 
     @Test
-    void validate() {
-        List<String> errors = service.validate(testGameChar);
+    void validate1() {
+        List<String> errors = service.validate(gameChar);
+
+        assertEquals(0, errors.size());
+    }
+
+    @Test
+    void validate2() {
+        GameChar gameChar2 = TestHelper.getGameChar2();
+
+        List<String> errors = service.validate(gameChar2);
 
         assertEquals(0, errors.size());
     }
 
     @Test
     void storeChar() throws Exception {
-        service.storeChar(testGameChar);
+        service.storeChar(gameChar);
 
         // Validate game character was written to local storage.
         ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +69,7 @@ class GameCharServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(tempDir, "game-char.json");
         List<GameChar> gameCharList = new ArrayList<>();
-        gameCharList.add(testGameChar);
+        gameCharList.add(gameChar);
         mapper.writeValue(file, gameCharList);
 
         service.removeChar("Bob the Example");
@@ -76,7 +85,7 @@ class GameCharServiceTest {
         ObjectMapper mapper = new ObjectMapper();
         File file = new File(tempDir, "game-char.json");
         List<GameChar> gameCharList = new ArrayList<>();
-        gameCharList.add(testGameChar);
+        gameCharList.add(gameChar);
         mapper.writeValue(file, gameCharList);
 
         List<GameChar> gameChars = service.getStoredGameChars();

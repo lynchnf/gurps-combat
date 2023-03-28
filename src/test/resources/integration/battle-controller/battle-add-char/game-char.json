@@ -8,6 +8,7 @@
     "hitPoints": 15,
     "basicSpeed": 6.25,
     "basicMove": 7,
+    "damageResistance": 1,
     "encumbranceLevel": 1,
     "unconsciousnessCheck": 13,
     "deathCheck": 12,
@@ -15,7 +16,7 @@
       {
         "name": "Broadsword",
         "skill": 14,
-        "modes": [
+        "meleeWeaponModes": [
           {
             "name": "swing",
             "damageDice": 2,
@@ -37,50 +38,81 @@
         ],
         "parryType": "YES",
         "parryModifier": 0,
-        "minStrength": 10,
-        "twoHanded": false
+        "minimumStrength": 10
+      }
+    ],
+    "rangedWeapons": [
+      {
+        "name": "Longbow",
+        "skill": 13,
+        "damageDice": 1,
+        "damageAdds": 2,
+        "damageType": "IMPALING",
+        "accuracy": 3,
+        "halfDamageRange": 210,
+        "maximumRange": 280,
+        "rateOfFire": 1,
+        "minimumStrength": 11,
+        "bulk": -8,
+        "recoil": 1
       }
     ],
     "shields": [
       {
-        "name": "Medium Shield",
+        "name": "Small Shield",
         "skill": 13,
-        "defenseBonus": 2
+        "defenseBonus": 1
       }
     ],
-    "armorList": [
+    "armorPieces": [
       {
-        "location": "TORSO",
+        "name": "Leather Jacket",
+        "hitLocations": [
+          "TORSO",
+          "ARMS"
+        ],
         "damageResistance": 1
       },
       {
-        "location": "GROIN",
+        "name": "Leather Pants",
+        "hitLocations": [
+          "LEGS",
+          "GROIN"
+        ],
         "damageResistance": 1
       },
       {
-        "location": "LEGS",
+        "name": "Heavy Leather Sleeves",
+        "hitLocations": [
+          "ARMS"
+        ],
+        "damageResistance": 2
+      },
+      {
+        "name": "Leather Cap",
+        "hitLocations": [
+          "SKULL"
+        ],
         "damageResistance": 1
       },
       {
-        "location": "ARMS",
+        "name": "Cloth Gloves",
+        "hitLocations": [
+          "HANDS"
+        ],
         "damageResistance": 1
       },
       {
-        "location": "SKULL",
-        "damageResistance": 1
-      },
-      {
-        "location": "FACE",
-        "damageResistance": 1
-      },
-      {
-        "location": "HANDS",
-        "damageResistance": 1
-      },
-      {
-        "location": "FEET",
+        "name": "Shoes",
+        "hitLocations": [
+          "FEET"
+        ],
         "damageResistance": 1
       }
+    ],
+    "defaultReadyItems": [
+      "Broadsword",
+      "Small Shield"
     ]
   }
 ]

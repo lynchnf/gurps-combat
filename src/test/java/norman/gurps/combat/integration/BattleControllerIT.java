@@ -79,12 +79,12 @@ class BattleControllerIT {
     void tearDown() {
         if (storageBattleFile.exists()) {
             if (!storageBattleFile.delete()) {
-                throw new RuntimeException("SETUP: Unable to delete file " + storageBattleFile + ".");
+                throw new RuntimeException("TEARDOWN: Unable to delete file " + storageBattleFile + ".");
             }
         }
         if (storageGameCharFile.exists()) {
             if (!storageGameCharFile.delete()) {
-                throw new RuntimeException("SETUP: Unable to delete file " + storageGameCharFile + ".");
+                throw new RuntimeException("TEARDOWN: Unable to delete file " + storageGameCharFile + ".");
             }
         }
     }
@@ -100,19 +100,14 @@ class BattleControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(0, battleJsonNode.get("combatants").size());
         assertTrue(battleJsonNode.get("nextStep").isNull());
-        assertTrue(battleJsonNode.get("logs").isArray());
-        assertEquals(1, battleJsonNode.get("logs").size());
+        assertEquals(1, battleJsonNode.get("battleLogs").size());
     }
 
     @Test
@@ -133,11 +128,8 @@ class BattleControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertFalse(storageBattleFile.exists());
     }
@@ -172,21 +164,16 @@ class BattleControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(1, battleJsonNode.get("combatants").size());
         assertEquals("Bob the Example", battleJsonNode.get("combatants").get(0).get("label").asText());
         assertEquals("Bob the Example", battleJsonNode.get("combatants").get(0).get("gameChar").get("name").asText());
         assertTrue(battleJsonNode.get("nextStep").isNull());
-        assertTrue(battleJsonNode.get("logs").isArray());
-        assertEquals(2, battleJsonNode.get("logs").size());
+        assertEquals(2, battleJsonNode.get("battleLogs").size());
     }
 
     @Test
@@ -219,20 +206,15 @@ class BattleControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(2, battleJsonNode.get("combatants").size());
         assertEquals("Bob the Example 2", battleJsonNode.get("combatants").get(1).get("label").asText());
         assertEquals("Bob the Example", battleJsonNode.get("combatants").get(1).get("gameChar").get("name").asText());
         assertTrue(battleJsonNode.get("nextStep").isNull());
-        assertTrue(battleJsonNode.get("logs").isArray());
-        assertEquals(3, battleJsonNode.get("logs").size());
+        assertEquals(3, battleJsonNode.get("battleLogs").size());
     }
 
     @Test
@@ -258,18 +240,13 @@ class BattleControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
         assertEquals(0, battleJsonNode.get("combatants").size());
         assertTrue(battleJsonNode.get("nextStep").isNull());
-        assertTrue(battleJsonNode.get("logs").isArray());
-        assertEquals(3, battleJsonNode.get("logs").size());
+        assertEquals(3, battleJsonNode.get("battleLogs").size());
     }
 
     @Test
@@ -288,19 +265,16 @@ class BattleControllerIT {
                 .andReturn();
         //@formatter:on
 
-        System.out.println("result=" + result);
-        System.out.println("response=" + result.getResponse());
-        System.out.println("content=" + result.getResponse().getContentAsString());
-
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
-        assertTrue(jsonNode.get("battle").get("combatants").isArray());
-        assertTrue(jsonNode.get("battle").get("logs").isArray());
+        assertEquals(1, jsonNode.get("battle").get("combatants").size());
+        assertEquals("Bob the Example", jsonNode.get("battle").get("combatants").get(0).get("label").asText());
+        assertEquals("Bob the Example",
+                jsonNode.get("battle").get("combatants").get(0).get("gameChar").get("name").asText());
+        assertTrue(jsonNode.get("battle").get("nextStep").isNull());
+        assertEquals(2, jsonNode.get("battle").get("battleLogs").size());
     }
 
     private String readResource(String resourceName) throws IOException {

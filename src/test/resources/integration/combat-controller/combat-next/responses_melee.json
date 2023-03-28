@@ -1,0 +1,426 @@
+[
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : It is now Bob the Example's turn. He/she is at 15 hit points (out of a possible 15). He/she is alive and well.",
+      "1/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "1/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : Bob the Example is attacking Grunt with Broadsword/swing.",
+      "1/0 : Bob the Example, please roll 3d (need 14 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 8, needed a 14.",
+      "1/0 : Grunt, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : Grunt has chosen to block with his/her Medium Shield.",
+      "1/0 : Grunt, please roll 3d (need 10 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : Grunt successfully defended against Bob the Example by blocking with his/her Medium Shield. Rolled a 9, needed a 10.",
+      "1/1 : It is now Grunt's turn. He/she is at 10 hit points (out of a possible 10). He/she is alive and well.",
+      "1/1 : Grunt, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/1 : Grunt has chosen to do a regular attack with a melee weapon.",
+      "1/1 : Grunt, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/1 : Grunt is attacking Bob the Example with Axe/swing.",
+      "1/1 : Grunt, please roll 3d (need 11 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/1 : Grunt has failed to hit Bob the Example with Axe. Rolled a 13, but needed a 11.",
+      "1/2 : It is now Grunt 2's turn. He/she is at 10 hit points (out of a possible 10). He/she is alive and well.",
+      "1/2 : Grunt 2, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/2 : Grunt 2 has chosen to make a determined all-out attack with a melee weapon (gaining +4 to hit).",
+      "1/2 : Grunt 2, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/2 : Grunt 2 is attacking Bob the Example with Axe/swing.",
+      "1/2 : Grunt 2, please roll 3d (need 15 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/2 : Grunt 2 has successfully hit Bob the Example with Axe. Rolled a 9, needed a 15.",
+      "1/2 : Bob the Example, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/2 : Bob the Example has chosen to parry with his/her Broadsword.",
+      "1/2 : Bob the Example, please roll 3d (need 11 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "1/2 : Bob the Example successfully defended against Grunt 2 by parrying with his/her Broadsword. Rolled a 8, needed a 11.",
+      "2/0 : It is now Bob the Example's turn. He/she is at 15 hit points (out of a possible 15). He/she is alive and well.",
+      "2/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "2/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/0 : Bob the Example is attacking Grunt 2 with Broadsword/swing.",
+      "2/0 : Bob the Example, please roll 3d (need 14 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/0 : Bob the Example has successfully hit Grunt 2 with Broadsword. Rolled a 10, needed a 14.",
+      "2/0 : Bob the Example, please roll 2d+1 cut damage."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/0 : Grunt 2 is hit for 10 cut damage. 8 gets through his/her armour (DR 2) doing 12 hits of damage.",
+      "2/1 : It is now Grunt's turn. He/she is at 10 hit points (out of a possible 10). He/she is alive and well.",
+      "2/1 : Grunt, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Grunt has chosen to make a determined all-out attack with a melee weapon (gaining +4 to hit).",
+      "2/1 : Grunt, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Grunt is attacking Bob the Example with Axe/swing.",
+      "2/1 : Grunt, please roll 3d (need 15 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Grunt has successfully hit Bob the Example with Axe. Rolled a 10, needed a 15.",
+      "2/1 : Bob the Example, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Bob the Example has chosen to parry with his/her Broadsword.",
+      "2/1 : Bob the Example, please roll 3d (need 11 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Bob the Example failed to defend against Grunt by parrying with his/her Broadsword. Rolled a 12, but needed a 11.",
+      "2/1 : Grunt, please roll 1d+2 cut damage."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/1 : Bob the Example is hit for 5 cut damage. 3 gets through his/her armour (DR 2) doing 4 hits of damage.",
+      "2/2 : It is now Grunt 2's turn. He/she is at -2 hit points (out of a possible 10). He/she is barely conscious. His/her current move is reduced to 2 and dodge is reduced to 7. He/she is temporarily at -4 to all DX and IQ based skills because of shock.",
+      "2/2 : Grunt 2 needs to make a roll to stay conscious. Please roll 3d (need 10)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/2 : Grunt 2 successfully remained conscious! Rolled a 8, needed a 10.",
+      "2/2 : Grunt 2, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "2/2 : Grunt 2 has chosen to take an increased defense against attacks (gaining +2 to a single defense for each attack).",
+      "3/0 : It is now Bob the Example's turn. He/she is at 11 hit points (out of a possible 15). He/she is alive and well. He/she is temporarily at -4 to all DX and IQ based skills because of shock.",
+      "3/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "3/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/0 : Bob the Example is attacking Grunt with Broadsword/swing.",
+      "3/0 : Bob the Example, please roll 3d (need 10 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 9, needed a 10.",
+      "3/0 : Bob the Example, please roll 2d+1 cut damage."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/0 : Grunt is hit for 8 cut damage. 6 gets through his/her armour (DR 2) doing 9 hits of damage.",
+      "3/1 : It is now Grunt's turn. He/she is at 1 hit points (out of a possible 10). He/she is reeling from wounds. His/her current move is reduced to 2 and dodge is reduced to 7. He/she is temporarily at -4 to all DX and IQ based skills because of shock.",
+      "3/1 : Grunt, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/1 : Grunt has chosen to take an increased defense against attacks (gaining +2 to a single defense for each attack).",
+      "3/2 : It is now Grunt 2's turn. He/she is at -2 hit points (out of a possible 10). He/she is barely conscious. His/her current move is reduced to 2 and dodge is reduced to 7.",
+      "3/2 : Grunt 2 needs to make a roll to stay conscious. Please roll 3d (need 10)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "3/2 : Grunt 2 is now unconscious! Rolled a 15, needed a 10.",
+      "4/0 : It is now Bob the Example's turn. He/she is at 11 hit points (out of a possible 15). He/she is alive and well.",
+      "4/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "4/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/0 : Bob the Example is attacking Grunt with Broadsword/swing.",
+      "4/0 : Bob the Example, please roll 3d (need 14 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 9, needed a 14.",
+      "4/0 : Grunt, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/0 : Grunt has chosen to block with his/her Medium Shield.",
+      "4/0 : Grunt, please roll 3d (need 12 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/0 : Grunt successfully defended against Bob the Example by blocking with his/her Medium Shield. Rolled a 12, needed a 12.",
+      "4/1 : It is now Grunt's turn. He/she is at 1 hit points (out of a possible 10). He/she is reeling from wounds. His/her current move is reduced to 2 and dodge is reduced to 7.",
+      "4/1 : Grunt, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/1 : Grunt has chosen to do a regular attack with a melee weapon.",
+      "4/1 : Grunt, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/1 : Grunt is attacking Bob the Example with Axe/swing.",
+      "4/1 : Grunt, please roll 3d (need 11 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/1 : Grunt has successfully hit Bob the Example with Axe. Rolled a 9, needed a 11.",
+      "4/1 : Bob the Example, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/1 : Bob the Example has chosen to parry with his/her Broadsword.",
+      "4/1 : Bob the Example, please roll 3d (need 11 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "4/1 : Bob the Example successfully defended against Grunt by parrying with his/her Broadsword. Rolled a 9, needed a 11.",
+      "4/2 : Grunt 2 is at -2 hit points (out of a possible 10). He/she is unconscious. His/her turn is being skipped.",
+      "5/0 : It is now Bob the Example's turn. He/she is at 11 hit points (out of a possible 15). He/she is alive and well.",
+      "5/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "5/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Bob the Example is attacking Grunt with Broadsword/swing.",
+      "5/0 : Bob the Example, please roll 3d (need 14 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 12, needed a 14.",
+      "5/0 : Grunt, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Grunt has chosen to block with his/her Medium Shield.",
+      "5/0 : Grunt, please roll 3d (need 10 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Grunt failed to defend against Bob the Example by blocking with his/her Medium Shield. Rolled a 13, but needed a 10.",
+      "5/0 : Bob the Example, please roll 2d+1 cut damage."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/0 : Grunt is hit for 9 cut damage. 7 gets through his/her armour (DR 2) doing 10 hits of damage.",
+      "5/1 : It is now Grunt's turn. He/she is at -9 hit points (out of a possible 10). He/she is barely conscious. His/her current move is reduced to 2 and dodge is reduced to 7. He/she is temporarily at -4 to all DX and IQ based skills because of shock.",
+      "5/1 : Grunt needs to make a roll to stay conscious. Please roll 3d (need 10)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/1 : Grunt successfully remained conscious! Rolled a 7, needed a 10.",
+      "5/1 : Grunt, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/1 : Grunt has chosen to do a regular attack with a melee weapon.",
+      "5/1 : Grunt, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/1 : Grunt is attacking Bob the Example with Axe/swing.",
+      "5/1 : Grunt, please roll 3d (need 7 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "5/1 : Grunt has failed to hit Bob the Example with Axe. Rolled a 8, but needed a 7.",
+      "5/2 : Grunt 2 is at -2 hit points (out of a possible 10). He/she is unconscious. His/her turn is being skipped.",
+      "6/0 : It is now Bob the Example's turn. He/she is at 11 hit points (out of a possible 15). He/she is alive and well.",
+      "6/0 : Bob the Example, please chose an action."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/0 : Bob the Example has chosen to do a regular attack with a melee weapon.",
+      "6/0 : Bob the Example, please chose a target, a melee weapon, and a weapon mode."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/0 : Bob the Example is attacking Grunt with Broadsword/swing.",
+      "6/0 : Bob the Example, please roll 3d (need 14 to hit)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 11, needed a 14.",
+      "6/0 : Grunt, please chose a defense and item (if needed for defense)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/0 : Grunt has chosen to block with his/her Medium Shield.",
+      "6/0 : Grunt, please roll 3d (need 10 to defend)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/0 : Grunt successfully defended against Bob the Example by blocking with his/her Medium Shield. Rolled a 10, needed a 10.",
+      "6/1 : It is now Grunt's turn. He/she is at -9 hit points (out of a possible 10). He/she is barely conscious. His/her current move is reduced to 2 and dodge is reduced to 7.",
+      "6/1 : Grunt needs to make a roll to stay conscious. Please roll 3d (need 10)."
+    ]
+  },
+  {
+    "successful": true,
+    "messages": [
+      "6/1 : Grunt is now unconscious! Rolled a 11, needed a 10.",
+      "6/2 : Grunt 2 is at -2 hit points (out of a possible 10). He/she is unconscious. His/her turn is being skipped.",
+      "7/0 : It is now Bob the Example's turn. He/she is at 11 hit points (out of a possible 15). He/she is alive and well.",
+      "7/0 : Bob the Example, please chose an action."
+    ]
+  }
+]

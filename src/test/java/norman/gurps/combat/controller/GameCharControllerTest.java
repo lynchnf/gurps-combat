@@ -1,5 +1,6 @@
 package norman.gurps.combat.controller;
 
+import norman.gurps.combat.TestHelper;
 import norman.gurps.combat.controller.request.NameRequest;
 import norman.gurps.combat.controller.response.BasicResponse;
 import norman.gurps.combat.controller.response.GameCharsResponse;
@@ -19,19 +20,19 @@ import static org.mockito.Mockito.when;
 class GameCharControllerTest {
     GameCharController controller;
     GameCharService service;
+    GameChar gameChar;
 
     @BeforeEach
     void setUp() {
         // Mock service.
         service = mock(GameCharService.class);
         controller = new GameCharController(service);
+
+        gameChar = TestHelper.getGameChar1();
     }
 
     @Test
     void storeChar() {
-        GameChar gameChar = new GameChar();
-        gameChar.setName("Test Character");
-
         BasicResponse resp = controller.storeChar(gameChar);
 
         assertTrue(resp.getSuccessful());
@@ -41,7 +42,7 @@ class GameCharControllerTest {
     @Test
     void removeChar() {
         NameRequest req = new NameRequest();
-        req.setName("Test Character");
+        req.setName("Bob the Example");
 
         BasicResponse resp = controller.removeChar(req);
 
@@ -52,15 +53,17 @@ class GameCharControllerTest {
     @Test
     void showStoredChars() {
         List<GameChar> storedGameChars = new ArrayList<>();
-        GameChar testGameChar = new GameChar();
-        testGameChar.setName("Test Character");
-        storedGameChars.add(testGameChar);
+        storedGameChars.add(gameChar);
+        GameChar gameChar2 = TestHelper.getGameChar2();
+        storedGameChars.add(gameChar2);
         when(service.getStoredGameChars()).thenReturn(storedGameChars);
 
         GameCharsResponse resp = controller.showStoredChars();
 
         assertTrue(resp.getSuccessful());
         assertEquals(1, resp.getMessages().size());
-        assertEquals(1, resp.getGameChars().size());
+        assertEquals(2, resp.getGameChars().size());
+        assertEquals("Bob the Example", resp.getGameChars().get(0).getName());
+        assertEquals("Grunt", resp.getGameChars().get(1).getName());
     }
 }

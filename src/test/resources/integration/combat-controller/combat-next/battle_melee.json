@@ -1,0 +1,413 @@
+{
+  "combatants": [
+    {
+      "label": "Bob the Example",
+      "gameChar": {
+        "name": "Bob the Example",
+        "strength": 14,
+        "dexterity": 13,
+        "intelligence": 12,
+        "health": 11,
+        "hitPoints": 15,
+        "basicSpeed": 6.25,
+        "basicMove": 7,
+        "damageResistance": 1,
+        "encumbranceLevel": 1,
+        "unconsciousnessCheck": 13,
+        "deathCheck": 12,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 14,
+            "meleeWeaponModes": [
+              {
+                "name": "swing",
+                "damageDice": 2,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "YES",
+            "parryModifier": 0,
+            "minimumStrength": 10
+          }
+        ],
+        "rangedWeapons": [
+          {
+            "name": "Longbow",
+            "skill": 13,
+            "damageDice": 1,
+            "damageAdds": 2,
+            "damageType": "IMPALING",
+            "accuracy": 3,
+            "halfDamageRange": 210,
+            "maximumRange": 280,
+            "rateOfFire": 1,
+            "minimumStrength": 11,
+            "bulk": -8,
+            "recoil": 1
+          }
+        ],
+        "shields": [
+          {
+            "name": "Small Shield",
+            "skill": 13,
+            "defenseBonus": 1
+          }
+        ],
+        "armorPieces": [
+          {
+            "name": "Leather Jacket",
+            "hitLocations": [
+              "TORSO",
+              "ARMS"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Leather Pants",
+            "hitLocations": [
+              "LEGS",
+              "GROIN"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Leather Cap",
+            "hitLocations": [
+              "SKULL"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Cloth Gloves",
+            "hitLocations": [
+              "HANDS"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Shoes",
+            "hitLocations": [
+              "FEET"
+            ],
+            "damageResistance": 1
+          }
+        ],
+        "defaultReadyItems": [
+          "Broadsword",
+          "Small Shield"
+        ]
+      },
+      "readyItems": [
+        "Broadsword",
+        "Small Shield"
+      ],
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "unconsciousnessCheckFailed": false,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
+      "healthStatus": "ALIVE",
+      "currentMove": 6,
+      "shockPenalty": 0,
+      "actionType": "DO_NOTHING",
+      "combatMelees": [],
+      "combatRanged": null,
+      "combatDefenses": []
+    },
+    {
+      "label": "Grunt",
+      "gameChar": {
+        "name": "Grunt",
+        "strength": 10,
+        "dexterity": 10,
+        "intelligence": 10,
+        "health": 10,
+        "hitPoints": 10,
+        "basicSpeed": 5.0,
+        "basicMove": 5,
+        "damageResistance": 0,
+        "encumbranceLevel": 2,
+        "unconsciousnessCheck": 10,
+        "deathCheck": 10,
+        "meleeWeapons": [
+          {
+            "name": "Axe",
+            "skill": 12,
+            "meleeWeaponModes": [
+              {
+                "name": "swing",
+                "damageDice": 1,
+                "damageAdds": 2,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "UNBALANCED",
+            "parryModifier": 0,
+            "minimumStrength": 11
+          }
+        ],
+        "rangedWeapons": [
+          {
+            "name": "Revolver, .36",
+            "skill": 12,
+            "damageDice": 2,
+            "damageAdds": -1,
+            "damageType": "PIERCING",
+            "accuracy": 1,
+            "halfDamageRange": 120,
+            "maximumRange": 1300,
+            "rateOfFire": 1,
+            "minimumStrength": 9,
+            "bulk": -2,
+            "recoil": 2
+          }
+        ],
+        "shields": [
+          {
+            "name": "Medium Shield",
+            "skill": 11,
+            "defenseBonus": 2
+          }
+        ],
+        "armorPieces": [
+          {
+            "name": "Leather Body Armor",
+            "hitLocations": [
+              "TORSO",
+              "GROIN"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Heavy Leather Leggings",
+            "hitLocations": [
+              "LEGS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Heavy Leather Sleeves",
+            "hitLocations": [
+              "ARMS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Leather Helm",
+            "hitLocations": [
+              "SKULL",
+              "FACE"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Leather Gloves",
+            "hitLocations": [
+              "HANDS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Boots",
+            "hitLocations": [
+              "FEET"
+            ],
+            "damageResistance": 2
+          }
+        ],
+        "defaultReadyItems": [
+          "Axe",
+          "Medium Shield"
+        ]
+      },
+      "readyItems": [
+        "Axe",
+        "Medium Shield"
+      ],
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "unconsciousnessCheckFailed": false,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
+      "healthStatus": "ALIVE",
+      "currentMove": 3,
+      "shockPenalty": 0,
+      "actionType": "DO_NOTHING",
+      "combatMelees": [],
+      "combatRanged": null,
+      "combatDefenses": []
+    },
+    {
+      "label": "Grunt 2",
+      "gameChar": {
+        "name": "Grunt",
+        "strength": 10,
+        "dexterity": 10,
+        "intelligence": 10,
+        "health": 10,
+        "hitPoints": 10,
+        "basicSpeed": 5.0,
+        "basicMove": 5,
+        "damageResistance": 0,
+        "encumbranceLevel": 2,
+        "unconsciousnessCheck": 10,
+        "deathCheck": 10,
+        "meleeWeapons": [
+          {
+            "name": "Axe",
+            "skill": 12,
+            "meleeWeaponModes": [
+              {
+                "name": "swing",
+                "damageDice": 1,
+                "damageAdds": 2,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "UNBALANCED",
+            "parryModifier": 0,
+            "minimumStrength": 11
+          }
+        ],
+        "rangedWeapons": [
+          {
+            "name": "Revolver, .36",
+            "skill": 12,
+            "damageDice": 2,
+            "damageAdds": -1,
+            "damageType": "PIERCING",
+            "accuracy": 1,
+            "halfDamageRange": 120,
+            "maximumRange": 1300,
+            "rateOfFire": 1,
+            "minimumStrength": 9,
+            "bulk": -2,
+            "recoil": 2
+          }
+        ],
+        "shields": [
+          {
+            "name": "Medium Shield",
+            "skill": 11,
+            "defenseBonus": 2
+          }
+        ],
+        "armorPieces": [
+          {
+            "name": "Leather Body Armor",
+            "hitLocations": [
+              "TORSO",
+              "GROIN"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Heavy Leather Leggings",
+            "hitLocations": [
+              "LEGS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Heavy Leather Sleeves",
+            "hitLocations": [
+              "ARMS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Leather Helm",
+            "hitLocations": [
+              "SKULL",
+              "FACE"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Leather Gloves",
+            "hitLocations": [
+              "HANDS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Boots",
+            "hitLocations": [
+              "FEET"
+            ],
+            "damageResistance": 2
+          }
+        ],
+        "defaultReadyItems": [
+          "Axe",
+          "Medium Shield"
+        ]
+      },
+      "readyItems": [
+        "Axe",
+        "Medium Shield"
+      ],
+      "currentDamage": 0,
+      "previousDamage": 0,
+      "unconsciousnessCheckFailed": false,
+      "nbrOfDeathChecksNeeded": 0,
+      "deathCheckFailed": false,
+      "healthStatus": "ALIVE",
+      "currentMove": 3,
+      "shockPenalty": 0,
+      "actionType": "DO_NOTHING",
+      "combatMelees": [],
+      "combatRanged": null,
+      "combatDefenses": []
+    }
+  ],
+  "nextStep": {
+    "round": 1,
+    "index": 0,
+    "combatPhase": "BEGIN_TURN",
+    "inputNeeded": null,
+    "message": null
+  },
+  "battleLogs": [
+    {
+      "timeMillis": 1681615112004,
+      "message": "Battle created."
+    },
+    {
+      "timeMillis": 1681615128120,
+      "message": "Combatant Bob the Example added to Battle."
+    },
+    {
+      "timeMillis": 1681615171756,
+      "message": "Combatant Grunt added to Battle."
+    },
+    {
+      "timeMillis": 1681615176656,
+      "message": "Combatant Grunt 2 added to Battle."
+    },
+    {
+      "timeMillis": 1681615364473,
+      "message": "Combat started."
+    }
+  ]
+}

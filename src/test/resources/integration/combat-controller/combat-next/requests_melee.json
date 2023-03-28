@@ -1,0 +1,262 @@
+[
+  {
+    "combatPhase": "BEGIN_TURN"
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 8
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "BLOCK",
+    "defendingItemName": "Medium Shield"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Bob the Example",
+    "weaponName": "Axe",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 13
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "AOA_MELEE_4_TO_HIT"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Bob the Example",
+    "weaponName": "Axe",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "PARRY",
+    "defendingItemName": "Broadsword"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 8
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt 2",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 10
+  },
+  {
+    "combatPhase": "RESOLVE_DAMAGE",
+    "forDamageRoll": 10
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "AOA_MELEE_4_TO_HIT"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Bob the Example",
+    "weaponName": "Axe",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 10
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "PARRY",
+    "defendingItemName": "Broadsword"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 12
+  },
+  {
+    "combatPhase": "RESOLVE_DAMAGE",
+    "forDamageRoll": 5
+  },
+  {
+    "combatPhase": "RESOLVE_UNCONSCIOUSNESS_CHECK",
+    "forUnconsciousnessCheckRoll": 8
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "AOD_2_TO_DEFENSE"
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_DAMAGE",
+    "forDamageRoll": 8
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "AOD_2_TO_DEFENSE"
+  },
+  {
+    "combatPhase": "RESOLVE_UNCONSCIOUSNESS_CHECK",
+    "forUnconsciousnessCheckRoll": 15
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "BLOCK",
+    "defendingItemName": "Medium Shield"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 12
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Bob the Example",
+    "weaponName": "Axe",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "PARRY",
+    "defendingItemName": "Broadsword"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 12
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "BLOCK",
+    "defendingItemName": "Medium Shield"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 13
+  },
+  {
+    "combatPhase": "RESOLVE_DAMAGE",
+    "forDamageRoll": 9
+  },
+  {
+    "combatPhase": "RESOLVE_UNCONSCIOUSNESS_CHECK",
+    "forUnconsciousnessCheckRoll": 7
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Bob the Example",
+    "weaponName": "Axe",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 8
+  },
+  {
+    "combatPhase": "RESOLVE_ACTION",
+    "actionType": "ATTACK_MELEE"
+  },
+  {
+    "combatPhase": "RESOLVE_MELEE_TARGET",
+    "targetLabel": "Grunt",
+    "weaponName": "Broadsword",
+    "weaponModeName": "swing"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_HIT",
+    "toHitRoll": 11
+  },
+  {
+    "combatPhase": "RESOLVE_DEFENSE",
+    "defenseType": "BLOCK",
+    "defendingItemName": "Medium Shield"
+  },
+  {
+    "combatPhase": "RESOLVE_TO_DEFEND",
+    "toDefendRoll": 10
+  },
+  {
+    "combatPhase": "RESOLVE_UNCONSCIOUSNESS_CHECK",
+    "forUnconsciousnessCheckRoll": 11
+  }
+]

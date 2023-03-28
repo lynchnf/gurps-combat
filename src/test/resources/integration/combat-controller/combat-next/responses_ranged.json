@@ -1,0 +1,9 @@
+[
+  {
+    "successful": true,
+    "messages": [
+      "1/0 : It is now Bob the Example's turn. He/she is at 15 hit points (out of a possible 15). He/she is alive and well.",
+      "1/0 : Bob the Example, please chose an action."
+    ]
+  }
+]

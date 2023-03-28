@@ -10,16 +10,16 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CombatantTest {
-    GameChar testGameChar;
+    GameChar gameChar;
 
     @BeforeEach
     void setUp() {
-        testGameChar = TestHelper.getGameChar1();
+        gameChar = TestHelper.getGameChar1();
     }
 
     @Test
     void constructor1() {
-        Combatant combatant = new Combatant(testGameChar, new HashSet<>());
+        Combatant combatant = new Combatant(gameChar, new HashSet<>());
 
         assertEquals("Bob the Example", combatant.getLabel());
     }
@@ -29,7 +29,7 @@ class CombatantTest {
         Set<String> existingLabels = new HashSet<>();
         existingLabels.add("Bob the Example");
 
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
 
         assertEquals("Bob the Example 2", combatant.getLabel());
     }
@@ -40,7 +40,7 @@ class CombatantTest {
         existingLabels.add("Bob the Example");
         existingLabels.add("Bob the Example 2");
 
-        Combatant combatant = new Combatant(testGameChar, existingLabels);
+        Combatant combatant = new Combatant(gameChar, existingLabels);
 
         assertEquals("Bob the Example 3", combatant.getLabel());
     }

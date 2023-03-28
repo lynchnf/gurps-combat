@@ -9,14 +9,15 @@ public class NextStepRequest {
     private ActionType actionType;
     private String targetLabel;
     private String weaponName;
-    private String modeName;
-    private Integer rollToHit;
+    private String weaponModeName;
+    private Integer speedAndRange;
+    private Integer toHitRoll;
     private DefenseType defenseType;
     private String defendingItemName;
-    private Integer rollToDefend;
-    private Integer rollForDamage;
-    private Integer rollForDeathCheck;
-    private Integer rollForUnconsciousnessCheck;
+    private Integer toDefendRoll;
+    private Integer forDamageRoll;
+    private Integer forDeathCheckRoll;
+    private Integer forUnconsciousnessCheckRoll;
 
     public CombatPhase getCombatPhase() {
         return combatPhase;
@@ -50,20 +51,28 @@ public class NextStepRequest {
         this.weaponName = weaponName;
     }
 
-    public String getModeName() {
-        return modeName;
+    public String getWeaponModeName() {
+        return weaponModeName;
     }
 
-    public void setModeName(String modeName) {
-        this.modeName = modeName;
+    public void setWeaponModeName(String weaponModeName) {
+        this.weaponModeName = weaponModeName;
     }
 
-    public Integer getRollToHit() {
-        return rollToHit;
+    public Integer getSpeedAndRange() {
+        return speedAndRange;
     }
 
-    public void setRollToHit(Integer rollToHit) {
-        this.rollToHit = rollToHit;
+    public void setSpeedAndRange(Integer speedAndRange) {
+        this.speedAndRange = speedAndRange;
+    }
+
+    public Integer getToHitRoll() {
+        return toHitRoll;
+    }
+
+    public void setToHitRoll(Integer toHitRoll) {
+        this.toHitRoll = toHitRoll;
     }
 
     public DefenseType getDefenseType() {
@@ -82,35 +91,35 @@ public class NextStepRequest {
         this.defendingItemName = defendingItemName;
     }
 
-    public Integer getRollToDefend() {
-        return rollToDefend;
+    public Integer getToDefendRoll() {
+        return toDefendRoll;
     }
 
-    public void setRollToDefend(Integer rollToDefend) {
-        this.rollToDefend = rollToDefend;
+    public void setToDefendRoll(Integer toDefendRoll) {
+        this.toDefendRoll = toDefendRoll;
     }
 
-    public Integer getRollForDamage() {
-        return rollForDamage;
+    public Integer getForDamageRoll() {
+        return forDamageRoll;
     }
 
-    public void setRollForDamage(Integer rollForDamage) {
-        this.rollForDamage = rollForDamage;
+    public void setForDamageRoll(Integer forDamageRoll) {
+        this.forDamageRoll = forDamageRoll;
     }
 
-    public Integer getRollForDeathCheck() {
-        return rollForDeathCheck;
+    public Integer getForDeathCheckRoll() {
+        return forDeathCheckRoll;
     }
 
-    public void setRollForDeathCheck(Integer rollForDeathCheck) {
-        this.rollForDeathCheck = rollForDeathCheck;
+    public void setForDeathCheckRoll(Integer forDeathCheckRoll) {
+        this.forDeathCheckRoll = forDeathCheckRoll;
     }
 
-    public Integer getRollForUnconsciousnessCheck() {
-        return rollForUnconsciousnessCheck;
+    public Integer getForUnconsciousnessCheckRoll() {
+        return forUnconsciousnessCheckRoll;
     }
 
-    public void setRollForUnconsciousnessCheck(Integer rollForUnconsciousnessCheck) {
-        this.rollForUnconsciousnessCheck = rollForUnconsciousnessCheck;
+    public void setForUnconsciousnessCheckRoll(Integer forUnconsciousnessCheckRoll) {
+        this.forUnconsciousnessCheckRoll = forUnconsciousnessCheckRoll;
     }
 }

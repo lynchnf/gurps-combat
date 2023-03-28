@@ -44,26 +44,26 @@ public class CombatController {
     public BasicResponse nextStepInCombat(@RequestBody NextStepRequest req) {
         LOGGER.debug("Taking the next step in combat.");
         BasicResponse resp = new BasicResponse();
-
         CombatPhase combatPhase = req.getCombatPhase();
         ActionType actionType = req.getActionType();
         String targetLabel = req.getTargetLabel();
         String weaponName = req.getWeaponName();
-        String modeName = req.getModeName();
-        Integer rollToHit = req.getRollToHit();
+        String weaponModeName = req.getWeaponModeName();
+        Integer speedAndRange = req.getSpeedAndRange();
+        Integer toHitRoll = req.getToHitRoll();
         DefenseType defenseType = req.getDefenseType();
         String defendingItemName = req.getDefendingItemName();
-        Integer rollToDefend = req.getRollToDefend();
-        Integer rollForDamage = req.getRollForDamage();
-        Integer rollForDeathCheck = req.getRollForDeathCheck();
-        Integer rollForUnconsciousnessCheck = req.getRollForUnconsciousnessCheck();
+        Integer toDefendRoll = req.getToDefendRoll();
+        Integer forDamageRoll = req.getForDamageRoll();
+        Integer forDeathCheckRoll = req.getForDeathCheckRoll();
+        Integer forUnconsciousnessCheckRoll = req.getForUnconsciousnessCheckRoll();
 
         boolean inputNeeded;
         try {
             do {
-                NextStep nextStep = service.nextStep(combatPhase, actionType, targetLabel, weaponName, modeName,
-                        rollToHit, defenseType, defendingItemName, rollToDefend, rollForDamage, rollForDeathCheck,
-                        rollForUnconsciousnessCheck);
+                NextStep nextStep = service.nextStep(combatPhase, actionType, targetLabel, weaponName, weaponModeName,
+                        speedAndRange, toHitRoll, defenseType, defendingItemName, toDefendRoll, forDamageRoll,
+                        forDeathCheckRoll, forUnconsciousnessCheckRoll);
                 if (nextStep.getMessage() != null) {
                     resp.getMessages().add(nextStep.getMessage());
                 }

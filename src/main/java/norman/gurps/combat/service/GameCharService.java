@@ -8,6 +8,7 @@ import norman.gurps.combat.model.HitLocation;
 import norman.gurps.combat.model.MeleeWeapon;
 import norman.gurps.combat.model.MeleeWeaponMode;
 import norman.gurps.combat.model.ParryType;
+import norman.gurps.combat.model.RangedWeapon;
 import norman.gurps.combat.model.Shield;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -119,20 +120,17 @@ public class GameCharService {
             errors.add("Death check may not be less than 0.");
         }
 
-        if (gameChar.getMeleeWeapons().isEmpty()) {
-            errors.add("Must have at least one weapon.");
-        } else {
-            Set<String> weaponNames = new HashSet<>();
-            for (MeleeWeapon weapon : gameChar.getMeleeWeapons()) {
-                errors.addAll(validateMeleeWeapon(weapon, weaponNames));
-            }
+        Set<String> itemNames = new HashSet<>();
+        for (MeleeWeapon meleeWeapon : gameChar.getMeleeWeapons()) {
+            errors.addAll(validateMeleeWeapon(meleeWeapon, itemNames));
         }
 
-        if (gameChar.getShields().isEmpty()) {
-            Set<String> shieldNames = new HashSet<>();
-            for (Shield shield : gameChar.getShields()) {
-                errors.addAll(validateShield(shield, shieldNames));
-            }
+        for (RangedWeapon rangedWeapon : gameChar.getRangedWeapons()) {
+            errors.addAll(validateRangedWeapon(rangedWeapon, itemNames));
+        }
+
+        for (Shield shield : gameChar.getShields()) {
+            errors.addAll(validateShield(shield, itemNames));
         }
 
         Set<String> armorPieceNames = new HashSet<>();
@@ -140,100 +138,185 @@ public class GameCharService {
             errors.addAll(validateArmor(armorPiece, armorPieceNames));
         }
 
-        return errors;
-    }
-
-    private List<String> validateMeleeWeapon(MeleeWeapon weapon, Set<String> weaponNames) {
-        List<String> errors = new ArrayList<>();
-
-        if (StringUtils.isBlank(weapon.getName())) {
-            errors.add("Weapon name may not be blank.");
-        } else {
-            if (weaponNames.contains(weapon.getName())) {
-                errors.add("Weapon name " + weapon.getName() + " is not unique.");
+        List<String> defaultReadyItems = gameChar.getDefaultReadyItems();
+        for (String defaultReadyItem : defaultReadyItems) {
+            if (!itemNames.contains(defaultReadyItem)) {
+                errors.add("Default ready item " + defaultReadyItem +
+                        " is not a valid melee weapon, nor a valid ranged weapon, nor a valid shield.");
             }
-            weaponNames.add(weapon.getName());
-        }
-
-        if (weapon.getSkill() == null) {
-            errors.add("Skill for weapon " + weapon.getName() + " may not be blank.");
-        } else if (weapon.getSkill() < 0) {
-            errors.add("Skill for weapon " + weapon.getName() + " may not be less than zero.");
-        }
-
-        if (weapon.getMeleeWeaponModes().isEmpty()) {
-            errors.add("Weapon " + weapon.getName() + " must have at least one mode.");
-        } else {
-            Set<String> modeNames = new HashSet<>();
-            for (MeleeWeaponMode mode : weapon.getMeleeWeaponModes()) {
-                String weaponName = weapon.getName();
-                errors.addAll(validateMeleeWeaponMode(mode, modeNames, weaponName));
-            }
-        }
-
-        if (weapon.getParryType() == null) {
-            errors.add("Parry type for weapon " + weapon.getName() + " may not be blank.");
-        } else if (weapon.getParryType() != ParryType.NO) {
-            if (weapon.getParryModifier() == null) {
-                errors.add("Parry modifier for weapon " + weapon.getName() + " may not be blank.");
-            }
-        } else {
-            if (weapon.getParryModifier() != null) {
-                errors.add("Parry modifier for weapon " + weapon.getName() + " must be blank.");
-            }
-        }
-
-        if (weapon.getMinStrength() == null) {
-            errors.add("Minimum strength for weapon " + weapon.getName() + " may not be blank.");
-        } else if (weapon.getMinStrength() < 0) {
-            errors.add("Minimum strength for weapon " + weapon.getName() + " may not be less than zero.");
-        }
-
-        if (weapon.getTwoHanded() == null) {
-            errors.add("Two-handed indicator for weapon " + weapon.getName() + " may not be blank.");
         }
 
         return errors;
     }
 
-    private List<String> validateMeleeWeaponMode(MeleeWeaponMode mode, Set<String> modeNames, String weaponName) {
+    private List<String> validateMeleeWeapon(MeleeWeapon meleeWeapon, Set<String> itemNames) {
         List<String> errors = new ArrayList<>();
 
-        if (StringUtils.isBlank(mode.getName())) {
-            errors.add("Mode name for weapon " + weaponName + " may not be blank.");
+        if (StringUtils.isBlank(meleeWeapon.getName())) {
+            errors.add("Melee weapon name may not be blank.");
         } else {
-            if (modeNames.contains(mode.getName())) {
-                errors.add("Mode name " + mode.getName() + " for weapon " + weaponName + " is not unique.");
+            if (itemNames.contains(meleeWeapon.getName())) {
+                errors.add("Melee weapon name " + meleeWeapon.getName() + " is not unique.");
             }
-            modeNames.add(mode.getName());
+            itemNames.add(meleeWeapon.getName());
         }
 
-        if (mode.getDamageDice() == null) {
-            errors.add("Damage dice for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
-        } else if (mode.getDamageDice() < 0) {
-            errors.add("Damage dice for weapon & mode " + weaponName + "/" + mode.getName() +
+        if (meleeWeapon.getSkill() == null) {
+            errors.add("Skill for melee weapon " + meleeWeapon.getName() + " may not be blank.");
+        } else if (meleeWeapon.getSkill() < 0) {
+            errors.add("Skill for melee weapon " + meleeWeapon.getName() + " may not be less than zero.");
+        }
+
+        if (meleeWeapon.getMeleeWeaponModes().isEmpty()) {
+            errors.add("Melee weapon " + meleeWeapon.getName() + " must have at least one melee weapon mode.");
+        } else {
+            Set<String> meleeWeaponModeNames = new HashSet<>();
+            for (MeleeWeaponMode meleeWeaponMode : meleeWeapon.getMeleeWeaponModes()) {
+                errors.addAll(validateMeleeWeaponMode(meleeWeaponMode, meleeWeaponModeNames, meleeWeapon.getName()));
+            }
+        }
+
+        if (meleeWeapon.getParryType() == null) {
+            errors.add("Parry type for melee weapon " + meleeWeapon.getName() + " may not be blank.");
+        } else if (meleeWeapon.getParryType() != ParryType.NO) {
+            if (meleeWeapon.getParryModifier() == null) {
+                errors.add("Parry modifier for melee weapon " + meleeWeapon.getName() + " may not be blank.");
+            }
+        } else {
+            if (meleeWeapon.getParryModifier() != null) {
+                errors.add("Parry modifier for melee weapon " + meleeWeapon.getName() + " must be blank.");
+            }
+        }
+
+        if (meleeWeapon.getMinimumStrength() == null) {
+            errors.add("Minimum strength for melee weapon " + meleeWeapon.getName() + " may not be blank.");
+        } else if (meleeWeapon.getMinimumStrength() < 0) {
+            errors.add("Minimum strength for melee weapon " + meleeWeapon.getName() + " may not be less than zero.");
+        }
+
+        return errors;
+    }
+
+    private List<String> validateRangedWeapon(RangedWeapon rangedWeapon, Set<String> itemNames) {
+        List<String> errors = new ArrayList<>();
+
+        if (StringUtils.isBlank(rangedWeapon.getName())) {
+            errors.add("Ranged weapon name may not be blank.");
+        } else {
+            if (itemNames.contains(rangedWeapon.getName())) {
+                errors.add("Ranged weapon name " + rangedWeapon.getName() + " is not unique.");
+            }
+            itemNames.add(rangedWeapon.getName());
+        }
+
+        if (rangedWeapon.getSkill() == null) {
+            errors.add("Skill for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getSkill() < 0) {
+            errors.add("Skill for ranged weapon " + rangedWeapon.getName() + " may not be less than zero.");
+        }
+
+        if (rangedWeapon.getDamageDice() == null) {
+            errors.add("Damage dice for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getDamageDice() < 0) {
+            errors.add("Damage dice for ranged weapon " + rangedWeapon.getName() + " may not be less than zero.");
+        }
+
+        if (rangedWeapon.getDamageAdds() == null) {
+            errors.add("Damage adds for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        }
+
+        if (rangedWeapon.getDamageType() == null) {
+            errors.add("Damage type for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        }
+
+        if (rangedWeapon.getAccuracy() == null) {
+            errors.add("Accuracy for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getAccuracy() < 0) {
+            errors.add("Accuracy for ranged weapon " + rangedWeapon.getName() + " may not be less than zero.");
+        }
+
+        if (rangedWeapon.getHalfDamageRange() != null && rangedWeapon.getHalfDamageRange() <= 0) {
+            errors.add("Half damage range for ranged weapon " + rangedWeapon.getName() +
+                    " must be more than zero, if it's not blank.");
+        }
+
+        if (rangedWeapon.getMaximumRange() == null) {
+            errors.add("Maximum range for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getMaximumRange() <= 0) {
+            errors.add("Maximum range for ranged weapon " + rangedWeapon.getName() + " must be more than zero.");
+        }
+        if (rangedWeapon.getRateOfFire() == null) {
+            errors.add("Rate of fire for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getRateOfFire() <= 0) {
+            errors.add("Rate of fire for ranged weapon " + rangedWeapon.getName() + " must be more than zero.");
+        }
+
+        if (rangedWeapon.getMinimumStrength() == null) {
+            errors.add("Minimum strength for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getMinimumStrength() < 0) {
+            errors.add("Minimum strength for ranged weapon " + rangedWeapon.getName() + " may not be less than zero.");
+        }
+
+        if (rangedWeapon.getBulk() == null) {
+            errors.add("Bulk for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getBulk() >= 0) {
+            errors.add("Bulk for ranged weapon " + rangedWeapon.getName() + " must be less than zero.");
+        }
+
+        if (rangedWeapon.getRecoil() == null) {
+            errors.add("Recoil for ranged weapon " + rangedWeapon.getName() + " may not be blank.");
+        } else if (rangedWeapon.getRecoil() <= 0) {
+            errors.add("Recoil for ranged weapon " + rangedWeapon.getName() + " must be more than zero.");
+        }
+
+        return errors;
+    }
+
+    private List<String> validateMeleeWeaponMode(MeleeWeaponMode meleeWeaponMode, Set<String> meleeWeaponModeNames,
+            String meleeWeaponName) {
+        List<String> errors = new ArrayList<>();
+
+        if (StringUtils.isBlank(meleeWeaponMode.getName())) {
+            errors.add("Melee weapon mode name for melee weapon " + meleeWeaponName + " may not be blank.");
+        } else {
+            if (meleeWeaponModeNames.contains(meleeWeaponMode.getName())) {
+                errors.add(
+                        "Melee weapon mode name " + meleeWeaponMode.getName() + " for melee weapon " + meleeWeaponName +
+                                " is not unique.");
+            }
+            meleeWeaponModeNames.add(meleeWeaponMode.getName());
+        }
+
+        if (meleeWeaponMode.getDamageDice() == null) {
+            errors.add("Damage dice for melee weapon & mode " + meleeWeaponName + "/" + meleeWeaponMode.getName() +
+                    " may not be blank.");
+        } else if (meleeWeaponMode.getDamageDice() < 0) {
+            errors.add("Damage dice for melee weapon & mode " + meleeWeaponName + "/" + meleeWeaponMode.getName() +
                     " may not be less than zero.");
         }
 
-        if (mode.getDamageAdds() == null) {
-            errors.add("Damage adds for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
+        if (meleeWeaponMode.getDamageAdds() == null) {
+            errors.add("Damage adds for melee weapon & mode " + meleeWeaponName + "/" + meleeWeaponMode.getName() +
+                    " may not be blank.");
         }
 
-        if (mode.getDamageType() == null) {
-            errors.add("Damage type for weapon & mode " + weaponName + "/" + mode.getName() + " may not be blank.");
+        if (meleeWeaponMode.getDamageType() == null) {
+            errors.add("Damage type for melee weapon & mode " + meleeWeaponName + "/" + meleeWeaponMode.getName() +
+                    " may not be blank.");
         }
 
-        if (mode.getReaches().isEmpty()) {
-            errors.add("Weapon & mode " + weaponName + "/" + mode.getName() + " must have at least one reach.");
+        if (meleeWeaponMode.getReaches().isEmpty()) {
+            errors.add("Melee weapon & mode " + meleeWeaponName + "/" + meleeWeaponMode.getName() +
+                    " must have at least one reach.");
         } else {
             Set<Integer> reachSet = new HashSet<>();
-            for (Integer reach : mode.getReaches()) {
+            for (Integer reach : meleeWeaponMode.getReaches()) {
                 if (reach < 0) {
-                    errors.add("Reach " + reach + " for weapon & mode " + weaponName + "/" + mode.getName() +
-                            " must be zero or greater.");
+                    errors.add("Reach " + reach + " for melee weapon & mode " + meleeWeaponName + "/" +
+                            meleeWeaponMode.getName() + " must be zero or greater.");
                 } else if (reachSet.contains(reach)) {
-                    errors.add("Reach " + reach + " for weapon & mode " + weaponName + "/" + mode.getName() +
-                            " is not unique.");
+                    errors.add("Reach " + reach + " for melee weapon & mode " + meleeWeaponName + "/" +
+                            meleeWeaponMode.getName() + " is not unique.");
                 }
                 reachSet.add(reach);
             }
@@ -242,16 +325,16 @@ public class GameCharService {
         return errors;
     }
 
-    private List<String> validateShield(Shield shield, Set<String> shieldNames) {
+    private List<String> validateShield(Shield shield, Set<String> itemNames) {
         List<String> errors = new ArrayList<>();
 
         if (StringUtils.isBlank(shield.getName())) {
             errors.add("Shield name may not be blank.");
         } else {
-            if (shieldNames.contains(shield.getName())) {
+            if (itemNames.contains(shield.getName())) {
                 errors.add("Shield name " + shield.getName() + " is not unique.");
             }
-            shieldNames.add(shield.getName());
+            itemNames.add(shield.getName());
         }
 
         if (shield.getSkill() == null) {

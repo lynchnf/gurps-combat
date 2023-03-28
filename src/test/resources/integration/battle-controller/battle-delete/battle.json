@@ -1,9 +1,9 @@
 {
   "combatants": [],
   "nextStep": null,
-  "logs": [
+  "battleLogs": [
     {
-      "timeMillis": 1679172078169,
+      "timeMillis": 1680287651330,
       "message": "Battle created."
     }
   ]

@@ -17,8 +17,10 @@ public class GameChar {
     private Integer unconsciousnessCheck;
     private Integer deathCheck;
     private List<MeleeWeapon> meleeWeapons = new ArrayList<>();
+    private List<RangedWeapon> rangedWeapons = new ArrayList<>();
     private List<Shield> shields = new ArrayList<>();
     private List<ArmorPiece> armorPieces = new ArrayList<>();
+    private List<String> defaultReadyItems = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -124,6 +126,14 @@ public class GameChar {
         this.meleeWeapons = meleeWeapons;
     }
 
+    public List<RangedWeapon> getRangedWeapons() {
+        return rangedWeapons;
+    }
+
+    public void setRangedWeapons(List<RangedWeapon> rangedWeapons) {
+        this.rangedWeapons = rangedWeapons;
+    }
+
     public List<Shield> getShields() {
         return shields;
     }
@@ -138,5 +148,13 @@ public class GameChar {
 
     public void setArmorPieces(List<ArmorPiece> armorPieces) {
         this.armorPieces = armorPieces;
+    }
+
+    public List<String> getDefaultReadyItems() {
+        return defaultReadyItems;
+    }
+
+    public void setDefaultReadyItems(List<String> defaultReadyItems) {
+        this.defaultReadyItems = defaultReadyItems;
     }
 }

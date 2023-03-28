@@ -7,6 +7,7 @@ import java.util.Set;
 public class Combatant {
     private String label;
     private GameChar gameChar;
+    private List<String> readyItems = new ArrayList<>();
     private Integer currentDamage;
     private Integer previousDamage;
     private Boolean unconsciousnessCheckFailed;
@@ -14,18 +15,10 @@ public class Combatant {
     private Boolean deathCheckFailed;
     private HealthStatus healthStatus;
     private Integer currentMove;
-    private Integer defenseBonus;
     private Integer shockPenalty;
     private ActionType actionType;
-    private String targetLabel;
-    private String weaponName;
-    private String weaponModeName;
-    private Integer toHitEffectiveSkill;
-    private Integer toHitRoll;
-    private ResultType toHitResultType;
-    private Integer damageDice;
-    private Integer damageAdds;
-    private Integer forDamageRoll;
+    private List<CombatMelee> combatMelees = new ArrayList<>();
+    private CombatRanged combatRanged;
     private List<CombatDefense> combatDefenses = new ArrayList<>();
 
     public Combatant() {
@@ -55,6 +48,14 @@ public class Combatant {
 
     public void setGameChar(GameChar gameChar) {
         this.gameChar = gameChar;
+    }
+
+    public List<String> getReadyItems() {
+        return readyItems;
+    }
+
+    public void setReadyItems(List<String> readyItems) {
+        this.readyItems = readyItems;
     }
 
     public Integer getCurrentDamage() {
@@ -113,14 +114,6 @@ public class Combatant {
         this.currentMove = currentMove;
     }
 
-    public Integer getDefenseBonus() {
-        return defenseBonus;
-    }
-
-    public void setDefenseBonus(Integer defenseBonus) {
-        this.defenseBonus = defenseBonus;
-    }
-
     public Integer getShockPenalty() {
         return shockPenalty;
     }
@@ -137,76 +130,20 @@ public class Combatant {
         this.actionType = actionType;
     }
 
-    public String getTargetLabel() {
-        return targetLabel;
+    public List<CombatMelee> getCombatMelees() {
+        return combatMelees;
     }
 
-    public void setTargetLabel(String targetLabel) {
-        this.targetLabel = targetLabel;
+    public void setCombatMelees(List<CombatMelee> combatMelees) {
+        this.combatMelees = combatMelees;
     }
 
-    public String getWeaponName() {
-        return weaponName;
+    public CombatRanged getCombatRanged() {
+        return combatRanged;
     }
 
-    public void setWeaponName(String weaponName) {
-        this.weaponName = weaponName;
-    }
-
-    public String getWeaponModeName() {
-        return weaponModeName;
-    }
-
-    public void setWeaponModeName(String weaponModeName) {
-        this.weaponModeName = weaponModeName;
-    }
-
-    public Integer getToHitEffectiveSkill() {
-        return toHitEffectiveSkill;
-    }
-
-    public void setToHitEffectiveSkill(Integer toHitEffectiveSkill) {
-        this.toHitEffectiveSkill = toHitEffectiveSkill;
-    }
-
-    public Integer getToHitRoll() {
-        return toHitRoll;
-    }
-
-    public void setToHitRoll(Integer toHitRoll) {
-        this.toHitRoll = toHitRoll;
-    }
-
-    public ResultType getToHitResultType() {
-        return toHitResultType;
-    }
-
-    public void setToHitResultType(ResultType toHitResultType) {
-        this.toHitResultType = toHitResultType;
-    }
-
-    public Integer getDamageDice() {
-        return damageDice;
-    }
-
-    public void setDamageDice(Integer damageDice) {
-        this.damageDice = damageDice;
-    }
-
-    public Integer getDamageAdds() {
-        return damageAdds;
-    }
-
-    public void setDamageAdds(Integer damageAdds) {
-        this.damageAdds = damageAdds;
-    }
-
-    public Integer getForDamageRoll() {
-        return forDamageRoll;
-    }
-
-    public void setForDamageRoll(Integer forDamageRoll) {
-        this.forDamageRoll = forDamageRoll;
+    public void setCombatRanged(CombatRanged combatRanged) {
+        this.combatRanged = combatRanged;
     }
 
     public List<CombatDefense> getCombatDefenses() {

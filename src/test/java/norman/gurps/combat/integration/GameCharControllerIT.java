@@ -89,11 +89,8 @@ class GameCharControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         // Do it again.
         //@formatter:off
@@ -106,12 +103,9 @@ class GameCharControllerIT {
         //@formatter:on
 
         JsonNode jsonNode2 = mapper.readTree(result2.getResponse().getContentAsString());
-        assertTrue(jsonNode2.get("successful").isBoolean());
         // This time, it should fail.
         assertFalse(jsonNode2.get("successful").asBoolean());
-        assertTrue(jsonNode2.get("messages").isArray());
         assertEquals(1, jsonNode2.get("messages").size());
-        assertTrue(jsonNode2.get("messages").get(0).isTextual());
     }
 
     @Test
@@ -137,11 +131,8 @@ class GameCharControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
         // Do it again.
         //@formatter:off
@@ -154,12 +145,9 @@ class GameCharControllerIT {
         //@formatter:on
 
         JsonNode jsonNode2 = mapper.readTree(result2.getResponse().getContentAsString());
-        assertTrue(jsonNode2.get("successful").isBoolean());
         // This time, it should fail.
         assertFalse(jsonNode2.get("successful").asBoolean());
-        assertTrue(jsonNode2.get("messages").isArray());
         assertEquals(1, jsonNode2.get("messages").size());
-        assertTrue(jsonNode2.get("messages").get(0).isTextual());
     }
 
     @Test
@@ -180,12 +168,8 @@ class GameCharControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
         assertTrue(jsonNode.get("successful").asBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
-        assertTrue(jsonNode.get("gameChars").isArray());
         assertEquals(1, jsonNode.get("gameChars").size());
         assertEquals("Bob the Example", jsonNode.get("gameChars").get(0).get("name").asText());
     }

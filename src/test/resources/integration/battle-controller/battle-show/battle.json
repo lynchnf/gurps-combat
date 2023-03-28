@@ -1,10 +1,147 @@
 {
-  "combatants": [],
-  "nextStep": null,
-  "logs": [
+  "combatants": [
     {
-      "timeMillis": 1679172078169,
+      "label": "Bob the Example",
+      "gameChar": {
+        "name": "Bob the Example",
+        "strength": 14,
+        "dexterity": 13,
+        "intelligence": 12,
+        "health": 11,
+        "hitPoints": 15,
+        "basicSpeed": 6.25,
+        "basicMove": 7,
+        "damageResistance": 1,
+        "encumbranceLevel": 1,
+        "unconsciousnessCheck": 13,
+        "deathCheck": 12,
+        "meleeWeapons": [
+          {
+            "name": "Broadsword",
+            "skill": 14,
+            "meleeWeaponModes": [
+              {
+                "name": "swing",
+                "damageDice": 2,
+                "damageAdds": 1,
+                "damageType": "CUTTING",
+                "reaches": [
+                  1
+                ]
+              },
+              {
+                "name": "thrust",
+                "damageDice": 1,
+                "damageAdds": 1,
+                "damageType": "CRUSHING",
+                "reaches": [
+                  1
+                ]
+              }
+            ],
+            "parryType": "YES",
+            "parryModifier": 0,
+            "minimumStrength": 10
+          }
+        ],
+        "rangedWeapons": [
+          {
+            "name": "Longbow",
+            "skill": 13,
+            "damageDice": 1,
+            "damageAdds": 2,
+            "damageType": "IMPALING",
+            "accuracy": 3,
+            "halfDamageRange": 210,
+            "maximumRange": 280,
+            "rateOfFire": 1,
+            "minimumStrength": 11,
+            "bulk": -8,
+            "recoil": 1
+          }
+        ],
+        "shields": [
+          {
+            "name": "Small Shield",
+            "skill": 13,
+            "defenseBonus": 1
+          }
+        ],
+        "armorPieces": [
+          {
+            "name": "Leather Jacket",
+            "hitLocations": [
+              "TORSO",
+              "ARMS"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Leather Pants",
+            "hitLocations": [
+              "LEGS",
+              "GROIN"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Heavy Leather Sleeves",
+            "hitLocations": [
+              "ARMS"
+            ],
+            "damageResistance": 2
+          },
+          {
+            "name": "Leather Cap",
+            "hitLocations": [
+              "SKULL"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Cloth Gloves",
+            "hitLocations": [
+              "HANDS"
+            ],
+            "damageResistance": 1
+          },
+          {
+            "name": "Shoes",
+            "hitLocations": [
+              "FEET"
+            ],
+            "damageResistance": 1
+          }
+        ],
+        "defaultReadyItems": [
+          "Broadsword",
+          "Small Shield"
+        ]
+      },
+      "readyItems": [],
+      "currentDamage": null,
+      "previousDamage": null,
+      "unconsciousnessCheckFailed": null,
+      "nbrOfDeathChecksNeeded": null,
+      "deathCheckFailed": null,
+      "healthStatus": null,
+      "currentMove": null,
+      "shockPenalty": null,
+      "actionType": null,
+      "combatMelees": [],
+      "combatRanged": null,
+      "combatDefenses": []
+    }
+  ],
+  "nextStep": null,
+  "battleLogs": [
+    {
+      "timeMillis": 1680287651330,
       "message": "Battle created."
+    },
+    {
+      "timeMillis": 1680287877908,
+      "message": "Combatant Bob the Example added to Battle."
     }
   ]
 }

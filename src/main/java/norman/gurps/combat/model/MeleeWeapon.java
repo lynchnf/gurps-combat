@@ -9,8 +9,7 @@ public class MeleeWeapon {
     private List<MeleeWeaponMode> meleeWeaponModes = new ArrayList<>();
     private ParryType parryType;
     private Integer parryModifier;
-    private Integer minStrength;
-    private Boolean twoHanded;
+    private Integer minimumStrength;
 
     public String getName() {
         return name;
@@ -52,19 +51,11 @@ public class MeleeWeapon {
         this.parryModifier = parryModifier;
     }
 
-    public Integer getMinStrength() {
-        return minStrength;
+    public Integer getMinimumStrength() {
+        return minimumStrength;
     }
 
-    public void setMinStrength(Integer minStrength) {
-        this.minStrength = minStrength;
-    }
-
-    public Boolean getTwoHanded() {
-        return twoHanded;
-    }
-
-    public void setTwoHanded(Boolean twoHanded) {
-        this.twoHanded = twoHanded;
+    public void setMinimumStrength(Integer minimumStrength) {
+        this.minimumStrength = minimumStrength;
     }
 }

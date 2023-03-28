@@ -7,10 +7,25 @@ import norman.gurps.combat.controller.CombatController;
 import norman.gurps.combat.service.BattleService;
 import norman.gurps.combat.service.CombatService;
 import norman.gurps.combat.service.GameCharService;
+import norman.gurps.combat.service.combat.CombatActionComponent;
+import norman.gurps.combat.service.combat.CombatAimTargetComponent;
+import norman.gurps.combat.service.combat.CombatBeginTurnComponent;
+import norman.gurps.combat.service.combat.CombatDeathCheckComponent;
+import norman.gurps.combat.service.combat.CombatDefenseComponent;
+import norman.gurps.combat.service.combat.CombatEndTurnComponent;
+import norman.gurps.combat.service.combat.CombatForDamageComponent;
+import norman.gurps.combat.service.combat.CombatMeleeTargetComponent;
+import norman.gurps.combat.service.combat.CombatRangedTargetComponent;
+import norman.gurps.combat.service.combat.CombatToDefendComponent;
+import norman.gurps.combat.service.combat.CombatToHitComponent;
+import norman.gurps.combat.service.combat.CombatUnconsciousnessCheckComponent;
+import norman.gurps.combat.service.combat.CombatUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,8 +51,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @ContextConfiguration(
-        classes = {CombatController.class, CombatService.class, BattleService.class, GameCharService.class,
-                GurpsCombatConfig.class})
+        classes = {CombatController.class, CombatService.class, BattleService.class, CombatBeginTurnComponent.class,
+                CombatUnconsciousnessCheckComponent.class, CombatActionComponent.class,
+                CombatMeleeTargetComponent.class, CombatAimTargetComponent.class, CombatRangedTargetComponent.class,
+                CombatToHitComponent.class, CombatDefenseComponent.class, CombatToDefendComponent.class,
+                CombatForDamageComponent.class, CombatDeathCheckComponent.class, CombatEndTurnComponent.class,
+                CombatUtils.class, GameCharService.class, GurpsCombatConfig.class})
 @WebMvcTest
 class CombatControllerIT {
     @Value("${storage.dir.name}")
@@ -71,14 +90,14 @@ class CombatControllerIT {
     void tearDown() {
         if (storageBattleFile.exists()) {
             if (!storageBattleFile.delete()) {
-                throw new RuntimeException("SETUP: Unable to delete file " + storageBattleFile + ".");
+                throw new RuntimeException("TEARDOWN: Unable to delete file " + storageBattleFile + ".");
             }
         }
     }
 
     @Test
     void startCombat() throws Exception {
-        // Preload file with data.
+        // Create battle in storage.
         String resourceName = "integration/combat-controller/combat-start/battle.json";
         String battleJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
@@ -94,430 +113,71 @@ class CombatControllerIT {
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
+        assertTrue(jsonNode.get("successful").asBoolean());
         assertEquals(1, jsonNode.get("messages").size());
-        assertTrue(jsonNode.get("messages").get(0).isTextual());
 
-        assertTrue(storageBattleFile.exists());
         JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
+        assertEquals(3, battleJsonNode.get("combatants").size());
+        assertEquals("Bob the Example", battleJsonNode.get("combatants").get(0).get("label").asText());
+        assertEquals("Grunt", battleJsonNode.get("combatants").get(1).get("label").asText());
+        assertEquals("Grunt 2", battleJsonNode.get("combatants").get(2).get("label").asText());
         assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
         assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("BEGIN", battleJsonNode.get("nextStep").get("phase").asText());
+        assertEquals("BEGIN_TURN", battleJsonNode.get("nextStep").get("combatPhase").asText());
         assertFalse(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
+        assertTrue(battleJsonNode.get("nextStep").get("message").isNull());
+        assertEquals(5, battleJsonNode.get("battleLogs").size());
     }
 
     @Test
-    void nextStepInCombat_begin() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_begin.json";
-        String requestData = readResource(resourceName1);
+    void nextStepInCombat_melee() throws Exception {
+        String resourceName = "integration/combat-controller/combat-next/battle_melee.json";
+        String resourceName1 = "integration/combat-controller/combat-next/requests_melee.json";
+        String resourceName2 = "integration/combat-controller/combat-next/responses_melee.json";
 
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_begin.json";
-        String battleJson = readResource(resourceName2);
+        doNextStepInCombat(resourceName, resourceName1, resourceName2);
+    }
+
+    @Test
+    void nextStepInCombat_ranged() throws Exception {
+        String resourceName = "integration/combat-controller/combat-next/battle_ranged.json";
+        String resourceName1 = "integration/combat-controller/combat-next/requests_ranged.json";
+        String resourceName2 = "integration/combat-controller/combat-next/responses_ranged.json";
+
+        doNextStepInCombat(resourceName, resourceName1, resourceName2);
+    }
+
+    private void doNextStepInCombat(String resourceName, String resourceName1, String resourceName2) throws Exception {
+        String battleJson = readResource(resourceName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
         writer.write(battleJson);
         writer.close();
 
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
 
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_ACTION", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-    }
+        String requestsJson = readResource(resourceName1);
+        JsonNode requests = mapper.readTree(requestsJson);
 
-    @Test
-    void nextStepInCombat_resolve_action() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_action.json";
-        String requestData = readResource(resourceName1);
+        String responsesJson = readResource(resourceName2);
+        JsonNode responses = mapper.readTree(responsesJson);
 
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_action.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
+        for (int i = 0; i < requests.size(); i++) {
+            String requestData = requests.get(i).toString();
 
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
+            //@formatter:off
+            MvcResult result = mockMvc.perform(post("/combat/next")
+                            .content(requestData)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+            //@formatter:on
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_TARGET_AND_WEAPON", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_target_and_weapon() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_target_and_weapon.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_target_and_weapon.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_TO_HIT", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-        assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
-        assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
-        assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
-        assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_to_hit() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_to_hit.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_to_hit.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_DEFENSE", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-        assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
-        assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
-        assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
-        assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
-        assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_defense() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_defense.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_defense.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_TO_DEFEND", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-        assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
-        assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
-        assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
-        assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
-        assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
-        assertEquals("BLOCK",
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("defenseType").asText());
-        assertEquals("Medium Shield",
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("defendingItemName").asText());
-        assertEquals(10,
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("effectiveSkillToDefend")
-                        .asInt());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_to_defend() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_to_defend.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_to_defend.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_DAMAGE", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-        assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
-        assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
-        assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
-        assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
-        assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
-        assertEquals(2, battleJsonNode.get("combatants").get(0).get("damageDice").asInt());
-        assertEquals(1, battleJsonNode.get("combatants").get(0).get("damageAdds").asInt());
-        assertEquals("BLOCK",
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("defenseType").asText());
-        assertEquals("Medium Shield",
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("defendingItemName").asText());
-        assertEquals(10,
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("effectiveSkillToDefend")
-                        .asInt());
-        assertEquals(11,
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("rollToDefend").asInt());
-        assertEquals("FAILURE",
-                battleJsonNode.get("combatants").get(1).get("activeDefenses").get(0).get("toDefendResult").asText());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_damage() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_damage.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_damage.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(2, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_DEATH_CHECK", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals("ATTACK", battleJsonNode.get("combatants").get(0).get("action").asText());
-        assertEquals("Grunt", battleJsonNode.get("combatants").get(0).get("targetLabel").asText());
-        assertEquals("Broadsword", battleJsonNode.get("combatants").get(0).get("weaponName").asText());
-        assertEquals("swing", battleJsonNode.get("combatants").get(0).get("modeName").asText());
-        assertEquals(14, battleJsonNode.get("combatants").get(0).get("effectiveSkillToHit").asInt());
-        assertEquals(13, battleJsonNode.get("combatants").get(0).get("rollToHit").asInt());
-        assertEquals("SUCCESS", battleJsonNode.get("combatants").get(0).get("toHitResult").asText());
-        assertEquals(2, battleJsonNode.get("combatants").get(0).get("damageDice").asInt());
-        assertEquals(1, battleJsonNode.get("combatants").get(0).get("damageAdds").asInt());
-        assertEquals(16, battleJsonNode.get("combatants").get(0).get("rollForDamage").asInt());
-        assertEquals(21, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
-        assertEquals(1, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
-        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
-        assertEquals("ALMOST", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
-        assertEquals(2, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
-        assertTrue(battleJsonNode.get("combatants").get(1).get("activeDefenses").isArray());
-        assertFalse(battleJsonNode.get("combatants").get(1).get("activeDefenses").isEmpty());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_death_check() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_death_check.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_death_check.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(3, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(1, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(1, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_UNCONSCIOUSNESS_CHECK", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals(21, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
-        assertEquals(0, battleJsonNode.get("combatants").get(1).get("previousDamage").asInt());
-        assertFalse(battleJsonNode.get("combatants").get(1).get("unconsciousnessCheckFailed").asBoolean());
-        assertEquals(0, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
-        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
-        assertEquals("ALMOST", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
-        assertEquals(2, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
-    }
-
-    @Test
-    void nextStepInCombat_resolve_unconsciousness_check() throws Exception {
-        String resourceName1 = "integration/combat-controller/combat-next/request_resolve_unconsciousness_check.json";
-        String requestData = readResource(resourceName1);
-
-        // Preload file with data.
-        String resourceName2 = "integration/combat-controller/combat-next/battle_resolve_unconsciousness_check.json";
-        String battleJson = readResource(resourceName2);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(storageBattleFile));
-        writer.write(battleJson);
-        writer.close();
-
-        //@formatter:off
-        MvcResult result = mockMvc.perform(post("/combat/next")
-                        .content(requestData)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-        //@formatter:on
-
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(result.getResponse().getContentAsString());
-        assertTrue(jsonNode.get("successful").isBoolean());
-        assertTrue(jsonNode.get("messages").isArray());
-        assertEquals(3, jsonNode.get("messages").size());
-
-        assertTrue(storageBattleFile.exists());
-        JsonNode battleJsonNode = mapper.readTree(storageBattleFile);
-        assertTrue(battleJsonNode.get("combatants").isArray());
-        assertEquals(2, battleJsonNode.get("combatants").size());
-        assertEquals(2, battleJsonNode.get("nextStep").get("round").asInt());
-        assertEquals(0, battleJsonNode.get("nextStep").get("index").asInt());
-        assertEquals("RESOLVE_ACTION", battleJsonNode.get("nextStep").get("phase").asText());
-        assertTrue(battleJsonNode.get("nextStep").get("inputNeeded").asBoolean());
-        assertEquals(0, battleJsonNode.get("combatants").get(1).get("currentDamage").asInt());
-        assertEquals(21, battleJsonNode.get("combatants").get(1).get("previousDamage").asInt());
-        assertTrue(battleJsonNode.get("combatants").get(1).get("unconsciousnessCheckFailed").asBoolean());
-        assertEquals(0, battleJsonNode.get("combatants").get(1).get("nbrOfDeathChecksNeeded").asInt());
-        assertFalse(battleJsonNode.get("combatants").get(1).get("deathCheckFailed").asBoolean());
-        assertEquals("UNCONSCIOUS", battleJsonNode.get("combatants").get(1).get("healthStatus").asText());
-        assertEquals(0, battleJsonNode.get("combatants").get(1).get("currentMove").asInt());
+            String message = "Test failed at step " + i + ".";
+            String expectedStr = responses.get(i).toString();
+            String actualStr = result.getResponse().getContentAsString();
+            JSONAssert.assertEquals(message, expectedStr, actualStr, JSONCompareMode.STRICT);
+        }
     }
 
     private String readResource(String resourceName) throws IOException {

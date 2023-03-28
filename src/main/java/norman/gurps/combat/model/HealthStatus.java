@@ -1,6 +1,8 @@
 package norman.gurps.combat.model;
 
 public enum HealthStatus {
+    // The description should describe the status such that the following sentence makes sense:
+    // "The combatant is " + healthStatus.getDescription() + "."
     //@formatter:off
     ALIVE("alive and well"),
     REELING("reeling from wounds"),
