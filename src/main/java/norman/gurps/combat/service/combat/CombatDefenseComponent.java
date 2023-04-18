@@ -1,6 +1,7 @@
 package norman.gurps.combat.service.combat;
 
 import norman.gurps.combat.exception.LoggingException;
+import norman.gurps.combat.model.ActionType;
 import norman.gurps.combat.model.CombatDefense;
 import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.Combatant;
@@ -23,14 +24,23 @@ public class CombatDefenseComponent {
     }
 
     public NextStep prompt(int round, int index, Combatant target) {
+        CombatPhase combatPhase = CombatPhase.RESOLVE_DEFENSE;
         String message = target.getLabel() + ", please chose a defense and item (if needed for defense).";
+        boolean inputNeeded = true;
+        if (target.getActionType() == ActionType.AOA_MELEE_4_TO_HIT ||
+                target.getActionType() == ActionType.AOA_MELEE_2_TO_DMG ||
+                target.getActionType() == ActionType.AOA_RANGED_1_TO_HIT) {
+            combatPhase = CombatPhase.PROMPT_FOR_DAMAGE;
+            message = target.getLabel() + " does not get a defense because he/she took an all-out attack action.";
+            inputNeeded = false;
+        }
 
         // Create next step.
         NextStep nextStep = new NextStep();
         nextStep.setRound(round);
         nextStep.setIndex(index);
-        nextStep.setCombatPhase(CombatPhase.RESOLVE_DEFENSE);
-        nextStep.setInputNeeded(true);
+        nextStep.setCombatPhase(combatPhase);
+        nextStep.setInputNeeded(inputNeeded);
         nextStep.setMessage("" + round + "/" + index + " : " + message);
         return nextStep;
     }

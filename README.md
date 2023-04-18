@@ -2,9 +2,12 @@
 
 A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game.
 
-## TODO
+## Currently working on
 
 * Go through prompt for defense phase and add message if target does not get a defense.
+
+## TODO
+
 * Combine weaponName and defendingItemName.
 * Combine toHitRoll, toDefendRoll, forDeathCheckRoll, and forUnconsciousnessCheckRoll.
 * Validate defenses for ranged weapons.
@@ -42,5 +45,5 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 ## Hardening Ideas
 
 * Move all text messages and logs to a message file.
-* Create new exception for combat validation errors ... or something.
-* Go to an event driven architecture.
+* Create new exception for validation errors ... or something.
+* Go to an event driven architecture ... whatever that means.

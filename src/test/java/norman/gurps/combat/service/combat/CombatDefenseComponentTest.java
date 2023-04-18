@@ -2,6 +2,7 @@ package norman.gurps.combat.service.combat;
 
 import norman.gurps.combat.TestHelper;
 import norman.gurps.combat.exception.LoggingException;
+import norman.gurps.combat.model.ActionType;
 import norman.gurps.combat.model.CombatDefense;
 import norman.gurps.combat.model.CombatMelee;
 import norman.gurps.combat.model.CombatPhase;
@@ -35,13 +36,28 @@ class CombatDefenseComponentTest {
     }
 
     @Test
-    void prompt() {
+    void prompt_regular() {
         NextStep nextStep = component.prompt(1, 0, target);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
         assertEquals(CombatPhase.RESOLVE_DEFENSE, nextStep.getCombatPhase());
         assertTrue(nextStep.getInputNeeded());
+        String nextStepMessage = nextStep.getMessage();
+        LOGGER.debug("nextStepMessage=\"" + nextStepMessage + "\"");
+        assertTrue(StringUtils.contains(nextStepMessage, "Grunt"));
+    }
+
+    @Test
+    void prompt_all_out_attack() {
+        target.setActionType(ActionType.AOA_MELEE_4_TO_HIT);
+
+        NextStep nextStep = component.prompt(1, 0, target);
+
+        assertEquals(1, nextStep.getRound());
+        assertEquals(0, nextStep.getIndex());
+        assertEquals(CombatPhase.PROMPT_FOR_DAMAGE, nextStep.getCombatPhase());
+        assertFalse(nextStep.getInputNeeded());
         String nextStepMessage = nextStep.getMessage();
         LOGGER.debug("nextStepMessage=\"" + nextStepMessage + "\"");
         assertTrue(StringUtils.contains(nextStepMessage, "Grunt"));

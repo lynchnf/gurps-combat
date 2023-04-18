@@ -118,6 +118,7 @@
     "successful": true,
     "messages": [
       "2/0 : Bob the Example has successfully hit Grunt 2 with Broadsword. Rolled a 10, needed a 14.",
+      "2/0 : Grunt 2 does not get a defense because he/she took an all-out attack action.",
       "2/0 : Bob the Example, please roll 2d+1 cut damage."
     ]
   },
@@ -205,6 +206,7 @@
     "successful": true,
     "messages": [
       "3/0 : Bob the Example has successfully hit Grunt with Broadsword. Rolled a 9, needed a 10.",
+      "3/0 : Grunt does not get a defense because he/she took an all-out attack action.",
       "3/0 : Bob the Example, please roll 2d+1 cut damage."
     ]
   },

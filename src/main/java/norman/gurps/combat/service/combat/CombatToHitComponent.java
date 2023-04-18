@@ -147,13 +147,7 @@ public class CombatToHitComponent {
                     weaponName + ". Rolled a " + toHitRoll + ", needed a " + weaponSkill +
                     ". Please roll on the Critical Hit Table.";
         } else if (resultType == ResultType.SUCCESS) {
-            if (target.getActionType() == ActionType.AOA_MELEE_4_TO_HIT ||
-                    target.getActionType() == ActionType.AOA_MELEE_2_TO_DMG ||
-                    target.getActionType() == ActionType.AOA_RANGED_1_TO_HIT) {
-                combatPhase = CombatPhase.PROMPT_FOR_DAMAGE;
-            } else {
-                combatPhase = CombatPhase.PROMPT_FOR_DEFENSE;
-            }
+            combatPhase = CombatPhase.PROMPT_FOR_DEFENSE;
             message = attacker.getLabel() + " has successfully hit " + targetLabel + " with " + weaponName +
                     ". Rolled a " + toHitRoll + ", needed a " + weaponSkill + ".";
         } else if (resultType == ResultType.CRITICAL_FAILURE) {

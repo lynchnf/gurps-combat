@@ -222,13 +222,14 @@ class CombatToHitComponentTest {
         attacker.getCombatMelees().get(0).setToHitEffectiveSkill(14);
         attacker.getCombatMelees().get(0).setToHitRoll(10);
         attacker.getCombatMelees().get(0).setToHitResultType(ResultType.SUCCESS);
+        // This used to make a difference. Verify it no longer does.
         target.setActionType(ActionType.AOA_MELEE_4_TO_HIT);
 
         NextStep nextStep = component.resolve(1, 0, attacker, target);
 
         assertEquals(1, nextStep.getRound());
         assertEquals(0, nextStep.getIndex());
-        assertEquals(CombatPhase.PROMPT_FOR_DAMAGE, nextStep.getCombatPhase());
+        assertEquals(CombatPhase.PROMPT_FOR_DEFENSE, nextStep.getCombatPhase());
         assertFalse(nextStep.getInputNeeded());
         String nextStepMessage = nextStep.getMessage();
         LOGGER.debug("nextStepMessage=\"" + nextStepMessage + "\"");
