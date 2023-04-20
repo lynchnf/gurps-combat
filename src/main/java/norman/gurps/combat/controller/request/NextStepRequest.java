@@ -9,7 +9,7 @@ public class NextStepRequest {
     private ActionType actionType;
     private String targetLabel;
     private String weaponName;
-    private String weaponModeName;
+    private String modeName;
     private Integer speedAndRange;
     private Integer toHitRoll;
     private DefenseType defenseType;
@@ -51,12 +51,12 @@ public class NextStepRequest {
         this.weaponName = weaponName;
     }
 
-    public String getWeaponModeName() {
-        return weaponModeName;
+    public String getModeName() {
+        return modeName;
     }
 
-    public void setWeaponModeName(String weaponModeName) {
-        this.weaponModeName = weaponModeName;
+    public void setModeName(String modeName) {
+        this.modeName = modeName;
     }
 
     public Integer getSpeedAndRange() {

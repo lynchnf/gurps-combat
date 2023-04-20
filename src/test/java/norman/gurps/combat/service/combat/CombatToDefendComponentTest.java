@@ -36,7 +36,7 @@ class CombatToDefendComponentTest {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel("Grunt");
         combatMelee.setWeaponName("Broadsword");
-        combatMelee.setWeaponModeName("swing");
+        combatMelee.setModeName("swing");
         combatMelee.setToHitEffectiveSkill(14);
         combatMelee.setToHitRoll(10);
         combatMelee.setToHitResultType(ResultType.SUCCESS);

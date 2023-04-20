@@ -4,11 +4,11 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 
 ## Currently working on
 
-* Check that unbalanced weapons have not already be used to parry this round.
+* Change weaponModeName to modeName.
+* Combine weaponName and defendingItemName.
 
 ## TODO
 
-* Combine weaponName and defendingItemName.
 * Combine toHitRoll, toDefendRoll, forDeathCheckRoll, and forUnconsciousnessCheckRoll.
 * Validate defenses for ranged weapons.
 * Clear combatRanged if not aiming or attacking with a ranged weapon.

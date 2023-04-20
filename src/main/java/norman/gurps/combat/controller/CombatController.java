@@ -48,7 +48,7 @@ public class CombatController {
         ActionType actionType = req.getActionType();
         String targetLabel = req.getTargetLabel();
         String weaponName = req.getWeaponName();
-        String weaponModeName = req.getWeaponModeName();
+        String modeName = req.getModeName();
         Integer speedAndRange = req.getSpeedAndRange();
         Integer toHitRoll = req.getToHitRoll();
         DefenseType defenseType = req.getDefenseType();
@@ -61,7 +61,7 @@ public class CombatController {
         boolean inputNeeded;
         try {
             do {
-                NextStep nextStep = service.nextStep(combatPhase, actionType, targetLabel, weaponName, weaponModeName,
+                NextStep nextStep = service.nextStep(combatPhase, actionType, targetLabel, weaponName, modeName,
                         speedAndRange, toHitRoll, defenseType, defendingItemName, toDefendRoll, forDamageRoll,
                         forDeathCheckRoll, forUnconsciousnessCheckRoll);
                 if (nextStep.getMessage() != null) {

@@ -73,7 +73,7 @@ class CombatDefenseComponentTest {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel("Bob the Example");
         combatMelee.setWeaponName("Axe");
-        combatMelee.setWeaponModeName("swing");
+        combatMelee.setModeName("swing");
         combatMelee.setToHitEffectiveSkill(12);
         combatMelee.setToHitRoll(13);
         combatMelee.setToHitResultType(ResultType.FAILURE);

@@ -170,9 +170,9 @@ public class GameCharService {
         if (meleeWeapon.getMeleeWeaponModes().isEmpty()) {
             errors.add("Melee weapon " + meleeWeapon.getName() + " must have at least one melee weapon mode.");
         } else {
-            Set<String> meleeWeaponModeNames = new HashSet<>();
+            Set<String> meleeModeNames = new HashSet<>();
             for (MeleeWeaponMode meleeWeaponMode : meleeWeapon.getMeleeWeaponModes()) {
-                errors.addAll(validateMeleeWeaponMode(meleeWeaponMode, meleeWeaponModeNames, meleeWeapon.getName()));
+                errors.addAll(validateMeleeWeaponMode(meleeWeaponMode, meleeModeNames, meleeWeapon.getName()));
             }
         }
 
@@ -272,19 +272,19 @@ public class GameCharService {
         return errors;
     }
 
-    private List<String> validateMeleeWeaponMode(MeleeWeaponMode meleeWeaponMode, Set<String> meleeWeaponModeNames,
+    private List<String> validateMeleeWeaponMode(MeleeWeaponMode meleeWeaponMode, Set<String> meleeModeNames,
             String meleeWeaponName) {
         List<String> errors = new ArrayList<>();
 
         if (StringUtils.isBlank(meleeWeaponMode.getName())) {
             errors.add("Melee weapon mode name for melee weapon " + meleeWeaponName + " may not be blank.");
         } else {
-            if (meleeWeaponModeNames.contains(meleeWeaponMode.getName())) {
+            if (meleeModeNames.contains(meleeWeaponMode.getName())) {
                 errors.add(
                         "Melee weapon mode name " + meleeWeaponMode.getName() + " for melee weapon " + meleeWeaponName +
                                 " is not unique.");
             }
-            meleeWeaponModeNames.add(meleeWeaponMode.getName());
+            meleeModeNames.add(meleeWeaponMode.getName());
         }
 
         if (meleeWeaponMode.getDamageDice() == null) {

@@ -34,7 +34,7 @@ public class CombatForDamageComponent {
             CombatMelee combatMelee = attacker.getCombatMelees().get(size - 1);
             MeleeWeapon weapon = utils.getMeleeWeapon(combatMelee.getWeaponName(),
                     attacker.getGameChar().getMeleeWeapons());
-            MeleeWeaponMode weaponMode = utils.getMeleeWeaponMode(combatMelee.getWeaponModeName(),
+            MeleeWeaponMode weaponMode = utils.getMeleeWeaponMode(combatMelee.getModeName(),
                     weapon.getMeleeWeaponModes());
             int damageDice = weaponMode.getDamageDice();
             int damageAdds = weaponMode.getDamageAdds();

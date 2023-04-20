@@ -37,7 +37,7 @@ class CombatToHitComponentTest {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel("Grunt");
         combatMelee.setWeaponName("Broadsword");
-        combatMelee.setWeaponModeName("swing");
+        combatMelee.setModeName("swing");
         attacker.getCombatMelees().add(combatMelee);
         target = TestHelper.getCombatant(TestHelper.getGameChar2());
     }
