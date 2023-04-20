@@ -1,6 +1,7 @@
 package norman.gurps.combat.service.combat;
 
 import norman.gurps.combat.model.ArmorPiece;
+import norman.gurps.combat.model.CombatDefense;
 import norman.gurps.combat.model.CombatMelee;
 import norman.gurps.combat.model.Combatant;
 import norman.gurps.combat.model.DamageType;
@@ -47,6 +48,17 @@ public class CombatUtils {
         for (CombatMelee combatMelee : combatMelees) {
             if (weaponName.equals(combatMelee.getWeaponName())) {
                 found = combatMelee;
+                break;
+            }
+        }
+        return found;
+    }
+
+    public CombatDefense getCombatDefense(String defendingItemName, List<CombatDefense> combatDefenses) {
+        CombatDefense found = null;
+        for (CombatDefense combatDefense : combatDefenses) {
+            if (defendingItemName.equals(combatDefense.getDefendingItemName())) {
+                found = combatDefense;
                 break;
             }
         }

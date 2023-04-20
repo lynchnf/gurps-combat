@@ -69,7 +69,7 @@ class CombatDefenseComponentTest {
     }
 
     @Test
-    void validate_parry_bad() {
+    void validate_parry_bad_unbalanced() {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel("Bob the Example");
         combatMelee.setWeaponName("Axe");

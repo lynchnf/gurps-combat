@@ -1,10 +1,13 @@
 package norman.gurps.combat.service.combat;
 
 import norman.gurps.combat.TestHelper;
+import norman.gurps.combat.exception.LoggingException;
 import norman.gurps.combat.model.ActionType;
+import norman.gurps.combat.model.CombatDefense;
 import norman.gurps.combat.model.CombatMelee;
 import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.Combatant;
+import norman.gurps.combat.model.DefenseType;
 import norman.gurps.combat.model.NextStep;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CombatMeleeTargetComponentTest {
@@ -50,10 +54,24 @@ class CombatMeleeTargetComponentTest {
     }
 
     @Test
-    void validate() {
+    void validate_good() {
         List<Combatant> combatants = Arrays.asList(attacker, target);
 
         assertDoesNotThrow(() -> component.validate("Grunt", "Broadsword", "swing", attacker, combatants));
+    }
+
+    @Test
+    void validate_bad_unbalanced() {
+        attacker = TestHelper.getCombatant(TestHelper.getGameChar2());
+        CombatDefense combatDefense = new CombatDefense();
+        combatDefense.setDefenseType(DefenseType.PARRY);
+        combatDefense.setDefendingItemName("Axe");
+        attacker.getCombatDefenses().add(combatDefense);
+        target = TestHelper.getCombatant(TestHelper.getGameChar1());
+        List<Combatant> combatants = Arrays.asList(attacker, target);
+
+        assertThrows(LoggingException.class,
+                () -> component.validate("Bob the Example", "Axe", "swing", attacker, combatants));
     }
 
     @Test

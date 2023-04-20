@@ -6,6 +6,7 @@ import norman.gurps.combat.model.CombatPhase;
 import norman.gurps.combat.model.Combatant;
 import norman.gurps.combat.model.MeleeWeapon;
 import norman.gurps.combat.model.NextStep;
+import norman.gurps.combat.model.ParryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -62,6 +63,11 @@ public class CombatMeleeTargetComponent {
                 throw new LoggingException(LOGGER,
                         "Unexpected error. Melee weapon " + weaponName + " not found in inventory of combatant " +
                                 attacker.getLabel() + ".");
+            } else if (weapon.getParryType() == ParryType.UNBALANCED &&
+                    utils.getCombatDefense(weaponName, attacker.getCombatDefenses()) != null) {
+                throw new LoggingException(LOGGER, "Melee weapon " + weaponName +
+                        " is an unbalanced weapon and cannot be used to attack because " + attacker.getLabel() +
+                        " already used it to parry this round.");
             }
 
             if (weaponModeName == null) {

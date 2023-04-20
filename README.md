@@ -4,14 +4,13 @@ A play aid for Gamemasters running a [GURPS](http://www.sjgames.com/gurps/) game
 
 ## Currently working on
 
-* Go through prompt for defense phase and add message if target does not get a defense.
+* Check that unbalanced weapons have not already be used to parry this round.
 
 ## TODO
 
 * Combine weaponName and defendingItemName.
 * Combine toHitRoll, toDefendRoll, forDeathCheckRoll, and forUnconsciousnessCheckRoll.
 * Validate defenses for ranged weapons.
-* Check that unbalanced weapons have not already be used to parry this round.
 * Clear combatRanged if not aiming or attacking with a ranged weapon.
 * Preferences
 * Handle weapons that require multiple ready turns.
