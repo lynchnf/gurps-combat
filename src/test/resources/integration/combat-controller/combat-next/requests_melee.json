@@ -10,7 +10,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -33,7 +33,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Bob the Example",
     "weaponName": "Axe",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -47,7 +47,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Bob the Example",
     "weaponName": "Axe",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -70,7 +70,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt 2",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -88,7 +88,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Bob the Example",
     "weaponName": "Axe",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -123,7 +123,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -149,7 +149,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -172,7 +172,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Bob the Example",
     "weaponName": "Axe",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -195,7 +195,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -226,7 +226,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Bob the Example",
     "weaponName": "Axe",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",
@@ -240,7 +240,7 @@
     "combatPhase": "RESOLVE_MELEE_TARGET",
     "targetLabel": "Grunt",
     "weaponName": "Broadsword",
-    "modeName": "swing"
+    "weaponModeName": "swing"
   },
   {
     "combatPhase": "RESOLVE_TO_HIT",

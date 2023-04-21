@@ -80,7 +80,7 @@ class CombatMeleeTargetComponentTest {
 
         assertEquals("Grunt", attacker.getCombatMelees().get(0).getTargetLabel());
         assertEquals("Broadsword", attacker.getCombatMelees().get(0).getWeaponName());
-        assertEquals("swing", attacker.getCombatMelees().get(0).getModeName());
+        assertEquals("swing", attacker.getCombatMelees().get(0).getWeaponModeName());
     }
 
     @Test
@@ -88,7 +88,7 @@ class CombatMeleeTargetComponentTest {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel("Grunt");
         combatMelee.setWeaponName("Broadsword");
-        combatMelee.setModeName("swing");
+        combatMelee.setWeaponModeName("swing");
         attacker.getCombatMelees().add(combatMelee);
 
         NextStep nextStep = component.resolve(1, 0, attacker);

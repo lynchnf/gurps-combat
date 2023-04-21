@@ -215,10 +215,10 @@ public class CombatUtils {
         return found;
     }
 
-    public MeleeWeaponMode getMeleeWeaponMode(String modeName, List<MeleeWeaponMode> weaponModes) {
+    public MeleeWeaponMode getMeleeWeaponMode(String weaponModeName, List<MeleeWeaponMode> weaponModes) {
         MeleeWeaponMode found = null;
         for (MeleeWeaponMode weaponMode : weaponModes) {
-            if (modeName.equals(weaponMode.getName())) {
+            if (weaponModeName.equals(weaponMode.getName())) {
                 found = weaponMode;
             }
         }

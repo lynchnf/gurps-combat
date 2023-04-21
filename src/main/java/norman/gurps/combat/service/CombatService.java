@@ -117,7 +117,7 @@ public class CombatService {
     }
 
     public NextStep nextStep(CombatPhase combatPhase, ActionType actionType, String targetLabel, String weaponName,
-            String modeName, Integer speedAndRange, Integer toHitRoll, DefenseType defenseType,
+            String weaponModeName, Integer speedAndRange, Integer toHitRoll, DefenseType defenseType,
             String defendingItemName, Integer toDefendRoll, Integer forDamageRoll, Integer forDeathCheckRoll,
             Integer forUnconsciousnessCheckRoll) {
         LOGGER.debug("Next step in combat.");
@@ -184,11 +184,11 @@ public class CombatService {
                 message = "Combatant " + attacker.getLabel() + " must a chose a target, melee weapon, and weapon mode.";
                 break;
             case RESOLVE_MELEE_TARGET:
-                meleeTarget.validate(targetLabel, weaponName, modeName, attacker, combatants);
-                meleeTarget.updateAttacker(attacker, targetLabel, weaponName, modeName);
+                meleeTarget.validate(targetLabel, weaponName, weaponModeName, attacker, combatants);
+                meleeTarget.updateAttacker(attacker, targetLabel, weaponName, weaponModeName);
                 nextStep = meleeTarget.resolve(round, index, attacker);
                 message = "Combatant " + attacker.getLabel() + " has chosen a target of  " + targetLabel +
-                        " and a melee weapon of " + weaponName + " with a mode of " + modeName + ".";
+                        " and a melee weapon of " + weaponName + " with a mode of " + weaponModeName + ".";
                 break;
             case PROMPT_FOR_AIM_TARGET:
                 nextStep = aimTarget.prompt(round, index, attacker);

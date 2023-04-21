@@ -3,7 +3,7 @@ package norman.gurps.combat.model;
 public class CombatMelee implements CombatAttack {
     private String targetLabel;
     private String weaponName;
-    private String modeName;
+    private String weaponModeName;
     private Integer toHitEffectiveSkill;
     private Integer toHitRoll;
     private ResultType toHitResultType;
@@ -35,12 +35,12 @@ public class CombatMelee implements CombatAttack {
         this.weaponName = weaponName;
     }
 
-    public String getModeName() {
-        return modeName;
+    public String getWeaponModeName() {
+        return weaponModeName;
     }
 
-    public void setModeName(String modeName) {
-        this.modeName = modeName;
+    public void setWeaponModeName(String weaponModeName) {
+        this.weaponModeName = weaponModeName;
     }
 
     @Override

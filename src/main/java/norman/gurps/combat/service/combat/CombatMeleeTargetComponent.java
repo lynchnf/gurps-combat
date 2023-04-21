@@ -35,7 +35,7 @@ public class CombatMeleeTargetComponent {
         return nextStep;
     }
 
-    public void validate(String targetLabel, String weaponName, String modeName, Combatant attacker,
+    public void validate(String targetLabel, String weaponName, String weaponModeName, Combatant attacker,
             List<Combatant> combatants) {
         // Validate target.
         if (targetLabel == null) {
@@ -70,21 +70,21 @@ public class CombatMeleeTargetComponent {
                         " already used it to parry this round.");
             }
 
-            if (modeName == null) {
+            if (weaponModeName == null) {
                 throw new LoggingException(LOGGER, "Weapon mode may not be blank.");
-            } else if (utils.getMeleeWeaponMode(modeName, weapon.getMeleeWeaponModes()) == null) {
+            } else if (utils.getMeleeWeaponMode(weaponModeName, weapon.getMeleeWeaponModes()) == null) {
                 throw new LoggingException(LOGGER,
-                        "Mode " + modeName + " is not a valid mode of melee weapon " + weapon.getName() +
+                        "Mode " + weaponModeName + " is not a valid mode of melee weapon " + weapon.getName() +
                                 " for combatant " + attacker.getLabel() + ".");
             }
         }
     }
 
-    public void updateAttacker(Combatant attacker, String targetLabel, String weaponName, String modeName) {
+    public void updateAttacker(Combatant attacker, String targetLabel, String weaponName, String weaponModeName) {
         CombatMelee combatMelee = new CombatMelee();
         combatMelee.setTargetLabel(targetLabel);
         combatMelee.setWeaponName(weaponName);
-        combatMelee.setModeName(modeName);
+        combatMelee.setWeaponModeName(weaponModeName);
         attacker.getCombatMelees().add(combatMelee);
     }
 
@@ -93,9 +93,10 @@ public class CombatMeleeTargetComponent {
         CombatMelee combatMelee = attacker.getCombatMelees().get(size - 1);
         String targetLabel = combatMelee.getTargetLabel();
         String weaponName = combatMelee.getWeaponName();
-        String modeName = combatMelee.getModeName();
+        String weaponModeName = combatMelee.getWeaponModeName();
         String message =
-                attacker.getLabel() + " is attacking " + targetLabel + " with " + weaponName + "/" + modeName + ".";
+                attacker.getLabel() + " is attacking " + targetLabel + " with " + weaponName + "/" + weaponModeName +
+                        ".";
 
         // Create next step.
         NextStep nextStep = new NextStep();
